@@ -242,34 +242,50 @@ sudo systemctl restart nginx
 > a aparecer nos seus testes. Em caso de duvida durante a conferencia, use
 > `restart`. No dia a dia, `reload` basta.
 
-### 2. Certificado de origem da Cloudflare
+### 2. Certificado (Let's Encrypt, via DNS-01)
 
-No painel: **SSL/TLS → Origin Server → Create Certificate**, RSA 2048, validade
-de 15 anos, hostnames `feijoadaporkinho.com.br` e `*.feijoadaporkinho.com.br`.
+O certificado é do **Let's Encrypt**, publicamente confiável e renovado sozinho
+pelo timer do certbot. Por ser confiável, funciona com o SSL da Cloudflare em
+**Full (strict)** e continua válido se um dia o proxy for pausado.
 
 ```bash
-sudo install -d -m 755 /etc/ssl/cloudflare
-sudo nano /etc/ssl/cloudflare/feijoadaporkinho.com.br.pem   # cole o certificado
-sudo nano /etc/ssl/cloudflare/feijoadaporkinho.com.br.key   # cole a chave privada
-sudo chmod 644 /etc/ssl/cloudflare/feijoadaporkinho.com.br.pem
-sudo chmod 600 /etc/ssl/cloudflare/feijoadaporkinho.com.br.key
-
-# CA para o Authenticated Origin Pulls
-sudo curl -fsSL -o /etc/ssl/cloudflare/origin-pull-ca.pem \
-  https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
+sudo apt install -y certbot python3-certbot-dns-cloudflare
+sudo CF_DNS_TOKEN=<token> /opt/porkinho-scripts/emitir-certificado.sh --ensaio contato@feijoadaporkinho.com.br
+sudo CF_DNS_TOKEN=<token> /opt/porkinho-scripts/emitir-certificado.sh          contato@feijoadaporkinho.com.br
 ```
 
-Esse certificado **só vale para conexões vindas da Cloudflare**. Abrir
-`https://<IP-do-VPS>` direto no navegador acusa certificado inválido — isso é
-esperado e correto.
+O token é da Cloudflare, com permissão **Zone → DNS → Edit** restrita à zona
+`feijoadaporkinho.com.br` (modelo pronto "Edit zone DNS"). Ele fica em
+`/etc/letsencrypt/cloudflare.ini` com `chmod 600` e **nunca** no repositório.
+Se o token for revogado, a renovação automática para de funcionar.
 
-> **Atenção:** hoje o servidor está com um certificado **auto-assinado
-> provisório**, gerado só para o nginx subir e o site poder ser testado. Ele
-> funciona com o SSL em *Full*, mas **não** em *Full (strict)*. Troque pelo
-> Cloudflare Origin Certificate antes de colocar o SSL em Full (strict).
+> **Por que DNS-01 e não HTTP-01:** com a nuvem laranja ligada, o HTTP-01 exige
+> que a borda da Cloudflare consiga falar com a origem — exatamente o que deixa
+> de funcionar quando o certificado da origem está com problema. Seria uma
+> dependência circular: consertar o certificado dependeria de ele já estar bom.
+> Foi o que aconteceu de fato aqui: com o SSL em Full (strict) e um certificado
+> provisório na origem, a borda respondia **526** e nenhum desafio HTTP chegava.
+> O DNS-01 valida por registro TXT e não passa pela porta 80 nem pela origem.
 
-**Não instale Certbot nem Let's Encrypt.** É redundante e o desafio HTTP-01
-briga com o proxy laranja.
+> **O `location ~ /\.`** que barra `.git` e `.env` também barrava
+> `/.well-known/` inteiro, devolvendo 403 no desafio ACME. Por isso existe o
+> `location ^~ /.well-known/acme-challenge/` — o prefixo `^~` ganha do regex.
+> O webroot é `/var/www/acme`, **fora** de `/var/www/feijoadaporkinho/public`,
+> porque o deploy roda `rsync --delete` e apagaria o desafio no meio da emissão.
+
+A renovação roda pelo `certbot.timer` e recarrega o nginx pelo gancho em
+`/etc/letsencrypt/renewal-hooks/deploy/`. Para conferir:
+
+```bash
+sudo certbot certificates
+sudo certbot renew --dry-run
+systemctl list-timers certbot.timer
+```
+
+**Alternativa:** um **Cloudflare Origin Certificate** (SSL/TLS → Origin Server),
+válido 15 anos mas só para tráfego vindo da Cloudflare. Os caminhos ficam em
+`/etc/ssl/cloudflare/` e o `deploy/scripts/gerar-csr-origem.sh` gera a chave e o
+CSR no servidor, sem a chave privada sair de lá.
 
 ### 3. Faixas de IP da Cloudflare
 
@@ -346,6 +362,24 @@ sudo ufw status numbered
 | 7 | DNS | `A @` e `A www` → IP do VPS, **os dois com nuvem laranja** |
 | 8 | Analytics & Logs → Web Analytics | ligado; copie o token para o `index.html` |
 | 9 | Caching → Cache Rules | `URI Path starts with /go/` → **Bypass cache** |
+| 10 | Scrape Shield → Email Address Obfuscation | Tanto faz — o HTML já se protege com `<!--email_off-->`. Ver abaixo. |
+
+### A Cloudflare reescreve o e-mail do rodapé
+
+Com **Email Address Obfuscation** ligada (Scrape Shield), a borda troca
+`<a href="mailto:...">` por `/cdn-cgi/l/email-protection` e o texto visível por
+`[email protected]`, que só volta ao normal com um script injetado. Resultado:
+**sem JavaScript o contato fica ilegível** — inclusive na política de
+privacidade, que é onde o endereço para exercício de direitos da LGPD precisa
+estar.
+
+Os `<!--email_off-->` em volta de cada `mailto:` já resolvem isso no HTML, sem
+depender de configuração de conta. **Se algum dia acrescentar um e-mail novo,
+envolva com os marcadores também**, e confira:
+
+```bash
+curl -s https://feijoadaporkinho.com.br/ | grep -c '__cf_email__'   # tem que ser 0
+```
 
 ### Se o site entrar em loop de redirecionamento
 
@@ -466,7 +500,6 @@ já visitou continua com a imagem velha.
 - Não usar `301` nas rotas `/go/` — o navegador guarda o redirect permanente e a
   partir do segundo clique a contagem para. É sempre `302` + `no-store`.
 - Não deixar a Cloudflare cachear `/go/*`.
-- Não instalar Certbot nem Let's Encrypt.
 - Não usar SSL Flexible.
 - Não adicionar framework, bundler, Node, Docker ou banco de dados.
 - Não criar formulário de contato, chat, newsletter ou pop-up.
