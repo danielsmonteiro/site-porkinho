@@ -61,6 +61,7 @@ validar() {
 }
 validar "$tmp/v4" v4
 validar "$tmp/v6" v6
+ESPERADAS=$(( $(grep -cve '^[[:space:]]*$' "$tmp/v4") + $(grep -cve '^[[:space:]]*$' "$tmp/v6") ))
 
 echo "==> Montando $DESTINO"
 {
@@ -73,12 +74,14 @@ echo "==> Montando $DESTINO"
   echo "# ------------------------------------------------------------------------"
   echo
   echo "# IPv4"
-  while read -r faixa; do
+  # O `|| [[ -n "$faixa" ]]` nao e enfeite: a Cloudflare serve a lista SEM
+  # quebra de linha no final, e um `while read` simples engole a ultima faixa.
+  while read -r faixa || [[ -n "$faixa" ]]; do
     [[ -n "$faixa" ]] && echo "set_real_ip_from $faixa;"
   done < "$tmp/v4"
   echo
   echo "# IPv6"
-  while read -r faixa; do
+  while read -r faixa || [[ -n "$faixa" ]]; do
     [[ -n "$faixa" ]] && echo "set_real_ip_from $faixa;"
   done < "$tmp/v6"
   echo
@@ -99,7 +102,14 @@ if [[ -f "$DESTINO" ]]; then
 fi
 cp "$tmp/saida.conf" "$DESTINO"
 chmod 644 "$DESTINO"
-echo "    $(grep -c '^set_real_ip_from' "$DESTINO") faixas gravadas"
+GRAVADAS=$(grep -c '^set_real_ip_from' "$DESTINO")
+echo "    $GRAVADAS faixas gravadas (esperadas: $ESPERADAS)"
+if [[ "$GRAVADAS" -ne "$ESPERADAS" ]]; then
+  echo "ERRO: gravamos $GRAVADAS de $ESPERADAS faixas. Uma faixa perdida vira" >&2
+  echo "      visitante logado com o IP da Cloudflare. Restaurando o anterior." >&2
+  [[ -f "$DESTINO.bak" ]] && cp -a "$DESTINO.bak" "$DESTINO"
+  exit 1
+fi
 
 if ! command -v nginx >/dev/null 2>&1; then
   echo "==> nginx nao encontrado nesta maquina; arquivo gerado e nada mais."

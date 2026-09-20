@@ -15,6 +15,8 @@
 #   DEPLOY_DESTINO  opcional      padrao /var/www/feijoadaporkinho/public
 #   DEPLOY_BRANCH   opcional      padrao main
 #   SAUDE_URL       opcional      padrao https://feijoadaporkinho.com.br/health
+#   SAUDE_RESOLVE   opcional      ex.: feijoadaporkinho.com.br:443:203.0.113.10
+#   SAUDE_INSEGURO  opcional      1 = aceita certificado provisorio na origem
 #   CF_ZONE_ID      opcional      liga a limpeza de cache da Cloudflare
 #   CF_API_TOKEN    opcional      idem (permissao: Zone > Cache Purge)
 #
@@ -177,8 +179,16 @@ if [[ "$SECO" -eq 1 ]]; then
   exit 0
 fi
 
+CURL=(curl -sf --max-time 15)
+# Durante a virada de DNS, da para apontar a checagem direto para a origem:
+#   SAUDE_URL=https://feijoadaporkinho.com.br/health
+#   SAUDE_RESOLVE=feijoadaporkinho.com.br:443:203.0.113.10
+#   SAUDE_INSEGURO=1   (enquanto o certificado ainda for o provisorio)
+[[ -n "${SAUDE_RESOLVE:-}" ]] && CURL+=(--resolve "$SAUDE_RESOLVE")
+[[ "${SAUDE_INSEGURO:-0}" == "1" ]] && CURL+=(--insecure)
+
 for tentativa in 1 2 3; do
-  CORPO="$(curl -sf --max-time 15 "$SAUDE_URL" || true)"
+  CORPO="$("${CURL[@]}" "$SAUDE_URL" || true)"
   if [[ "$CORPO" == "ok" ]]; then
     echo "    /health respondeu ok"
     echo
