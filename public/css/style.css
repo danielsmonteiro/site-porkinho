@@ -220,7 +220,12 @@ a { color: var(--primaria-texto); }
 }
 
 .status--aberto .status__ponto { background: var(--aberto); animation: pulsar 2.2s ease-in-out infinite; }
-.status--fechado .status__ponto { background: var(--fechado); }
+/* O `animation: none` nao e redundante: se as duas classes coexistirem, esta
+   regra vem depois e ganha no desempate, entao o ponto vermelho nao herda a
+   pulsacao de "aberto". O JS ja nao deixa isso acontecer (renderizarStatus
+   remove as tres antes de por a certa); aqui e so para o erro ser impossivel
+   de aparecer, e nao apenas improvavel. */
+.status--fechado .status__ponto { background: var(--fechado); animation: none; }
 .status--aberto { color: var(--aberto); }
 .status--fechado { color: var(--fechado); }
 .status--neutro { color: var(--texto-2); font-weight: 400; }
