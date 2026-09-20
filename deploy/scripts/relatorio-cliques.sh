@@ -61,6 +61,8 @@ reunir "$LOG" | awk -F'\t' 'NF>=2 && $2 ~ /^\/go\//' > "$tmp/todos" || true
 
 TOTAL_LINHAS=$(wc -l < "$tmp/todos" | tr -d ' ')
 
+FUSO=$( (timedatectl show -p Timezone --value 2>/dev/null) || cat /etc/timezone 2>/dev/null || echo "?" )
+FUSO=${FUSO:-?}
 HOJE=$(date +%F)
 INI7=$(date -d '6 days ago' +%F 2>/dev/null || date -v-6d +%F)
 INI30=$(date -d '29 days ago' +%F 2>/dev/null || date -v-29d +%F)
@@ -208,7 +210,7 @@ periodo() {
 
   # ------------------------------------------------------- por hora
   echo
-  echo "POR HORA (fuso do servidor)"
+  echo "POR HORA (fuso do servidor: $FUSO)"
   awk -F'\t' '{h[substr($1,12,2)]++} END {for (i=0;i<24;i++) {k=sprintf("%02d",i); printf "%s\t%d\n", k, h[k]+0}}' "$arq" > "$tmp/horas"
   local max_h; max_h=$(cut -f2 "$tmp/horas" | sort -rn | head -1)
   while IFS=$'\t' read -r h c; do
