@@ -354,28 +354,39 @@ senão o navegador continua com o arquivo velho:
 
 ---
 
-## Imagens — o que ainda é provisório
+## Imagens e paleta
 
-Tudo em `public/img/` foi gerado a partir de formas simples, sem nenhuma foto
-real. Nada disso veio de banco de imagens. Para trocar, basta sobrescrever o
-arquivo mantendo **o mesmo nome e as mesmas dimensões** — o HTML já declara
-`width`/`height`, então nada de layout shift.
+A **logo é a oficial**, a mesma do [Linktree](https://linktr.ee/porkinho) e do
+[Instagram](https://www.instagram.com/feijoadaporkinho): o porco-chef no anel
+dourado. Dela saem o favicon, os ícones de PWA e a og-image.
 
-| Arquivo | Tamanho | O que precisa entrar |
+O **amarelo do site vem do próprio anel da logo**. O degradê metálico dele vai
+de `#945C24` a `#F4EC6C`; `--primaria: #E9D45C` é a faixa clara desse degradê.
+Os tons estão todos em `:root` no `css/style.css` — mexendo lá, o site inteiro
+acompanha.
+
+> Se trocar a logo, **recalcule o contraste** antes de publicar. O amarelo
+> claro funciona porque o texto por cima dele é a tinta escura `#241A0B`
+> (11,43:1). Um amarelo mais escuro, ou texto claro por cima, reprova na
+> acessibilidade.
+
+### O que ainda é provisório
+
+| Arquivo | Tamanho | Situação |
 |---|---|---|
-| `logo.webp` / `logo.jpg` | 192×192 | A logo oficial da marca. Aparece recortada em círculo. |
-| `og-image.jpg` | 1200×630, < 300 KB | **O mais importante.** Foto do Kit Completa, bonita e bem iluminada. É o que aparece quando o link é colado no WhatsApp. |
-| `kit-executiva.webp` / `.jpg` | 128×128 | Foto do Kit Executiva, enquadrada quadrada. |
-| `kit-completa.webp` / `.jpg` | 128×128 | Foto do Kit Completa, enquadrada quadrada. |
-| `icon-192.png`, `icon-512.png` | 192, 512 | Ícone do app (tela de início do celular). |
-| `icon-maskable-512.png` | 512 | Mesmo ícone com folga nas bordas (Android recorta). |
-| `apple-touch-icon.png` | 180×180 | Ícone no iPhone. |
-| `../favicon.ico` | 16/32/48 | Ícone da aba do navegador. |
+| `img/kit-executiva.*` | 128×128 | **Placeholder** — ilustração de tigela. Entra foto real do Kit Executiva, enquadrada quadrada. |
+| `img/kit-completa.*` | 128×128 | **Placeholder** — idem, foto do Kit Completa. |
+| `img/og-image.jpg` | 1200×630, < 300 KB | Funcional, montada com a logo. O ideal é uma **foto do Kit Completa** bem iluminada: é isto que aparece quando o link é colado no WhatsApp. |
+| `img/logo.webp` / `.png` | 192×192 | Pronto — logo oficial, com transparência. |
+| `img/icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `../favicon.ico` | — | Prontos, gerados da logo oficial. |
 
-Gere sempre o par **WebP + JPG**: o `<picture>` entrega WebP a quem aceita e JPG
-ao resto.
+Para trocar, sobrescreva mantendo **o mesmo nome e as mesmas dimensões** — o
+HTML já declara `width`/`height`, então não há layout shift. Gere sempre o par
+**WebP + JPG**: o `<picture>` entrega WebP a quem aceita e JPG ao resto.
 
----
+E **suba o `?v=`** da imagem no `index.html`: os arquivos de `/img/` são
+servidos com `max-age=31536000, immutable`, então sem isso o navegador de quem
+já visitou continua com a imagem velha.
 
 ## Privacidade e LGPD
 
