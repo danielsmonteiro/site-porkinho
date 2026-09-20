@@ -13,7 +13,14 @@
 #   3. copie o certificado devolvido e instale com:
 #         sudo tee /etc/ssl/cloudflare/feijoadaporkinho.com.br.pem
 #         sudo chmod 644 /etc/ssl/cloudflare/feijoadaporkinho.com.br.pem
-#         sudo nginx -t && sudo systemctl reload nginx
+#   4. ATENCAO: hoje a config do nginx aponta para o Let's Encrypt, em
+#      /etc/letsencrypt/live/. Copiar os arquivos NAO troca nada — o nginx
+#      recarrega sem erro e continua servindo o Let's Encrypt. Para usar mesmo
+#      este certificado, edite os DOIS pares em
+#      deploy/nginx/feijoadaporkinho.com.br.conf:
+#         ssl_certificate     /etc/ssl/cloudflare/feijoadaporkinho.com.br.pem;
+#         ssl_certificate_key /etc/ssl/cloudflare/feijoadaporkinho.com.br.key;
+#      e so entao: sudo nginx -t && sudo systemctl reload nginx
 #
 # A chave existente so e substituida com --forcar, para nao invalidar um
 # certificado que ja esteja em uso.

@@ -23,8 +23,14 @@
 # Uso:
 #   ./deploy.sh                 # so o site
 #   ./deploy.sh --configs       # tambem instala os arquivos do nginx
+#   ./deploy.sh --scripts       # SO os scripts de manutencao, sem tocar no nginx
 #   ./deploy.sh --seco          # mostra o que faria, sem escrever nada
 #   ./deploy.sh --forcar        # publica mesmo com a arvore suja
+#
+# O --scripts existe para o bootstrap: numa maquina nova, emitir-certificado.sh
+# precisa estar la ANTES de o --configs rodar, porque a config do nginx aponta
+# para /etc/letsencrypt/live/... e o `nginx -t` reprova enquanto o certificado
+# nao existir.
 #
 set -euo pipefail
 
@@ -48,13 +54,14 @@ if [[ -f deploy/.env ]]; then
   unset _linha _chave _valor
 fi
 
-SECO=0; FORCAR=0; CONFIGS=0
+SECO=0; FORCAR=0; CONFIGS=0; SO_SCRIPTS=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --seco|--dry-run) SECO=1; shift ;;
     --forcar|--force) FORCAR=1; shift ;;
     --configs)        CONFIGS=1; shift ;;
-    -h|--help)        sed -n '2,30p' "$0"; exit 0 ;;
+    --scripts)        SO_SCRIPTS=1; shift ;;
+    -h|--help)        sed -n '2,34p' "$0"; exit 0 ;;
     *) echo "Opção desconhecida: $1" >&2; exit 2 ;;
   esac
 done
@@ -66,6 +73,25 @@ SAUDE_URL="${SAUDE_URL:-https://feijoadaporkinho.com.br/health}"
 
 falhar() { echo "ERRO: $*" >&2; exit 1; }
 passo()  { echo; echo "==> $*"; }
+
+# Todos os scripts que rodam NO servidor. Mantidos a mao, saem de sincronia
+# com o repositorio na primeira mudanca de caminho de log ou de certificado.
+SCRIPTS_DO_SERVIDOR=(relatorio-cliques.sh update-cloudflare-ips.sh
+                     emitir-certificado.sh gerar-csr-origem.sh)
+
+enviar_scripts() {
+  tar -C deploy/scripts -cf - "${SCRIPTS_DO_SERVIDOR[@]}" \
+    | "${SSH[@]}" 'sudo tar -C /tmp -xf - --one-top-level=porkinho-scripts'
+  "${SSH[@]}" "
+    set -e
+    sudo install -d -m 755 /opt/porkinho-scripts
+    for f in ${SCRIPTS_DO_SERVIDOR[*]}; do
+      sudo install -m 755 \"/tmp/porkinho-scripts/\$f\" /opt/porkinho-scripts/
+    done
+    sudo rm -rf /tmp/porkinho-scripts
+  "
+  echo "    ${#SCRIPTS_DO_SERVIDOR[@]} scripts em /opt/porkinho-scripts"
+}
 
 : "${DEPLOY_HOST:?defina DEPLOY_HOST (ex.: export DEPLOY_HOST=203.0.113.10)}"
 : "${DEPLOY_USER:?defina DEPLOY_USER (ex.: export DEPLOY_USER=daniel)}"
@@ -101,6 +127,17 @@ command -v rsync >/dev/null || falhar "rsync não encontrado nesta máquina"
 passo "Conferindo o acesso a $REMOTO"
 "${SSH[@]}" true || falhar "não consegui abrir SSH para $REMOTO"
 
+if [[ "$SO_SCRIPTS" -eq 1 ]]; then
+  passo "Instalando só os scripts de manutenção"
+  if [[ "$SECO" -eq 1 ]]; then
+    echo "    [seco] enviaria ${SCRIPTS_DO_SERVIDOR[*]}"
+  else
+    enviar_scripts
+  fi
+  echo; echo "Pronto. Nada no nginx e nada em /var/www foi tocado."
+  exit 0
+fi
+
 # ---------------------------------------------- 2. arquivos de configuracao
 if [[ "$CONFIGS" -eq 1 ]]; then
   passo "Instalando os arquivos do nginx"
@@ -110,8 +147,7 @@ if [[ "$CONFIGS" -eq 1 ]]; then
     tar -C deploy/nginx -cf - . | "${SSH[@]}" 'sudo tar -C /tmp -xf - --one-top-level=porkinho-nginx'
     # Os scripts que rodam NO servidor vao junto. Mantidos a mao, eles saem de
     # sincronia com o repositorio na primeira mudanca de caminho de log.
-    tar -C deploy/scripts -cf - relatorio-cliques.sh update-cloudflare-ips.sh \
-      | "${SSH[@]}" 'sudo tar -C /tmp -xf - --one-top-level=porkinho-scripts'
+    enviar_scripts
     "${SSH[@]}" 'bash -s' <<'REMOTO_FIM'
 set -euo pipefail
 O=/tmp/porkinho-nginx
@@ -124,10 +160,7 @@ sudo install -m 644 "$O/cliques.conf"                  /etc/nginx/snippets/cliqu
 sudo install -m 644 "$O/seguranca.conf"                /etc/nginx/snippets/porkinho-seguranca.conf
 sudo install -m 644 "$O/feijoadaporkinho.com.br.conf"  /etc/nginx/sites-available/feijoadaporkinho.com.br.conf
 sudo install -m 644 "$O/logrotate-feijoadaporkinho"    /etc/logrotate.d/feijoadaporkinho
-sudo install -d -m 755 /opt/porkinho-scripts
-sudo install -m 755 /tmp/porkinho-scripts/relatorio-cliques.sh     /opt/porkinho-scripts/
-sudo install -m 755 /tmp/porkinho-scripts/update-cloudflare-ips.sh /opt/porkinho-scripts/
-sudo rm -rf /tmp/porkinho-scripts
+
 sudo ln -sfn /etc/nginx/sites-available/feijoadaporkinho.com.br.conf \
              /etc/nginx/sites-enabled/feijoadaporkinho.com.br.conf
 # cloudflare-realip.conf e GERADO; so instala o placeholder se nao houver nada la.

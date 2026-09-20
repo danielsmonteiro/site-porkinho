@@ -25,8 +25,17 @@ DOMINIO="feijoadaporkinho.com.br"
 INI="/etc/letsencrypt/cloudflare.ini"
 ENSAIO=0
 
-[[ "${1:-}" == "--ensaio" ]] && { ENSAIO=1; shift; }
-EMAIL="${1:-}"
+# --ensaio pode vir em qualquer posicao: aceitar so como $1 fazia
+# `script email@... --ensaio` emitir certificado de PRODUCAO em silencio.
+ARGUMENTOS=()
+for arg in "$@"; do
+  case "$arg" in
+    --ensaio|--staging) ENSAIO=1 ;;
+    -*) echo "Opção desconhecida: $arg" >&2; exit 2 ;;
+    *)  ARGUMENTOS+=("$arg") ;;
+  esac
+done
+EMAIL="${ARGUMENTOS[0]:-}"
 
 [[ $EUID -eq 0 ]] || { echo "Rode com sudo." >&2; exit 1; }
 [[ -n "$EMAIL" ]] || { echo "Informe o e-mail de contato como argumento." >&2; exit 2; }
@@ -61,10 +70,25 @@ ARGS=(certonly
   --dns-cloudflare-propagation-seconds 30
   -d "$DOMINIO" -d "www.$DOMINIO"
   --non-interactive --agree-tos -m "$EMAIL"
-  --key-type rsa --rsa-key-size 2048)
-[[ "$ENSAIO" -eq 1 ]] && ARGS+=(--staging --cert-name "$DOMINIO-ensaio")
+  --key-type rsa --rsa-key-size 2048
+  # Fixar o nome da linhagem. Sem isto, se ja existir uma linhagem com outro
+  # conjunto de dominios, o certbot cria "$DOMINIO-0001" e a conferencia mais
+  # abaixo passaria olhando os arquivos ANTIGOS, que o nginx continua servindo:
+  # uma execucao que parece ter dado certo e nao trocou nada.
+  --cert-name "$DOMINIO")
+if [[ "$ENSAIO" -eq 1 ]]; then
+  ARGS+=(--staging)
+  # sobrescreve o --cert-name de producao, que ja esta em ARGS
+  ARGS+=(--cert-name "$DOMINIO-ensaio")
+  ROTULO="(ENSAIO/staging) "
+else
+  ROTULO=""
+fi
 
-echo "==> certbot ${ENSAIO:+(ENSAIO/staging) }para $DOMINIO e www.$DOMINIO"
+# `${ENSAIO:+...}` expandiria com 0 E com 1, porque os dois sao nao-vazios: a
+# execucao de producao anunciava "ENSAIO/staging". Quem acreditasse repetiria a
+# emissao e bateria no limite de certificados duplicados do Let's Encrypt.
+echo "==> certbot ${ROTULO}para $DOMINIO e www.$DOMINIO"
 certbot "${ARGS[@]}"
 
 if [[ "$ENSAIO" -eq 1 ]]; then
@@ -82,8 +106,12 @@ openssl x509 -in "$VIVO/fullchain.pem" -noout -issuer -subject -dates | sed 's/^
 
 echo "==> nginx -t"
 nginx -t || { echo "ERRO: configuracao invalida; nada recarregado." >&2; exit 1; }
-systemctl reload nginx
-echo "==> Recarregado."
+# reload-or-restart, nao reload: numa maquina recem-provisionada o nginx pode
+# estar PARADO justamente por o certificado ainda nao existir. Ali um `reload`
+# falha com "Unit nginx.service is not active", o `set -e` aborta e o site
+# continua fora do ar mesmo com o certificado ja emitido.
+systemctl reload-or-restart nginx
+echo "==> nginx: $(systemctl is-active nginx)"
 
 echo "==> Renovacao automatica"
 systemctl list-timers certbot.timer --all --no-pager 2>/dev/null | sed -n '1,2p' || true

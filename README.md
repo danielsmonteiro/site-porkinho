@@ -249,6 +249,13 @@ pelo timer do certbot. Por ser confiável, funciona com o SSL da Cloudflare em
 **Full (strict)** e continua válido se um dia o proxy for pausado.
 
 ```bash
+# --- na sua máquina: leva os scripts de manutenção para o servidor ---
+# Tem que ser AGORA, não no passo 4: o --configs instala a config do nginx que
+# já aponta para /etc/letsencrypt/live/..., e o `nginx -t` reprova enquanto o
+# certificado não existir. O --scripts não toca no nginx nem em /var/www.
+./deploy/scripts/deploy.sh --scripts
+
+# --- no servidor ---
 sudo apt install -y certbot python3-certbot-dns-cloudflare
 sudo CF_DNS_TOKEN=<token> /opt/porkinho-scripts/emitir-certificado.sh --ensaio contato@feijoadaporkinho.com.br
 sudo CF_DNS_TOKEN=<token> /opt/porkinho-scripts/emitir-certificado.sh          contato@feijoadaporkinho.com.br
@@ -283,9 +290,15 @@ systemctl list-timers certbot.timer
 ```
 
 **Alternativa:** um **Cloudflare Origin Certificate** (SSL/TLS → Origin Server),
-válido 15 anos mas só para tráfego vindo da Cloudflare. Os caminhos ficam em
-`/etc/ssl/cloudflare/` e o `deploy/scripts/gerar-csr-origem.sh` gera a chave e o
-CSR no servidor, sem a chave privada sair de lá.
+válido 15 anos mas só para tráfego vindo da Cloudflare.
+`deploy/scripts/gerar-csr-origem.sh` gera a chave e o CSR no servidor, sem a
+chave privada sair de lá.
+
+> Trocar exige **duas** coisas: instalar os arquivos em `/etc/ssl/cloudflare/`
+> **e** apontar os dois pares `ssl_certificate` / `ssl_certificate_key` da
+> config para lá. Só copiar os arquivos não muda nada — o nginx recarrega sem
+> erro e segue servindo o Let's Encrypt, dando a impressão de que a troca
+> funcionou.
 
 ### 3. Faixas de IP da Cloudflare
 
@@ -311,6 +324,16 @@ cp deploy/.env.exemplo deploy/.env   # preencha DEPLOY_HOST e DEPLOY_USER
 ```
 
 ### 5. Authenticated Origin Pulls (recomendado, dois passos)
+
+Primeiro baixe a CA que valida o certificado de cliente que a Cloudflare
+apresenta — **nada mais no repositório cria esse arquivo**, e sem ele o
+`nginx -t` reprova com "cannot load certificate":
+
+```bash
+sudo install -d -m 755 /etc/ssl/cloudflare
+sudo curl -fsSL -o /etc/ssl/cloudflare/origin-pull-ca.pem \
+  https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
+```
 
 As duas linhas abaixo vêm **comentadas** em
 `deploy/nginx/feijoadaporkinho.com.br.conf`:
@@ -418,6 +441,7 @@ export DEPLOY_HOST=... DEPLOY_USER=...     # ou preencha deploy/.env
 ./deploy/scripts/deploy.sh --seco          # ensaio: mostra o que faria
 ./deploy/scripts/deploy.sh                 # só o site
 ./deploy/scripts/deploy.sh --configs       # site + arquivos do nginx
+./deploy/scripts/deploy.sh --scripts       # só os scripts de manutenção (bootstrap)
 ```
 
 O script confere a branch e a árvore de trabalho, sobe `public/` com
