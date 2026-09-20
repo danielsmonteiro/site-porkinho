@@ -19,14 +19,18 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Tokens. Contraste conferido: nenhum par de texto abaixo de 4.5:1.
- * Sobre o laranja o texto e sempre a tinta escura (#1C1410 = 6.02:1);
- * creme sobre laranja reprova (2.60:1) e por isso nao e usado.
+ * Tokens. O amarelo vem do anel dourado da logo oficial, que vai de
+ * #945C24 a #F4EC6C; #E9D45C e a faixa clara desse degrade.
+ *
+ * Contraste conferido: nenhum par de texto abaixo de 4.5:1.
+ * Sobre o amarelo o texto e sempre a tinta escura (11.43:1) e o texto
+ * de apoio usa --primaria-apoio (7.37:1). Nada de `opacity` em texto:
+ * a mistura com o fundo derruba o contraste sem avisar.
  * ------------------------------------------------------------------ */
 :root {
   color-scheme: dark light;
 
-  --fundo: #1C1410;
+  --fundo: #1A120C;
   --superficie: #2A1F18;
   --superficie-alta: #34261D;
   --borda: #8A6C52;
@@ -35,11 +39,12 @@
   --texto: #F5EDE3;
   --texto-2: #B8A594;
 
-  --primaria: #E8742C;
-  --primaria-forte: #F2853D;
-  --primaria-tinta: #1C1410;
-  --primaria-apoio: #2A1F18;
-  --primaria-texto: #F0913F;
+  --primaria: #E9D45C;
+  --primaria-forte: #F2DE6B;
+  --primaria-borda: transparent;
+  --primaria-tinta: #241A0B;
+  --primaria-apoio: #4A3A12;
+  --primaria-texto: #E9D45C;
 
   --whatsapp: #25D366;
   --whatsapp-texto: #3BE07A;
@@ -48,7 +53,7 @@
   --aberto: #4ADE80;
   --fechado: #F87171;
 
-  --foco: #FFD7A8;
+  --foco: #FFE9A3;
   --sombra: 0 6px 18px rgba(0, 0, 0, .38);
 
   --raio: 14px;
@@ -68,11 +73,14 @@
     --texto: #241A14;
     --texto-2: #6B5443;
 
-    --primaria: #E8742C;
-    --primaria-forte: #D96518;
-    --primaria-tinta: #1C1410;
-    --primaria-apoio: #2A1F18;
-    --primaria-texto: #A8480A;
+    --primaria: #E9D45C;
+    --primaria-forte: #DFC544;
+    /* Amarelo claro sobre creme da so 1.38:1. A borda garante o limite
+       visivel do controle exigido pela WCAG 1.4.11 (3.64:1). */
+    --primaria-borda: #9C7C20;
+    --primaria-tinta: #241A0B;
+    --primaria-apoio: #4A3A12;
+    --primaria-texto: #6B5410;
 
     --whatsapp: #25D366;
     --whatsapp-texto: #0B7C3A;
@@ -81,7 +89,7 @@
     --aberto: #146C2E;
     --fechado: #B3261E;
 
-    --foco: #8A3D00;
+    --foco: #4A3A12;
     --sombra: 0 6px 18px rgba(72, 48, 26, .12);
   }
 }
@@ -155,9 +163,7 @@ a { color: var(--primaria-texto); }
   height: 96px;
   margin: 0 auto 14px;
   border-radius: 50%;
-  border: 2px solid var(--borda-suave);
-  background: var(--superficie);
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .topo__titulo {
@@ -298,12 +304,13 @@ a { color: var(--primaria-texto); }
 /* Marketplaces: fundo solido de destaque, tinta escura por cima. */
 .botao--primario {
   background: var(--primaria);
+  border-color: var(--primaria-borda);
   color: var(--primaria-tinta);
   box-shadow: var(--sombra);
   min-height: 64px;
 }
-/* Nada de `opacity` aqui: a mistura com o laranja derrubava o contraste
-   para 4.32:1. A cor solida abaixo da 5.33:1 sobre #E8742C. */
+/* Nada de `opacity` aqui: a mistura com o fundo derruba o contraste sem
+   avisar. A cor solida abaixo da 7.37:1 sobre o amarelo. */
 .botao--primario .botao__apoio { color: var(--primaria-apoio); }
 .botao--primario:hover { background: var(--primaria-forte); }
 
@@ -365,7 +372,7 @@ a { color: var(--primaria-texto); }
 }
 .ponto:hover { border-color: var(--borda); background: var(--superficie-alta); }
 
-.ponto--proximo { border-color: var(--primaria); }
+.ponto--proximo { border-color: var(--primaria-texto); }
 
 .ponto__pino { flex: 0 0 auto; width: 22px; height: 22px; color: var(--primaria-texto); }
 .ponto__pino svg { width: 22px; height: 22px; display: block; }
