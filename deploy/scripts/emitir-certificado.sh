@@ -30,13 +30,19 @@ EMAIL="${1:-}"
 
 [[ $EUID -eq 0 ]] || { echo "Rode com sudo." >&2; exit 1; }
 [[ -n "$EMAIL" ]] || { echo "Informe o e-mail de contato como argumento." >&2; exit 2; }
-: "${CF_DNS_TOKEN:?defina CF_DNS_TOKEN (token com Zone > DNS > Edit)}"
-
-echo "==> Gravando as credenciais em $INI"
-install -d -m 755 /etc/letsencrypt
-umask 077
-printf 'dns_cloudflare_api_token = %s\n' "$CF_DNS_TOKEN" > "$INI"
-chmod 600 "$INI"
+# O token pode vir do ambiente ou ja estar gravado no ini de uma execucao
+# anterior. Preferir o ini evita repetir o segredo em linha de comando, onde
+# ele apareceria no `ps` e no historico do shell.
+if [[ -z "${CF_DNS_TOKEN:-}" && -s "$INI" ]]; then
+  echo "==> Reaproveitando o token ja gravado em $INI"
+else
+  : "${CF_DNS_TOKEN:?defina CF_DNS_TOKEN (token com Zone > DNS > Edit) ou grave $INI}"
+  echo "==> Gravando as credenciais em $INI"
+  install -d -m 755 /etc/letsencrypt
+  umask 077
+  printf 'dns_cloudflare_api_token = %s\n' "$CF_DNS_TOKEN" > "$INI"
+  chmod 600 "$INI"
+fi
 
 echo "==> Gancho de recarga do nginx nas renovacoes"
 install -d -m 755 /etc/letsencrypt/renewal-hooks/deploy
