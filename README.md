@@ -337,7 +337,7 @@ sudo ufw status numbered
 
 | # | Onde | Valor |
 |---|---|---|
-| 1 | SSL/TLS → Overview | **Full (strict)**. Nunca Flexible: gera loop de redirecionamento e deixa o tráfego Cloudflare↔VPS sem criptografia. |
+| 1 | SSL/TLS → Overview | **Full (strict)**. Nunca Flexible — ver o quadro abaixo. |
 | 2 | SSL/TLS → Edge Certificates | **Always Use HTTPS**: ligado |
 | 3 | SSL/TLS → Edge Certificates | **Automatic HTTPS Rewrites**: ligado |
 | 4 | SSL/TLS → Edge Certificates | **Minimum TLS Version**: 1.2 |
@@ -346,6 +346,26 @@ sudo ufw status numbered
 | 7 | DNS | `A @` e `A www` → IP do VPS, **os dois com nuvem laranja** |
 | 8 | Analytics & Logs → Web Analytics | ligado; copie o token para o `index.html` |
 | 9 | Caching → Cache Rules | `URI Path starts with /go/` → **Bypass cache** |
+
+### Se o site entrar em loop de redirecionamento
+
+Sintoma: `https://feijoadaporkinho.com.br/` responde **301 para ela mesma**, sem
+parar. Causa quase certa: **SSL/TLS em Flexible**. Nesse modo a Cloudflare
+conecta na origem em **http/80**, recebe o nosso 301 para HTTPS, devolve ao
+navegador, que volta pela borda, e assim por diante. De quebra, o trecho
+Cloudflare↔VPS trafega sem criptografia.
+
+Como confirmar em dez segundos, olhando a coluna `esquema/porta` do log:
+
+```bash
+sudo tail -3 /var/log/feijoadaporkinho/access.log
+# http/80   -> SSL está em Flexible. É esse o problema.
+# https/443 -> a origem está sendo acessada certo.
+```
+
+Correção: **SSL/TLS → Overview → Full**. Use *Full (strict)* somente depois de
+instalar o Cloudflare Origin Certificate — com um certificado auto-assinado na
+origem, o *strict* responde erro 526.
 
 O item **9 não é opcional**. Sem ele a borda responde o redirect do próprio
 cache, a requisição não chega ao VPS e o clique não é contado.
