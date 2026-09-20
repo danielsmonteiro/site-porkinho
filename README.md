@@ -85,6 +85,12 @@ Cole em `public/index.html`, na última linha antes de `</body>`:
 É a **única** requisição a domínio de terceiro permitida no site. Sem Google
 Analytics, sem Tag Manager, sem Meta Pixel.
 
+> **Enquanto o token for o placeholder**, a Cloudflare recusa o envio e o
+> navegador registra um erro de CORS no console (`cdn-cgi/rum` sem
+> `Access-Control-Allow-Origin`). Isso não quebra nada na página, mas derruba
+> a nota de Boas Práticas do Lighthouse de 100 para 96. Assim que o token real
+> entrar, o erro some.
+
 ---
 
 ## Trocar o link de um canal sem quebrar a contagem
@@ -185,7 +191,21 @@ Ubuntu 24.04. Os comandos abaixo rodam **no servidor**.
 ```bash
 sudo apt update && sudo apt install -y nginx
 sudo systemctl enable --now nginx
+
+# O site de exemplo do Ubuntu tambem declara `default_server` na porta 80 e
+# briga com o nosso catch-all. Sem remover, o `nginx -t` reprova.
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Fuso do servidor. Os carimbos de hora do log alimentam o relatorio por
+# hora e por dia da semana; em UTC os numeros sairiam 3 horas deslocados.
+sudo timedatectl set-timezone America/Fortaleza
+sudo systemctl restart nginx
 ```
+
+> **`reload` x `restart`:** o `reload` mantem os workers antigos vivos
+> atendendo conexoes keep-alive, entao uma mudanca de cabecalho pode demorar
+> a aparecer nos seus testes. Em caso de duvida durante a conferencia, use
+> `restart`. No dia a dia, `reload` basta.
 
 ### 2. Certificado de origem da Cloudflare
 
@@ -207,6 +227,11 @@ sudo curl -fsSL -o /etc/ssl/cloudflare/origin-pull-ca.pem \
 Esse certificado **só vale para conexões vindas da Cloudflare**. Abrir
 `https://<IP-do-VPS>` direto no navegador acusa certificado inválido — isso é
 esperado e correto.
+
+> **Atenção:** hoje o servidor está com um certificado **auto-assinado
+> provisório**, gerado só para o nginx subir e o site poder ser testado. Ele
+> funciona com o SSL em *Full*, mas **não** em *Full (strict)*. Troque pelo
+> Cloudflare Origin Certificate antes de colocar o SSL em Full (strict).
 
 **Não instale Certbot nem Let's Encrypt.** É redundante e o desafio HTTP-01
 briga com o proxy laranja.
@@ -291,7 +316,9 @@ O item **9 não é opcional**. Sem ele a borda responde o redirect do próprio
 cache, a requisição não chega ao VPS e o clique não é contado.
 
 Se existir alguma **Redirect Rule / Page Rule antiga** mandando o domínio para
-outro lugar (Linktree, por exemplo), desative antes — ela vence o site.
+outro lugar, desative antes — ela vence o site. Em 19/09/2026 havia uma regra
+ativa mandando `feijoadaporkinho.com.br` para `https://linktr.ee/porkinho`:
+**enquanto ela existir, ninguém chega neste site.**
 
 ---
 
