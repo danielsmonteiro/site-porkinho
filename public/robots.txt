@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# As rotas /go/ sao contadores de clique, nao conteudo.
+Disallow: /go/
+
+Sitemap: https://feijoadaporkinho.com.br/sitemap.xml

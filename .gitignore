@@ -1,0 +1,33 @@
+# Segredos e credenciais — nunca versionados.
+.env
+.env.*
+!.env.exemplo
+deploy/.env
+deploy/.env.*
+!deploy/.env.exemplo
+
+# Certificados e chaves
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+/deploy/certs/
+
+# Logs baixados do servidor para analise local
+*.log
+/logs/
+
+# Lixo de sistema operacional e de editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Nada de Node neste projeto, mas se alguem rodar npx por engano:
+node_modules/

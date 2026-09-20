@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Feijoada Porkinho — Peça pelo iFood, 99 Food ou retire em Fortaleza</title>
+<meta name="description" content="Feijoada e torresmo caseiro em Fortaleza. Peça no iFood ou no 99 Food, ou retire nos food trucks de Guararapes, Eusébio, Parque del Sol e Sapiranga.">
+<link rel="canonical" href="https://feijoadaporkinho.com.br/">
+<meta name="theme-color" content="#1C1410" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FBF5EC" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Feijoada Porkinho">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://feijoadaporkinho.com.br/">
+<meta property="og:title" content="Feijoada Porkinho — feijoada e torresmo em Fortaleza">
+<meta property="og:description" content="Peça no iFood ou no 99 Food, ou retire em um dos 4 food trucks. Sexta, sábado e domingo, das 09:00 às 15:00.">
+<meta property="og:image" content="https://feijoadaporkinho.com.br/img/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kit de feijoada completa da Feijoada Porkinho com torresmo, arroz, farofa e couve.">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Feijoada Porkinho — feijoada e torresmo em Fortaleza">
+<meta name="twitter:description" content="Peça no iFood ou no 99 Food, ou retire em um dos 4 food trucks. Sexta, sábado e domingo, das 09:00 às 15:00.">
+<meta name="twitter:image" content="https://feijoadaporkinho.com.br/img/og-image.jpg">
+<meta name="twitter:image:alt" content="Kit de feijoada completa da Feijoada Porkinho.">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/img/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<link rel="preload" href="/fonts/outfit-latin-var.woff2?v=1" as="font" type="font/woff2" crossorigin>
+
+<!-- CSS critico: tokens e primeira dobra. O resto vem em /css/style.css. -->
+<style>
+@font-face{font-family:'Outfit';src:url('/fonts/outfit-latin-var.woff2?v=1') format('woff2');font-weight:400 700;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{color-scheme:dark light;--fundo:#1C1410;--superficie:#2A1F18;--borda-suave:#3D2E23;--texto:#F5EDE3;--texto-2:#B8A594;--primaria:#E8742C;--primaria-tinta:#1C1410;--raio:14px;--largura:520px;--sombra:0 6px 18px rgba(0,0,0,.38)}
+@media(prefers-color-scheme:light){:root{--fundo:#FBF5EC;--superficie:#FFF;--borda-suave:#EADCC9;--texto:#241A14;--texto-2:#6B5443;--sombra:0 6px 18px rgba(72,48,26,.12)}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);font-family:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+.pagina{width:100%;max-width:var(--largura);margin:0 auto;padding:24px 16px calc(32px + env(safe-area-inset-bottom))}
+.topo{text-align:center}
+.topo__logo{width:96px;height:96px;margin:0 auto 14px;border-radius:50%;border:2px solid var(--borda-suave);background:var(--superficie);object-fit:cover}
+.topo__titulo{margin:0;font-size:1.75rem;line-height:1.15;font-weight:700;letter-spacing:-.015em}
+.topo__linha{margin:6px 0 0;color:var(--texto-2);font-size:.95rem}
+.status{display:flex;align-items:center;justify-content:center;gap:9px;margin:18px auto 0;padding:10px 16px;border:1px solid var(--borda-suave);border-radius:999px;background:var(--superficie);font-size:.95rem;font-weight:700;min-height:44px}
+.status--neutro{color:var(--texto-2);font-weight:400}
+.status__ponto{width:10px;height:10px;flex:0 0 auto;border-radius:50%;background:var(--texto-2)}
+.secao{margin-top:28px}
+.cta-titulo{margin:0 0 12px;text-align:center;font-size:1.05rem;font-weight:700;color:var(--texto)}
+.botao{display:flex;align-items:center;gap:14px;width:100%;min-height:56px;padding:11px 16px;margin-bottom:12px;border:1px solid transparent;border-radius:var(--raio);background:var(--superficie);color:var(--texto);font:inherit;text-align:left;text-decoration:none;cursor:pointer}
+.botao__icone{flex:0 0 auto;width:28px;height:28px;display:grid;place-items:center}
+.botao__icone svg{width:26px;height:26px;display:block}
+.botao__texto{flex:1 1 auto;min-width:0}
+.botao__rotulo{display:block;font-size:1.02rem;font-weight:700;line-height:1.25}
+.botao__apoio{display:block;font-size:.8rem;line-height:1.3;opacity:.82}
+.botao--primario{background:var(--primaria);color:var(--primaria-tinta);box-shadow:var(--sombra);min-height:64px}
+</style>
+<link rel="stylesheet" href="/css/style.css?v=1">
+</head>
+
+<body>
+<a class="pular" href="#comprar">Ir direto para as formas de pedir</a>
+
+<div class="pagina">
+
+  <header class="topo">
+    <picture>
+      <source srcset="/img/logo.webp" type="image/webp">
+      <img class="topo__logo" src="/img/logo.jpg" width="96" height="96"
+           alt="Logo da Feijoada Porkinho" fetchpriority="high" decoding="async">
+    </picture>
+    <h1 class="topo__titulo">Feijoada Porkinho</h1>
+    <p class="topo__linha">Feijoada e torresmo caseiro · Fortaleza/CE</p>
+
+    <p class="status status--neutro" id="status" role="status" aria-live="polite">
+      <span class="status__ponto" aria-hidden="true"></span>
+      <span id="status-texto">Sexta, sábado e domingo · 09:00 às 15:00</span>
+    </p>
+  </header>
+
+  <!-- 1. Marketplaces: os canais preferenciais. -->
+  <main id="comprar" class="secao">
+    <p class="cta-titulo" id="cta-titulo">Peça pelo aplicativo</p>
+
+    <a class="botao botao--primario" href="/go/ifood"
+       rel="nofollow noopener noreferrer"
+       title="https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share">
+      <span class="botao__icone" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      </span>
+      <span class="botao__texto">
+        <span class="botao__rotulo">Pedir no iFood</span>
+        <span class="botao__apoio">Entrega ou retirada · pedido mínimo R$ 59,00</span>
+      </span>
+      <span class="botao__seta" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
+    </a>
+
+    <a class="botao botao--primario" href="/go/99food"
+       rel="nofollow noopener noreferrer"
+       title="https://oia.99app.com/dlp9/0DRh5f">
+      <span class="botao__icone" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3"/><circle cx="18.5" cy="17.5" r="3"/><path d="M8.5 17.5h7"/><path d="m5.5 17.5 3.2-8.5H13l2.6 5.4"/><path d="M13 5h3l2.5 12.5"/></svg>
+      </span>
+      <span class="botao__texto">
+        <span class="botao__rotulo">Pedir no 99 Food</span>
+        <span class="botao__apoio">Abre direto na loja dentro do app</span>
+      </span>
+      <span class="botao__seta" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </span>
+    </a>
+
+    <!-- 2. Retirada nos food trucks. -->
+    <section class="secao" aria-labelledby="titulo-retirada">
+      <h2 class="secao__titulo" id="titulo-retirada">Retirar em um food truck</h2>
+      <p class="secao__apoio">Sexta, sábado e domingo, das 09:00 às 15:00.</p>
+
+      <p class="aviso-retirada">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+        <span>Os 4 food trucks são <strong>exclusivamente para retirada</strong>. Não há mesas nem consumo no local — você pega o pedido e leva para casa.</span>
+      </p>
+
+      <button type="button" class="botao botao--fantasma" id="btn-geo" hidden>
+        <span class="botao__icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        </span>
+        <span class="botao__texto"><span class="botao__rotulo" data-rotulo>Ver o ponto mais perto de mim</span></span>
+      </button>
+      <p class="geo-aviso" id="geo-aviso" hidden></p>
+
+      <ul class="pontos" id="pontos">
+        <li data-ponto="guararapes">
+          <a class="ponto" href="/go/ponto/guararapes" rel="nofollow noopener noreferrer"
+             title="https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A"
+             aria-label="Abrir no Google Maps o food truck de Guararapes">
+            <span class="ponto__pino" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            </span>
+            <span class="ponto__corpo">
+              <span class="ponto__nome">Guararapes</span>
+              <span class="ponto__detalhe">Fortaleza/CE · sex, sáb e dom · 09:00–15:00</span>
+              <span class="ponto__distancia" data-distancia hidden></span>
+            </span>
+            <span class="selo" data-selo-proximo hidden>Mais perto</span>
+          </a>
+        </li>
+        <li data-ponto="eusebio">
+          <a class="ponto" href="/go/ponto/eusebio" rel="nofollow noopener noreferrer"
+             title="https://goo.gl/maps/rtKKp78Pbua8ryKr8"
+             aria-label="Abrir no Google Maps o food truck do Eusébio">
+            <span class="ponto__pino" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            </span>
+            <span class="ponto__corpo">
+              <span class="ponto__nome">Eusébio</span>
+              <span class="ponto__detalhe">Av. Eusébio de Queiroz, 3409 · sex, sáb e dom · 09:00–15:00</span>
+              <span class="ponto__distancia" data-distancia hidden></span>
+            </span>
+            <span class="selo" data-selo-proximo hidden>Mais perto</span>
+          </a>
+        </li>
+        <li data-ponto="parque-del-sol">
+          <a class="ponto" href="/go/ponto/parque-del-sol" rel="nofollow noopener noreferrer"
+             title="https://goo.gl/maps/Dm4Ts9Kn9oQHNPrBA"
+             aria-label="Abrir no Google Maps o food truck do Parque del Sol">
+            <span class="ponto__pino" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            </span>
+            <span class="ponto__corpo">
+              <span class="ponto__nome">Parque del Sol</span>
+              <span class="ponto__detalhe">Fortaleza/CE · sex, sáb e dom · 09:00–15:00</span>
+              <span class="ponto__distancia" data-distancia hidden></span>
+            </span>
+            <span class="selo" data-selo-proximo hidden>Mais perto</span>
+          </a>
+        </li>
+        <li data-ponto="sapiranga">
+          <a class="ponto" href="/go/ponto/sapiranga" rel="nofollow noopener noreferrer"
+             title="https://goo.gl/maps/FM5NELs2QDhqmfeTA"
+             aria-label="Abrir no Google Maps o food truck da Sapiranga">
+            <span class="ponto__pino" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            </span>
+            <span class="ponto__corpo">
+              <span class="ponto__nome">Sapiranga</span>
+              <span class="ponto__detalhe">Fortaleza/CE · sex, sáb e dom · 09:00–15:00</span>
+              <span class="ponto__distancia" data-distancia hidden></span>
+            </span>
+            <span class="selo" data-selo-proximo hidden>Mais perto</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 3. WhatsApp: so evento, encomenda grande ou Pix. -->
+    <section class="secao" aria-labelledby="titulo-whatsapp">
+      <h2 class="secao__titulo" id="titulo-whatsapp">Evento, encomenda grande ou Pix</h2>
+      <p class="secao__apoio">Fale direto com o Sr. Monteiro. Para pedido do dia a dia, o app é mais rápido.</p>
+
+      <a class="botao botao--secundario botao--whatsapp" href="/go/whatsapp"
+         rel="nofollow noopener noreferrer" title="https://wa.me/5585985900985">
+        <span class="botao__icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.17-1.35a9.94 9.94 0 0 0 4.87 1.26h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.86c2.17 0 4.2.84 5.73 2.38a8.05 8.05 0 0 1 2.37 5.72c0 4.47-3.63 8.1-8.1 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-2.99-.19-.31a8.06 8.06 0 0 1-1.24-4.29c0-4.47 3.64-8.1 8.11-8.1Zm-3.1 4.3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34 1 2.5c.12.17 1.68 2.66 4.12 3.62 2.03.8 2.45.64 2.89.6.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46Z"/></svg>
+        </span>
+        <span class="botao__texto">
+          <span class="botao__rotulo">Falar no WhatsApp</span>
+          <span class="botao__apoio">Só para evento, encomenda grande ou pagamento via Pix</span>
+        </span>
+        <span class="botao__seta" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </a>
+
+      <a class="botao botao--secundario" href="/go/instagram"
+         rel="nofollow noopener noreferrer" title="https://instagram.com/feijoadaporkinho">
+        <span class="botao__icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
+        </span>
+        <span class="botao__texto">
+          <span class="botao__rotulo">@feijoadaporkinho</span>
+          <span class="botao__apoio">Fotos do dia e onde o food truck vai estar</span>
+        </span>
+        <span class="botao__seta" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </span>
+      </a>
+    </section>
+
+    <!-- 4. Cardapio. Recolhido no mobile, aberto no desktop via JS. -->
+    <section class="secao" aria-labelledby="titulo-cardapio">
+      <h2 class="visualmente-oculto" id="titulo-cardapio">Cardápio</h2>
+      <details class="cardapio" id="cardapio">
+        <summary class="cardapio__resumo">
+          <span class="botao__icone" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
+          </span>
+          <span>Ver o cardápio e os preços</span>
+          <span class="botao__seta" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </span>
+        </summary>
+
+        <div class="cardapio__corpo">
+          <ul class="itens">
+            <li class="item">
+              <picture>
+                <source srcset="/img/kit-executiva.webp" type="image/webp">
+                <img class="item__foto" src="/img/kit-executiva.jpg" width="64" height="64"
+                     alt="Kit Feijoada Executiva" loading="lazy" decoding="async">
+              </picture>
+              <div class="item__corpo">
+                <div class="item__cabeca">
+                  <span class="item__nome">Kit Feijoada Executiva</span>
+                  <span class="item__preco">R$&nbsp;69,90</span>
+                </div>
+                <span class="item__porcao">1 a 2 pessoas</span>
+                <p class="item__descricao">600 g de feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa.</p>
+              </div>
+            </li>
+
+            <li class="item">
+              <picture>
+                <source srcset="/img/kit-completa.webp" type="image/webp">
+                <img class="item__foto" src="/img/kit-completa.jpg" width="64" height="64"
+                     alt="Kit Feijoada Completa" loading="lazy" decoding="async">
+              </picture>
+              <div class="item__corpo">
+                <div class="item__cabeca">
+                  <span class="item__nome">Kit Feijoada Completa</span>
+                  <span class="item__preco">R$&nbsp;119,90</span>
+                </div>
+                <span class="item__porcao">3 a 4 pessoas</span>
+                <p class="item__descricao">1,2 kg de feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais.</p>
+              </div>
+            </li>
+
+            <li class="item">
+              <div class="item__corpo">
+                <div class="item__cabeca">
+                  <span class="item__nome">Bolinha de Feijoada</span>
+                  <span class="item__preco">R$&nbsp;24,90</span>
+                </div>
+                <span class="item__porcao">12 unidades</span>
+                <p class="item__descricao">Petisco crocante por fora, recheado de feijoada.</p>
+              </div>
+            </li>
+
+            <li class="item">
+              <div class="item__corpo">
+                <div class="item__cabeca">
+                  <span class="item__nome">Porção de Torresmo Caseiro</span>
+                  <span class="item__preco">R$&nbsp;14,90</span>
+                </div>
+                <span class="item__porcao">80 g</span>
+                <p class="item__descricao">Frito até ficar sequinho.</p>
+              </div>
+            </li>
+
+            <li class="item">
+              <div class="item__corpo">
+                <div class="item__cabeca">
+                  <span class="item__nome">Coca-Cola garrafa</span>
+                  <span class="item__preco">R$&nbsp;19,90</span>
+                </div>
+                <span class="item__porcao">2 litros</span>
+              </div>
+            </li>
+
+            <li class="item">
+              <div class="item__corpo">
+                <div class="item__cabeca">
+                  <span class="item__nome">Coca-Cola lata</span>
+                  <span class="item__preco">R$&nbsp;8,90</span>
+                </div>
+                <span class="item__porcao">350 ml</span>
+              </div>
+            </li>
+          </ul>
+
+          <p class="nota"><strong>Preços de referência</strong> — consulte o valor atualizado no app. Promoções do iFood e do 99 Food alteram o valor final.</p>
+          <p class="nota">Os kits <strong>não acompanham pratos nem talheres descartáveis</strong>. Pedido mínimo no iFood: R$&nbsp;59,00.</p>
+
+          <div class="cardapio__acoes">
+            <a class="botao botao--primario" href="/go/ifood"
+               rel="nofollow noopener noreferrer"
+               title="https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share">
+              <span class="botao__icone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+              </span>
+              <span class="botao__texto"><span class="botao__rotulo">Pedir no iFood</span></span>
+              <span class="botao__seta" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </span>
+            </a>
+            <a class="botao botao--primario" href="/go/99food"
+               rel="nofollow noopener noreferrer" title="https://oia.99app.com/dlp9/0DRh5f">
+              <span class="botao__icone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3"/><circle cx="18.5" cy="17.5" r="3"/><path d="M8.5 17.5h7"/><path d="m5.5 17.5 3.2-8.5H13l2.6 5.4"/><path d="M13 5h3l2.5 12.5"/></svg>
+              </span>
+              <span class="botao__texto"><span class="botao__rotulo">Pedir no 99 Food</span></span>
+              <span class="botao__seta" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </span>
+            </a>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <nav class="rodape__links" aria-label="Links do rodapé">
+      <a href="/politica-de-privacidade.html">Política de privacidade</a>
+      <a href="mailto:contato@feijoadaporkinho.com.br">contato@feijoadaporkinho.com.br</a>
+    </nav>
+    <p>Feijoada Porkinho · Rua Marcelino Lopes, 4100 — Sapiranga, Fortaleza/CE, 60833-075</p>
+    <p>Endereço da sede/fábrica. Não é ponto de atendimento ao público.</p>
+  </footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "@id": "https://feijoadaporkinho.com.br/#restaurante",
+  "name": "Feijoada Porkinho",
+  "description": "Feijoada e torresmo caseiro em Fortaleza/CE. Pedido pelo iFood e pelo 99 Food ou retirada em um dos 4 food trucks.",
+  "url": "https://feijoadaporkinho.com.br/",
+  "image": "https://feijoadaporkinho.com.br/img/og-image.jpg",
+  "logo": "https://feijoadaporkinho.com.br/img/icon-512.png",
+  "telephone": "+5585985900985",
+  "email": "contato@feijoadaporkinho.com.br",
+  "servesCuisine": "Brasileira",
+  "priceRange": "R$$",
+  "currenciesAccepted": "BRL",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Rua Marcelino Lopes, 4100",
+    "addressLocality": "Fortaleza",
+    "addressRegion": "CE",
+    "postalCode": "60833-075",
+    "addressCountry": "BR"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Friday", "Saturday", "Sunday"],
+      "opens": "09:00",
+      "closes": "15:00"
+    }
+  ],
+  "sameAs": [
+    "https://instagram.com/feijoadaporkinho",
+    "https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share"
+  ],
+  "potentialAction": {
+    "@type": "OrderAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share",
+      "actionPlatform": [
+        "http://schema.org/DesktopWebPlatform",
+        "http://schema.org/MobileWebPlatform"
+      ]
+    },
+    "deliveryMethod": [
+      "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
+      "http://purl.org/goodrelations/v1#DeliveryModePickUp"
+    ]
+  },
+  "hasMenu": {
+    "@type": "Menu",
+    "name": "Cardápio Feijoada Porkinho",
+    "inLanguage": "pt-BR",
+    "hasMenuSection": [
+      {
+        "@type": "MenuSection",
+        "name": "Kits de feijoada",
+        "hasMenuItem": [
+          {
+            "@type": "MenuItem",
+            "name": "Kit Feijoada Executiva",
+            "description": "600 g de feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa. Serve 1 a 2 pessoas.",
+            "offers": { "@type": "Offer", "price": "69.90", "priceCurrency": "BRL" }
+          },
+          {
+            "@type": "MenuItem",
+            "name": "Kit Feijoada Completa",
+            "description": "1,2 kg de feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais. Serve 3 a 4 pessoas.",
+            "offers": { "@type": "Offer", "price": "119.90", "priceCurrency": "BRL" }
+          }
+        ]
+      },
+      {
+        "@type": "MenuSection",
+        "name": "Petiscos",
+        "hasMenuItem": [
+          {
+            "@type": "MenuItem",
+            "name": "Bolinha de Feijoada (12 unidades)",
+            "description": "Petisco crocante por fora, recheado de feijoada.",
+            "offers": { "@type": "Offer", "price": "24.90", "priceCurrency": "BRL" }
+          },
+          {
+            "@type": "MenuItem",
+            "name": "Porção de Torresmo Caseiro (80 g)",
+            "description": "Frito até ficar sequinho.",
+            "offers": { "@type": "Offer", "price": "14.90", "priceCurrency": "BRL" }
+          }
+        ]
+      },
+      {
+        "@type": "MenuSection",
+        "name": "Bebidas",
+        "hasMenuItem": [
+          {
+            "@type": "MenuItem",
+            "name": "Coca-Cola garrafa 2 L",
+            "offers": { "@type": "Offer", "price": "19.90", "priceCurrency": "BRL" }
+          },
+          {
+            "@type": "MenuItem",
+            "name": "Coca-Cola lata 350 ml",
+            "offers": { "@type": "Offer", "price": "8.90", "priceCurrency": "BRL" }
+          }
+        ]
+      }
+    ]
+  },
+  "department": [
+    {
+      "@type": "FoodEstablishment",
+      "name": "Feijoada Porkinho — Guararapes",
+      "description": "Food truck exclusivamente para retirada.",
+      "url": "https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A",
+      "telephone": "+5585985900985",
+      "servesCuisine": "Brasileira",
+      "priceRange": "R$$",
+      "geo": { "@type": "GeoCoordinates", "latitude": -3.765045, "longitude": -38.487662 },
+      "address": { "@type": "PostalAddress", "addressLocality": "Fortaleza", "addressRegion": "CE", "addressCountry": "BR" },
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
+      ]
+    },
+    {
+      "@type": "FoodEstablishment",
+      "name": "Feijoada Porkinho — Eusébio",
+      "description": "Food truck exclusivamente para retirada.",
+      "url": "https://goo.gl/maps/rtKKp78Pbua8ryKr8",
+      "telephone": "+5585985900985",
+      "servesCuisine": "Brasileira",
+      "priceRange": "R$$",
+      "geo": { "@type": "GeoCoordinates", "latitude": -3.882846, "longitude": -38.459273 },
+      "address": { "@type": "PostalAddress", "streetAddress": "Av. Eusébio de Queiroz, 3409", "addressLocality": "Eusébio", "addressRegion": "CE", "addressCountry": "BR" },
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
+      ]
+    },
+    {
+      "@type": "FoodEstablishment",
+      "name": "Feijoada Porkinho — Parque del Sol",
+      "description": "Food truck exclusivamente para retirada.",
+      "url": "https://goo.gl/maps/Dm4Ts9Kn9oQHNPrBA",
+      "telephone": "+5585985900985",
+      "servesCuisine": "Brasileira",
+      "priceRange": "R$$",
+      "geo": { "@type": "GeoCoordinates", "latitude": -3.804495, "longitude": -38.498675 },
+      "address": { "@type": "PostalAddress", "addressLocality": "Fortaleza", "addressRegion": "CE", "addressCountry": "BR" },
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
+      ]
+    },
+    {
+      "@type": "FoodEstablishment",
+      "name": "Feijoada Porkinho — Sapiranga",
+      "description": "Food truck exclusivamente para retirada.",
+      "url": "https://goo.gl/maps/FM5NELs2QDhqmfeTA",
+      "telephone": "+5585985900985",
+      "servesCuisine": "Brasileira",
+      "priceRange": "R$$",
+      "geo": { "@type": "GeoCoordinates", "latitude": -3.787895, "longitude": -38.463066 },
+      "address": { "@type": "PostalAddress", "addressLocality": "Fortaleza", "addressRegion": "CE", "addressCountry": "BR" },
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script src="/js/app.js?v=1" defer></script>
+
+<!-- Cloudflare Web Analytics: sem cookie, agregado. Token no README. -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "SEU_TOKEN_AQUI"}'></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# ------------------------------------------------------------------------
+# Feijoada Porkinho — retencao de logs (LGPD)
+# Instalar em: /etc/logrotate.d/feijoadaporkinho
+#
+# Os logs guardam endereco IP, que e dado pessoal. A retencao e de 30 dias:
+# 30 arquivos diarios e nada alem disso. O que sobra depois disso sao apenas
+# os totais agregados que voce ja tiver tirado com relatorio-cliques.sh.
+#
+# Conferir a regra sem esperar um dia:
+#     sudo logrotate -d /etc/logrotate.d/feijoadaporkinho
+# ------------------------------------------------------------------------
+
+/var/log/nginx/cliques.log
+/var/log/nginx/feijoadaporkinho.access.log
+/var/log/nginx/feijoadaporkinho.error.log
+{
+    daily
+    rotate 30
+    maxage 30
+    missingok
+    notifempty
+    compress
+    delaycompress
+    create 0640 www-data adm
+    sharedscripts
+    postrotate
+        if [ -f /var/run/nginx.pid ]; then
+            kill -USR1 "$(cat /var/run/nginx.pid)"
+        fi
+    endscript
+}

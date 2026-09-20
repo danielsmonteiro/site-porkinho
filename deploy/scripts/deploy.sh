@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+#
+# Feijoada Porkinho — publicacao em producao.
+#
+# Sobe public/ para o servidor, ajusta permissoes, valida e recarrega o
+# nginx, opcionalmente limpa o cache da Cloudflare e so termina bem se
+# /health responder "ok".
+#
+# NENHUM segredo mora neste repositorio. Host, usuario e tokens vem do
+# ambiente (ou de deploy/.env, que esta no .gitignore).
+#
+#   DEPLOY_HOST     obrigatorio   ex.: 203.0.113.10
+#   DEPLOY_USER     obrigatorio   ex.: daniel
+#   DEPLOY_PORT     opcional      padrao 22
+#   DEPLOY_DESTINO  opcional      padrao /var/www/feijoadaporkinho/public
+#   DEPLOY_BRANCH   opcional      padrao main
+#   SAUDE_URL       opcional      padrao https://feijoadaporkinho.com.br/health
+#   CF_ZONE_ID      opcional      liga a limpeza de cache da Cloudflare
+#   CF_API_TOKEN    opcional      idem (permissao: Zone > Cache Purge)
+#
+# Uso:
+#   ./deploy.sh                 # so o site
+#   ./deploy.sh --configs       # tambem instala os arquivos do nginx
+#   ./deploy.sh --seco          # mostra o que faria, sem escrever nada
+#   ./deploy.sh --forcar        # publica mesmo com a arvore suja
+#
+set -euo pipefail
+
+cd "$(dirname "$0")/../.."
+RAIZ="$PWD"
+
+[[ -f deploy/.env ]] && { set -a; . deploy/.env; set +a; }
+
+SECO=0; FORCAR=0; CONFIGS=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --seco|--dry-run) SECO=1; shift ;;
+    --forcar|--force) FORCAR=1; shift ;;
+    --configs)        CONFIGS=1; shift ;;
+    -h|--help)        sed -n '2,30p' "$0"; exit 0 ;;
+    *) echo "Opção desconhecida: $1" >&2; exit 2 ;;
+  esac
+done
+
+DEPLOY_PORT="${DEPLOY_PORT:-22}"
+DEPLOY_DESTINO="${DEPLOY_DESTINO:-/var/www/feijoadaporkinho/public}"
+DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
+SAUDE_URL="${SAUDE_URL:-https://feijoadaporkinho.com.br/health}"
+
+falhar() { echo "ERRO: $*" >&2; exit 1; }
+passo()  { echo; echo "==> $*"; }
+
+: "${DEPLOY_HOST:?defina DEPLOY_HOST (ex.: export DEPLOY_HOST=203.0.113.10)}"
+: "${DEPLOY_USER:?defina DEPLOY_USER (ex.: export DEPLOY_USER=daniel)}"
+
+REMOTO="$DEPLOY_USER@$DEPLOY_HOST"
+SSH=(ssh -p "$DEPLOY_PORT" -o BatchMode=yes -o ConnectTimeout=15 "$REMOTO")
+
+# ------------------------------------------------------------- 1. checagens
+passo "Conferindo o repositório"
+
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || falhar "isto não é um repositório git"
+
+ATUAL="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$ATUAL" != "$DEPLOY_BRANCH" ]]; then
+  falhar "você está em '$ATUAL' e o deploy é da '$DEPLOY_BRANCH'. Troque de branch ou ajuste DEPLOY_BRANCH."
+fi
+echo "    branch: $ATUAL"
+
+if [[ -n "$(git status --porcelain)" ]]; then
+  if [[ "$FORCAR" -eq 1 ]]; then
+    echo "    AVISO: árvore suja, publicando assim mesmo (--forcar)"
+  else
+    git status --short
+    falhar "árvore de trabalho suja. Faça commit, ou use --forcar se for proposital."
+  fi
+else
+  echo "    árvore limpa em $(git rev-parse --short HEAD)"
+fi
+
+[[ -f public/index.html ]] || falhar "public/index.html não existe — diretório errado?"
+command -v rsync >/dev/null || falhar "rsync não encontrado nesta máquina"
+
+passo "Conferindo o acesso a $REMOTO"
+"${SSH[@]}" true || falhar "não consegui abrir SSH para $REMOTO"
+
+# ---------------------------------------------- 2. arquivos de configuracao
+if [[ "$CONFIGS" -eq 1 ]]; then
+  passo "Instalando os arquivos do nginx"
+  if [[ "$SECO" -eq 1 ]]; then
+    echo "    [seco] enviaria deploy/nginx/* e instalaria em /etc/nginx/"
+  else
+    tar -C deploy/nginx -cf - . | "${SSH[@]}" 'sudo tar -C /tmp -xf - --one-top-level=porkinho-nginx'
+    "${SSH[@]}" 'bash -s' <<'REMOTO_FIM'
+set -euo pipefail
+O=/tmp/porkinho-nginx
+sudo install -d -m 755 /etc/nginx/snippets /etc/nginx/conf.d /etc/nginx/sites-available
+sudo install -m 644 "$O/log-cliques.conf"              /etc/nginx/conf.d/log-cliques.conf
+sudo install -m 644 "$O/cliques.conf"                  /etc/nginx/snippets/cliques.conf
+sudo install -m 644 "$O/feijoadaporkinho.com.br.conf"  /etc/nginx/sites-available/feijoadaporkinho.com.br.conf
+sudo install -m 644 "$O/logrotate-feijoadaporkinho"    /etc/logrotate.d/feijoadaporkinho
+sudo ln -sfn /etc/nginx/sites-available/feijoadaporkinho.com.br.conf \
+             /etc/nginx/sites-enabled/feijoadaporkinho.com.br.conf
+# cloudflare-realip.conf e GERADO; so instala o placeholder se nao houver nada la.
+if [ ! -s /etc/nginx/conf.d/cloudflare-realip.conf ]; then
+  sudo install -m 644 "$O/cloudflare-realip.conf" /etc/nginx/conf.d/cloudflare-realip.conf
+  echo "    AVISO: rode update-cloudflare-ips.sh para preencher as faixas reais"
+fi
+sudo rm -rf "$O"
+REMOTO_FIM
+    echo "    configs instalados"
+  fi
+fi
+
+# ------------------------------------------------------------- 3. rsync
+passo "Enviando public/ para $REMOTO:$DEPLOY_DESTINO"
+
+RSYNC=(rsync -avz --delete --human-readable
+       --exclude '.DS_Store' --exclude 'Thumbs.db' --exclude '*.swp'
+       -e "ssh -p $DEPLOY_PORT -o BatchMode=yes")
+[[ "$SECO" -eq 1 ]] && RSYNC+=(--dry-run)
+
+"${SSH[@]}" "sudo install -d -m 755 '$DEPLOY_DESTINO' && sudo chown '$DEPLOY_USER' '$DEPLOY_DESTINO'"
+"${RSYNC[@]}" "$RAIZ/public/" "$REMOTO:$DEPLOY_DESTINO/"
+
+# --------------------------------------------------- 4. dono e permissoes
+passo "Ajustando dono e permissões"
+if [[ "$SECO" -eq 1 ]]; then
+  echo "    [seco] www-data:www-data, 755 em diretórios, 644 em arquivos"
+else
+  "${SSH[@]}" "
+    set -e
+    sudo chown -R www-data:www-data '$DEPLOY_DESTINO'
+    sudo find '$DEPLOY_DESTINO' -type d -exec chmod 755 {} +
+    sudo find '$DEPLOY_DESTINO' -type f -exec chmod 644 {} +
+  "
+  echo "    ok"
+fi
+
+# ------------------------------------------------------------- 5. nginx
+passo "Validando e recarregando o nginx"
+if [[ "$SECO" -eq 1 ]]; then
+  echo "    [seco] sudo nginx -t && sudo systemctl reload nginx"
+else
+  "${SSH[@]}" 'sudo nginx -t' || falhar "nginx -t reprovou; nada foi recarregado"
+  "${SSH[@]}" 'sudo systemctl reload nginx'
+  echo "    recarregado"
+fi
+
+# ------------------------------------------------- 6. cache da Cloudflare
+passo "Cache da Cloudflare"
+if [[ -n "${CF_ZONE_ID:-}" && -n "${CF_API_TOKEN:-}" ]]; then
+  if [[ "$SECO" -eq 1 ]]; then
+    echo "    [seco] purge_everything na zona ${CF_ZONE_ID:0:6}…"
+  else
+    RESP="$(curl -sS -X POST \
+      "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
+      -H "Authorization: Bearer $CF_API_TOKEN" \
+      -H "Content-Type: application/json" \
+      --data '{"purge_everything":true}')" || falhar "falha ao chamar a API da Cloudflare"
+    if printf '%s' "$RESP" | grep -q '"success":true'; then
+      echo "    cache limpo"
+    else
+      echo "    AVISO: a Cloudflare recusou a limpeza:" >&2
+      printf '    %s\n' "$RESP" >&2
+    fi
+  fi
+else
+  echo "    pulado (defina CF_ZONE_ID e CF_API_TOKEN para limpar o cache)"
+fi
+
+# ------------------------------------------------------------- 7. saude
+passo "Checando $SAUDE_URL"
+if [[ "$SECO" -eq 1 ]]; then
+  echo "    [seco] curl -sf $SAUDE_URL"
+  echo; echo "Ensaio concluído. Nada foi alterado."
+  exit 0
+fi
+
+for tentativa in 1 2 3; do
+  CORPO="$(curl -sf --max-time 15 "$SAUDE_URL" || true)"
+  if [[ "$CORPO" == "ok" ]]; then
+    echo "    /health respondeu ok"
+    echo
+    echo "Publicado: $(git rev-parse --short HEAD) em $DEPLOY_HOST:$DEPLOY_DESTINO"
+    exit 0
+  fi
+  echo "    tentativa $tentativa: resposta inesperada ('${CORPO:-vazio}')"
+  sleep 3
+done
+
+falhar "/health não respondeu 'ok' em $SAUDE_URL. Os arquivos subiram, mas confira o nginx e o DNS antes de considerar publicado."

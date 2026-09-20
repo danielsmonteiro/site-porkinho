@@ -1,0 +1,555 @@
+/*!
+ * Feijoada Porkinho — folha de estilo unica.
+ * Mobile-first: desenhado para 390px, conteudo com no maximo 520px.
+ * Sem framework, sem CDN, sem @import de terceiro.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Tipografia self-hosted. Arquivo unico, variavel, cobrindo 400 e 700.
+ * ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Outfit';
+  src: url('/fonts/outfit-latin-var.woff2?v=1') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ------------------------------------------------------------------ *
+ * Tokens. Contraste conferido: nenhum par de texto abaixo de 4.5:1.
+ * Sobre o laranja o texto e sempre a tinta escura (#1C1410 = 6.02:1);
+ * creme sobre laranja reprova (2.60:1) e por isso nao e usado.
+ * ------------------------------------------------------------------ */
+:root {
+  color-scheme: dark light;
+
+  --fundo: #1C1410;
+  --superficie: #2A1F18;
+  --superficie-alta: #34261D;
+  --borda: #8A6C52;
+  --borda-suave: #3D2E23;
+
+  --texto: #F5EDE3;
+  --texto-2: #B8A594;
+
+  --primaria: #E8742C;
+  --primaria-forte: #F2853D;
+  --primaria-tinta: #1C1410;
+  --primaria-texto: #F0913F;
+
+  --whatsapp: #25D366;
+  --whatsapp-texto: #3BE07A;
+  --whatsapp-tinta: #10240F;
+
+  --aberto: #4ADE80;
+  --fechado: #F87171;
+
+  --foco: #FFD7A8;
+  --sombra: 0 6px 18px rgba(0, 0, 0, .38);
+
+  --raio: 14px;
+  --raio-g: 20px;
+  --largura: 520px;
+  --transicao: 160ms ease;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --fundo: #FBF5EC;
+    --superficie: #FFFFFF;
+    --superficie-alta: #FFFFFF;
+    --borda: #9C8168;
+    --borda-suave: #EADCC9;
+
+    --texto: #241A14;
+    --texto-2: #6B5443;
+
+    --primaria: #E8742C;
+    --primaria-forte: #D96518;
+    --primaria-tinta: #1C1410;
+    --primaria-texto: #A8480A;
+
+    --whatsapp: #25D366;
+    --whatsapp-texto: #0B7C3A;
+    --whatsapp-tinta: #0B2A16;
+
+    --aberto: #146C2E;
+    --fechado: #B3261E;
+
+    --foco: #8A3D00;
+    --sombra: 0 6px 18px rgba(72, 48, 26, .12);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--primaria-texto); }
+
+:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.pular {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--superficie);
+  color: var(--texto);
+  padding: 12px 16px;
+  z-index: 10;
+  border-radius: 0 0 var(--raio) 0;
+}
+.pular:focus { left: 0; }
+
+.visualmente-oculto {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pagina {
+  width: 100%;
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 24px 16px calc(32px + env(safe-area-inset-bottom));
+}
+
+/* ------------------------------------------------------------------ *
+ * Cabecalho
+ * ------------------------------------------------------------------ */
+.topo { text-align: center; }
+
+.topo__logo {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  border: 2px solid var(--borda-suave);
+  background: var(--superficie);
+  object-fit: cover;
+}
+
+.topo__titulo {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -.015em;
+}
+
+.topo__linha {
+  margin: 6px 0 0;
+  color: var(--texto-2);
+  font-size: .95rem;
+}
+
+/* ------------------------------------------------------------------ *
+ * Banner de aberto / fechado
+ * ------------------------------------------------------------------ */
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin: 18px auto 0;
+  padding: 10px 16px;
+  border: 1px solid var(--borda-suave);
+  border-radius: 999px;
+  background: var(--superficie);
+  font-size: .95rem;
+  font-weight: 700;
+  min-height: 44px;
+}
+
+.status__ponto {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--texto-2);
+}
+
+.status--aberto .status__ponto { background: var(--aberto); animation: pulsar 2.2s ease-in-out infinite; }
+.status--fechado .status__ponto { background: var(--fechado); }
+.status--aberto { color: var(--aberto); }
+.status--fechado { color: var(--fechado); }
+.status--neutro { color: var(--texto-2); font-weight: 400; }
+
+@keyframes pulsar {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.35); opacity: .55; }
+}
+
+/* ------------------------------------------------------------------ *
+ * Secoes
+ * ------------------------------------------------------------------ */
+.secao { margin-top: 28px; }
+
+.secao__titulo {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.secao__apoio {
+  margin: 0 0 14px;
+  color: var(--texto-2);
+  font-size: .88rem;
+}
+
+.cta-titulo {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+/* ------------------------------------------------------------------ *
+ * Botoes. Altura minima 56px, alvo de toque nunca menor que 48x48.
+ * ------------------------------------------------------------------ */
+.botao {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 11px 16px;
+  margin-bottom: 12px;
+  border: 1px solid transparent;
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--transicao), background-color var(--transicao), border-color var(--transicao);
+}
+
+.botao:last-child { margin-bottom: 0; }
+.botao:active { transform: scale(.985); }
+
+.botao__icone {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+}
+.botao__icone svg { width: 26px; height: 26px; display: block; }
+
+.botao__texto { flex: 1 1 auto; min-width: 0; }
+
+.botao__rotulo {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.botao__apoio {
+  display: block;
+  font-size: .8rem;
+  line-height: 1.3;
+  opacity: .82;
+}
+
+.botao__seta { flex: 0 0 auto; width: 18px; height: 18px; opacity: .55; }
+.botao__seta svg { width: 18px; height: 18px; display: block; }
+
+/* Marketplaces: fundo solido de destaque, tinta escura por cima. */
+.botao--primario {
+  background: var(--primaria);
+  color: var(--primaria-tinta);
+  box-shadow: var(--sombra);
+  min-height: 64px;
+}
+.botao--primario .botao__apoio { opacity: .78; }
+.botao--primario:hover { background: var(--primaria-forte); }
+
+/* Retirada e WhatsApp: secundarios, com borda. */
+.botao--secundario {
+  background: var(--superficie);
+  border-color: var(--borda);
+}
+.botao--secundario:hover { background: var(--superficie-alta); }
+
+.botao--whatsapp { border-color: var(--whatsapp); }
+.botao--whatsapp .botao__icone { color: var(--whatsapp-texto); }
+
+.botao--fantasma {
+  background: transparent;
+  border-color: var(--borda);
+  min-height: 48px;
+  justify-content: center;
+  text-align: center;
+}
+.botao--fantasma .botao__texto { flex: 0 1 auto; }
+.botao--fantasma:hover { background: var(--superficie); }
+.botao--fantasma[disabled] { opacity: .6; cursor: progress; }
+
+/* ------------------------------------------------------------------ *
+ * Pontos de retirada
+ * ------------------------------------------------------------------ */
+.aviso-retirada {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  font-size: .88rem;
+  color: var(--texto-2);
+}
+.aviso-retirada strong { color: var(--texto); }
+.aviso-retirada svg { flex: 0 0 auto; width: 20px; height: 20px; color: var(--primaria-texto); }
+
+.pontos { list-style: none; margin: 0; padding: 0; }
+.pontos > li { margin-bottom: 10px; }
+.pontos > li:last-child { margin-bottom: 0; }
+
+.ponto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 11px 14px;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--texto);
+  text-decoration: none;
+  transition: border-color var(--transicao), background-color var(--transicao);
+}
+.ponto:hover { border-color: var(--borda); background: var(--superficie-alta); }
+
+.ponto--proximo { border-color: var(--primaria); }
+
+.ponto__pino { flex: 0 0 auto; width: 22px; height: 22px; color: var(--primaria-texto); }
+.ponto__pino svg { width: 22px; height: 22px; display: block; }
+
+.ponto__corpo { flex: 1 1 auto; min-width: 0; }
+
+.ponto__nome { display: block; font-weight: 700; line-height: 1.25; }
+
+.ponto__detalhe {
+  display: block;
+  font-size: .82rem;
+  color: var(--texto-2);
+  line-height: 1.35;
+}
+
+.ponto__distancia {
+  display: block;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--primaria-texto);
+}
+
+.selo {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--primaria);
+  color: var(--primaria-tinta);
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.geo-aviso {
+  margin: 10px 0 0;
+  font-size: .85rem;
+  color: var(--texto-2);
+}
+.geo-aviso--erro { color: var(--fechado); }
+.geo-aviso--ok { color: var(--aberto); }
+
+/* ------------------------------------------------------------------ *
+ * Cardapio
+ * ------------------------------------------------------------------ */
+.cardapio {
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-g);
+  background: var(--superficie);
+  overflow: hidden;
+}
+
+.cardapio__resumo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+.cardapio__resumo::-webkit-details-marker { display: none; }
+
+.cardapio__resumo .botao__seta { margin-left: auto; transition: transform var(--transicao); }
+.cardapio[open] .cardapio__resumo .botao__seta { transform: rotate(90deg); }
+
+.cardapio__corpo { padding: 0 16px 16px; }
+
+.itens { list-style: none; margin: 0; padding: 0; }
+
+.item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--borda-suave);
+}
+
+.item__foto {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--superficie-alta);
+}
+
+.item__corpo { flex: 1 1 auto; min-width: 0; }
+
+.item__cabeca {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.item__nome { font-weight: 700; line-height: 1.25; }
+
+.item__preco {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: var(--primaria-texto);
+  white-space: nowrap;
+}
+
+.item__porcao {
+  display: block;
+  font-size: .78rem;
+  color: var(--texto-2);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.item__descricao {
+  margin: 4px 0 0;
+  font-size: .86rem;
+  color: var(--texto-2);
+}
+
+.nota {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: var(--fundo);
+  border: 1px solid var(--borda-suave);
+  font-size: .82rem;
+  color: var(--texto-2);
+}
+.nota strong { color: var(--texto); }
+.nota + .nota { margin-top: 8px; }
+
+.cardapio__acoes { margin-top: 16px; }
+
+/* ------------------------------------------------------------------ *
+ * Rodape
+ * ------------------------------------------------------------------ */
+.rodape {
+  margin-top: 34px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borda-suave);
+  text-align: center;
+  font-size: .8rem;
+  color: var(--texto-2);
+}
+.rodape p { margin: 0 0 8px; }
+.rodape a { color: var(--texto-2); }
+.rodape a:hover { color: var(--primaria-texto); }
+
+.rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.rodape__links a {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Paginas de texto (politica de privacidade, 404, 50x)
+ * ------------------------------------------------------------------ */
+.texto { margin-top: 26px; }
+.texto h1 { font-size: 1.5rem; margin: 0 0 6px; }
+.texto h2 { font-size: 1.05rem; margin: 26px 0 6px; }
+.texto p, .texto li { color: var(--texto-2); font-size: .93rem; }
+.texto strong { color: var(--texto); }
+.texto ul { padding-left: 20px; }
+.texto li { margin-bottom: 6px; }
+
+.centro { text-align: center; }
+.centro .botao { margin-top: 18px; }
+
+/* ------------------------------------------------------------------ *
+ * Telas maiores. O conteudo nao passa de 520px; so o respiro cresce.
+ * ------------------------------------------------------------------ */
+@media (min-width: 760px) {
+  .pagina { padding-top: 44px; padding-bottom: 44px; }
+  .topo__titulo { font-size: 2rem; }
+  .cardapio__resumo { cursor: default; }
+}
+
+/* ------------------------------------------------------------------ *
+ * Sem animacao para quem pediu menos movimento.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .botao:active { transform: none; }
+}
