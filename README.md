@@ -32,6 +32,7 @@ deploy/
   nginx/
     feijoadaporkinho.com.br.conf   server blocks (sites-available)
     cliques.conf                   rotas /go/ (snippets, contexto server)
+    seguranca.conf                 cabeçalhos de segurança (snippets)
     log-cliques.conf               log_format (conf.d, contexto http)
     cloudflare-realip.conf         GERADO pelo script — não edite
     logrotate-feijoadaporkinho     retenção de 30 dias
@@ -46,6 +47,23 @@ deploy/
 > `log_format` só vale no contexto `http` e blocos `location` só valem no
 > contexto `server`. Os dois não cabem no mesmo `include`. O formato do log vai
 > para `conf.d/` e as rotas vão para `snippets/`.
+
+> **Por que `seguranca.conf` existe:** no nginx, um `add_header` dentro de um
+> bloco filho **descarta todos os `add_header` herdados do pai**. Como quase
+> todo `location` define o próprio `Cache-Control`, cada um deles perderia CSP,
+> `nosniff` e HSTS. Em vez de repetir seis diretivas em onze blocos, elas ficam
+> no snippet. **Regra: todo `location` que tiver qualquer `add_header` precisa
+> do `include /etc/nginx/snippets/porkinho-seguranca.conf;`.**
+
+> **Por que os logs não ficam em `/var/log/nginx`:** o pacote nginx do Ubuntu já
+> traz `/etc/logrotate.d/nginx` cobrindo `/var/log/nginx/*.log`. Listar os
+> mesmos arquivos numa segunda regra faz o logrotate abortar com
+> `duplicate log entry` e **pular o arquivo do pacote inteiro** — o `logrotate`
+> diário passa a sair com erro e o `access.log` do próprio nginx deixa de ser
+> rotacionado. Com os nossos logs em `/var/log/feijoadaporkinho/`, as duas
+> regras convivem. Para conferir colisão use o ensaio **global**
+> (`sudo logrotate -d /etc/logrotate.conf`); o ensaio de um arquivo isolado não
+> mostra o conflito.
 
 ---
 
@@ -151,7 +169,7 @@ chega no Maps, e o log mostra que o link antigo ainda circula.
 
 ```bash
 sudo ./deploy/scripts/relatorio-cliques.sh
-sudo ./deploy/scripts/relatorio-cliques.sh /var/log/nginx/cliques.log
+sudo ./deploy/scripts/relatorio-cliques.sh /var/log/feijoadaporkinho/cliques.log
 LARGURA=60 sudo ./deploy/scripts/relatorio-cliques.sh      # barras mais largas
 ```
 
@@ -177,7 +195,7 @@ log-format %dT%t%^	%U	%s	%h	%^	%^	%R	%u	%^
 ```
 
 ```bash
-sudo goaccess /var/log/nginx/cliques.log -o /tmp/cliques.html
+sudo goaccess /var/log/feijoadaporkinho/cliques.log -o /tmp/cliques.html
 ```
 
 ---
@@ -199,6 +217,10 @@ sudo rm -f /etc/nginx/sites-enabled/default
 # Fuso do servidor. Os carimbos de hora do log alimentam o relatorio por
 # hora e por dia da semana; em UTC os numeros sairiam 3 horas deslocados.
 sudo timedatectl set-timezone America/Fortaleza
+
+# Diretorio proprio de log (o deploy.sh --configs tambem cria).
+sudo install -d -m 755 -o root -g adm /var/log/feijoadaporkinho
+
 sudo systemctl restart nginx
 ```
 
@@ -393,8 +415,8 @@ já visitou continua com a imagem velha.
 - **Nenhum cookie.** Nenhum identificador persistente. Por isso não existe, e
   não deve existir, banner de consentimento.
 - **Cloudflare Web Analytics**, que mede sem cookie e sem impressão digital.
-- **Logs com IP** (`cliques.log` e `access.log`), apagados automaticamente em
-  **30 dias** pelo logrotate.
+- **Logs com IP** (`/var/log/feijoadaporkinho/{cliques,access,error}.log`),
+  apagados automaticamente em **30 dias** pelo logrotate.
 - Anonimização do IP fica **pronta e comentada** em
   `deploy/nginx/log-cliques.conf`: descomente o `map` e troque `$remote_addr`
   por `$ip_anon` nos dois `log_format`.

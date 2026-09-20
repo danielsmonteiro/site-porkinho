@@ -115,6 +115,13 @@ body {
 
 img { max-width: 100%; height: auto; display: block; }
 
+/* O `display` de uma regra de autor ganha do `[hidden]{display:none}` da
+   folha do navegador. Sem este !important, o #btn-geo — que nasce com
+   `hidden` para so aparecer depois que o JS assume — fica visivel e morto
+   para quem esta sem JavaScript. Vale para .botao, .selo e qualquer outro
+   elemento que combine classe com display e o atributo hidden. */
+[hidden] { display: none !important; }
+
 a { color: var(--primaria-texto); }
 
 :focus-visible {
@@ -372,7 +379,9 @@ a { color: var(--primaria-texto); }
 }
 .ponto:hover { border-color: var(--borda); background: var(--superficie-alta); }
 
-.ponto--proximo { border-color: var(--primaria-texto); }
+/* app.js poe a classe no <li> (e ele que carrega o data-ponto); a borda
+   mora no <a> de dentro. Sem o descendente, o destaque nunca aparecia. */
+.ponto--proximo .ponto { border-color: var(--primaria-texto); }
 
 .ponto__pino { flex: 0 0 auto; width: 22px; height: 22px; color: var(--primaria-texto); }
 .ponto__pino svg { width: 22px; height: 22px; display: block; }

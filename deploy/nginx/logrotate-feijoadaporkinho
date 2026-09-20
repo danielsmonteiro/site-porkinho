@@ -2,18 +2,21 @@
 # Feijoada Porkinho — retencao de logs (LGPD)
 # Instalar em: /etc/logrotate.d/feijoadaporkinho
 #
-# Os logs guardam endereco IP, que e dado pessoal. A retencao e de 30 dias:
-# 30 arquivos diarios e nada alem disso. O que sobra depois disso sao apenas
-# os totais agregados que voce ja tiver tirado com relatorio-cliques.sh.
+# POR QUE OS LOGS NAO FICAM EM /var/log/nginx:
+# o pacote nginx do Ubuntu ja traz /etc/logrotate.d/nginx cobrindo
+# /var/log/nginx/*.log. Listar os mesmos arquivos aqui faz o logrotate
+# abortar com "duplicate log entry" e PULAR o arquivo do pacote inteiro —
+# na pratica, access.log e error.log do nginx deixavam de ser rotacionados
+# e o `logrotate` diario passava a sair com erro. Com os nossos logs em
+# diretorio proprio, as duas regras convivem sem se cruzar.
 #
-# Conferir a regra sem esperar um dia:
-#     sudo logrotate -d /etc/logrotate.d/feijoadaporkinho
+# Os logs guardam endereco IP, que e dado pessoal. A retencao e de 30 dias.
+#
+# Conferir (o ensaio GLOBAL e que mostra colisao; o do arquivo isolado nao):
+#     sudo logrotate -d /etc/logrotate.conf
 # ------------------------------------------------------------------------
 
-/var/log/nginx/cliques.log
-/var/log/nginx/feijoadaporkinho.access.log
-/var/log/nginx/feijoadaporkinho.error.log
-{
+/var/log/feijoadaporkinho/*.log {
     daily
     rotate 30
     maxage 30
@@ -22,6 +25,7 @@
     compress
     delaycompress
     create 0640 www-data adm
+    su root adm
     sharedscripts
     postrotate
         if [ -f /var/run/nginx.pid ]; then

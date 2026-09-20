@@ -245,7 +245,12 @@
     var cta = $('#cta-titulo');
     var s = textoDoStatus(agoraEmFortaleza());
 
-    banner.classList.remove('status--neutro');
+    /* Tirar as tres antes de por a certa. Sem isso, quem deixa a aba aberta
+       atravessando as 15:00 fica com status--aberto E status--fechado ao
+       mesmo tempo: o texto vira vermelho, mas a animacao `pulsar` da regra
+       de aberto continua valendo e o ponto vermelho fica piscando como se
+       a loja estivesse funcionando. */
+    banner.classList.remove('status--neutro', 'status--aberto', 'status--fechado');
     banner.classList.add(s.aberto ? 'status--aberto' : 'status--fechado');
     banner.setAttribute('data-aberto', s.aberto ? 'sim' : 'nao');
     if (texto) { texto.textContent = s.status; }
@@ -361,22 +366,34 @@
     if (!det) { return; }
 
     var desktop = window.matchMedia('(min-width: 760px)');
+
+    /* O evento `toggle` do <details> e disparado de forma assincrona, inclusive
+       quando quem mexe no `open` e o proprio script. Sem esta trava, todo
+       carregamento no desktop disparava /go/evento/cardapio?r=aberto — ou seja,
+       o contador media pageview de desktop, nao abertura de cardapio — e ainda
+       marcava data-tocado, desligando o ajuste automatico por largura de tela. */
+    var programatico = false;
+
+    det.addEventListener('toggle', function () {
+      if (programatico) { programatico = false; return; }
+      det.setAttribute('data-tocado', '1');
+      if (det.open) { registrarEvento('cardapio', 'aberto'); }
+    });
+
     function aplicar(mq) {
       /* so abre automaticamente enquanto o visitante nao mexeu */
       if (det.hasAttribute('data-tocado')) { return; }
+      if (det.open === mq.matches) { return; }
+      programatico = true;
       det.open = mq.matches;
     }
+
     aplicar(desktop);
     if (desktop.addEventListener) {
       desktop.addEventListener('change', aplicar);
     } else if (desktop.addListener) {
       desktop.addListener(aplicar);
     }
-
-    det.addEventListener('toggle', function () {
-      det.setAttribute('data-tocado', '1');
-      if (det.open) { registrarEvento('cardapio', 'aberto'); }
-    });
   }
 
   /* ------------------------------------------------------------------ *

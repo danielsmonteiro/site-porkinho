@@ -9,7 +9,7 @@
 # So awk/sort/uniq. Nenhuma dependencia.
 #
 # Uso:
-#   ./relatorio-cliques.sh                      # /var/log/nginx/cliques.log
+#   ./relatorio-cliques.sh                      # /var/log/feijoadaporkinho/cliques.log
 #   ./relatorio-cliques.sh /caminho/do/log      # outro arquivo
 #   LARGURA=60 ./relatorio-cliques.sh           # barras mais largas
 #
@@ -21,7 +21,7 @@
 #
 set -uo pipefail
 
-LOG="${1:-/var/log/nginx/cliques.log}"
+LOG="${1:-/var/log/feijoadaporkinho/cliques.log}"
 LARGURA="${LARGURA:-34}"
 
 # Precisamos de um locale UTF-8 para que ${#texto} conte caracteres, e nao
@@ -41,7 +41,10 @@ reunir() {
   local base="$1"
   [[ -r "$base" ]] && cat -- "$base"
   local f
-  for f in "$base".[0-9]*; do
+  # `cliques.log.1` e o padrao; `cliques.log-20260919` aparece se alguem
+  # ligar `dateext` no logrotate.conf. Sem a segunda forma, o relatorio
+  # cobriria so o dia corrente e ainda assim imprimiria "ULTIMOS 30 DIAS".
+  for f in "$base".[0-9]* "$base"-[0-9]*; do
     [[ -e "$f" ]] || continue
     case "$f" in
       *.gz) zcat -- "$f" 2>/dev/null ;;
@@ -51,7 +54,7 @@ reunir() {
   return 0
 }
 
-if [[ ! -r "$LOG" ]] && ! compgen -G "$LOG.[0-9]*" >/dev/null; then
+if [[ ! -r "$LOG" ]] && ! compgen -G "$LOG.[0-9]*" >/dev/null && ! compgen -G "$LOG-[0-9]*" >/dev/null; then
   echo "Não consegui ler $LOG."
   echo "Confira o caminho, ou rode com sudo se o arquivo for do root."
   exit 1
@@ -85,6 +88,15 @@ pad() { # $1 = texto  $2 = largura em colunas (conta acento como 1)
 pct() { # $1 = parte  $2 = total
   [[ "${2:-0}" -eq 0 ]] && { printf '  0,0'; return; }
   awk -v a="$1" -v b="$2" 'BEGIN{printf "%5.1f", a*100/b}' | tr '.' ','
+}
+
+# ---------------------------------------------------------- contagem
+# Conta linhas de uma rota exata, ignorando query string. Um clique que
+# chegue como /go/ifood?fbclid=... e o mesmo clique: o `grep` por
+# $'\t/go/ifood\t' deixava esses de fora e as duas metades do relatorio
+# (total por rota x proporcao entre canais) discordavam entre si.
+conta_rota() {   # $1 = arquivo  $2 = rota exata
+  awk -F'\t' -v r="$2" '{split($2, a, "?"); if (a[1] == r) n++} END {print n+0}' "$1"
 }
 
 # ------------------------------------------------------- nome dos pontos
@@ -127,10 +139,10 @@ periodo() {
 
   # ------------------------------------------- proporcao entre canais
   local ifood food99 zap insta canais
-  ifood=$(grep -c $'\t/go/ifood\t'     "$arq"); ifood=${ifood:-0}
-  food99=$(grep -c $'\t/go/99food\t'   "$arq"); food99=${food99:-0}
-  zap=$(grep -c $'\t/go/whatsapp\t'    "$arq"); zap=${zap:-0}
-  insta=$(grep -c $'\t/go/instagram\t' "$arq"); insta=${insta:-0}
+  ifood=$(conta_rota  "$arq" /go/ifood)
+  food99=$(conta_rota "$arq" /go/99food)
+  zap=$(conta_rota    "$arq" /go/whatsapp)
+  insta=$(conta_rota  "$arq" /go/instagram)
   canais=$(( ifood + food99 + zap ))
 
   echo
@@ -152,8 +164,7 @@ periodo() {
   echo "PONTOS DE RETIRADA"
   {
     for p in guararapes eusebio parque-del-sol sapiranga; do
-      c=$(grep -c $'\t/go/ponto/'"$p"$'\t' "$arq"); c=${c:-0}
-      printf '%s\t%s\n' "$c" "$p"
+      printf '%s\t%s\n' "$(conta_rota "$arq" "/go/ponto/$p")" "$p"
     done
   } | sort -rn > "$tmp/pontos"
 
@@ -167,7 +178,7 @@ periodo() {
   printf '  %-19s %6s\n' "total" "$tot_p"
 
   # ------------------------------------------------- eventos internos
-  if grep -q $'\t/go/evento/' "$arq"; then
+  if awk -F'\t' '$2 ~ /^\/go\/evento\//{found=1; exit} END{exit !found}' "$arq"; then
     echo
     echo "EVENTOS INTERNOS (não saem da página)"
     awk -F'\t' '$2 ~ /^\/go\/evento\// {
@@ -227,7 +238,10 @@ echo "Arquivo .....: $LOG (+ rotacionados)"
 echo "Gerado em ...: $(date '+%d/%m/%Y %H:%M:%S')"
 echo "Linhas /go/ .: $TOTAL_LINHAS"
 if [[ "$TOTAL_LINHAS" -gt 0 ]]; then
-  echo "Período .....: $(head -1 "$tmp/todos" | cut -c1-10) a $(tail -1 "$tmp/todos" | cut -c1-10)"
+  # min/max de verdade: `reunir` emite o log corrente e depois os
+  # rotacionados em ordem de glob (.1, .10, .2, ...), entao head/tail
+  # devolviam um intervalo invertido e arbitrario.
+  echo "Período .....: $(awk -F'\t' '{d=substr($1,1,10); if (min=="" || d<min) min=d; if (d>max) max=d} END{print min" a "max}' "$tmp/todos")"
 else
   echo
   echo "Log vazio: nenhum clique registrado ainda."

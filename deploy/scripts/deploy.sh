@@ -31,7 +31,22 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 RAIZ="$PWD"
 
-[[ -f deploy/.env ]] && { set -a; . deploy/.env; set +a; }
+# O ambiente ganha do arquivo: `SAUDE_URL=... ./deploy.sh` tem que valer
+# mesmo com um SAUDE_URL definido no deploy/.env. Um `set -a; . .env` faria
+# o contrario, atropelando em silencio o que veio da linha de comando.
+if [[ -f deploy/.env ]]; then
+  while IFS= read -r _linha || [[ -n "$_linha" ]]; do
+    [[ "$_linha" =~ ^[[:space:]]*(#|$) ]] && continue
+    _chave="${_linha%%=*}"; _chave="${_chave//[[:space:]]/}"
+    [[ "$_chave" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
+    [[ -n "${!_chave+ja_definida}" ]] && continue
+    _valor="${_linha#*=}"
+    _valor="${_valor#"${_valor%%[![:space:]]*}"}"      # tira espaco a esquerda
+    [[ "$_valor" == \"*\" || "$_valor" == \'*\' ]] && _valor="${_valor:1:${#_valor}-2}"
+    export "$_chave=$_valor"
+  done < deploy/.env
+  unset _linha _chave _valor
+fi
 
 SECO=0; FORCAR=0; CONFIGS=0
 while [[ $# -gt 0 ]]; do
@@ -97,8 +112,12 @@ if [[ "$CONFIGS" -eq 1 ]]; then
 set -euo pipefail
 O=/tmp/porkinho-nginx
 sudo install -d -m 755 /etc/nginx/snippets /etc/nginx/conf.d /etc/nginx/sites-available
+# Diretorio proprio de log: fora de /var/log/nginx de proposito, senao colide
+# com o /etc/logrotate.d/nginx do pacote do Ubuntu.
+sudo install -d -m 755 -o root -g adm /var/log/feijoadaporkinho
 sudo install -m 644 "$O/log-cliques.conf"              /etc/nginx/conf.d/log-cliques.conf
 sudo install -m 644 "$O/cliques.conf"                  /etc/nginx/snippets/cliques.conf
+sudo install -m 644 "$O/seguranca.conf"                /etc/nginx/snippets/porkinho-seguranca.conf
 sudo install -m 644 "$O/feijoadaporkinho.com.br.conf"  /etc/nginx/sites-available/feijoadaporkinho.com.br.conf
 sudo install -m 644 "$O/logrotate-feijoadaporkinho"    /etc/logrotate.d/feijoadaporkinho
 sudo ln -sfn /etc/nginx/sites-available/feijoadaporkinho.com.br.conf \
@@ -127,7 +146,9 @@ RSYNC=(rsync -avz --delete --human-readable
        -e "ssh -p $DEPLOY_PORT -o BatchMode=yes")
 [[ "$SECO" -eq 1 ]] && RSYNC+=(--dry-run)
 
-"${SSH[@]}" "sudo install -d -m 755 '$DEPLOY_DESTINO'"
+# Criar o destino e escrita: fica de fora do ensaio. O rsync com --dry-run
+# nao reclama de diretorio inexistente.
+[[ "$SECO" -eq 0 ]] && "${SSH[@]}" "sudo install -d -m 755 '$DEPLOY_DESTINO'"
 "${RSYNC[@]}" "$RAIZ/public/" "$REMOTO:$DEPLOY_DESTINO/"
 
 # --------------------------------------------------- 4. dono e permissoes
