@@ -347,6 +347,14 @@ a { color: var(--primaria-texto); }
 .botao--fantasma:hover { background: var(--superficie); }
 .botao--fantasma[disabled] { opacity: .6; cursor: progress; }
 
+/* O botao de geolocalizacao so existe se houver JavaScript. Quem decide e a
+   classe `js` que o script inline do <head> poe em <html> antes da primeira
+   pintura — assim o botao ja nasce visivel e nao empurra a lista de pontos
+   para baixo. Fazer isso com o atributo `hidden` e remove-lo no
+   DOMContentLoaded custava 0.015 de CLS. */
+#btn-geo { display: none; }
+html.js #btn-geo { display: flex; }
+
 /* ------------------------------------------------------------------ *
  * Pontos de retirada
  * ------------------------------------------------------------------ */

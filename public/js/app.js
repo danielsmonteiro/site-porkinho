@@ -407,9 +407,10 @@
       if (!document.hidden) { renderizarStatus(); }
     });
 
+    /* Nao mexemos na visibilidade aqui: quem revela o botao e a classe `js`
+       posta pelo script inline do <head>, antes da primeira pintura. */
     var botaoGeo = $('#btn-geo');
     if (botaoGeo) {
-      botaoGeo.hidden = false;
       botaoGeo.addEventListener('click', function () { pedirLocalizacao(botaoGeo); });
     }
 

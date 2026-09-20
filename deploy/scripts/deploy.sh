@@ -105,9 +105,13 @@ passo "Conferindo o acesso a $REMOTO"
 if [[ "$CONFIGS" -eq 1 ]]; then
   passo "Instalando os arquivos do nginx"
   if [[ "$SECO" -eq 1 ]]; then
-    echo "    [seco] enviaria deploy/nginx/* e instalaria em /etc/nginx/"
+    echo "    [seco] enviaria deploy/nginx/* e deploy/scripts/* e instalaria no servidor"
   else
     tar -C deploy/nginx -cf - . | "${SSH[@]}" 'sudo tar -C /tmp -xf - --one-top-level=porkinho-nginx'
+    # Os scripts que rodam NO servidor vao junto. Mantidos a mao, eles saem de
+    # sincronia com o repositorio na primeira mudanca de caminho de log.
+    tar -C deploy/scripts -cf - relatorio-cliques.sh update-cloudflare-ips.sh \
+      | "${SSH[@]}" 'sudo tar -C /tmp -xf - --one-top-level=porkinho-scripts'
     "${SSH[@]}" 'bash -s' <<'REMOTO_FIM'
 set -euo pipefail
 O=/tmp/porkinho-nginx
@@ -120,6 +124,10 @@ sudo install -m 644 "$O/cliques.conf"                  /etc/nginx/snippets/cliqu
 sudo install -m 644 "$O/seguranca.conf"                /etc/nginx/snippets/porkinho-seguranca.conf
 sudo install -m 644 "$O/feijoadaporkinho.com.br.conf"  /etc/nginx/sites-available/feijoadaporkinho.com.br.conf
 sudo install -m 644 "$O/logrotate-feijoadaporkinho"    /etc/logrotate.d/feijoadaporkinho
+sudo install -d -m 755 /opt/porkinho-scripts
+sudo install -m 755 /tmp/porkinho-scripts/relatorio-cliques.sh     /opt/porkinho-scripts/
+sudo install -m 755 /tmp/porkinho-scripts/update-cloudflare-ips.sh /opt/porkinho-scripts/
+sudo rm -rf /tmp/porkinho-scripts
 sudo ln -sfn /etc/nginx/sites-available/feijoadaporkinho.com.br.conf \
              /etc/nginx/sites-enabled/feijoadaporkinho.com.br.conf
 # cloudflare-realip.conf e GERADO; so instala o placeholder se nao houver nada la.
