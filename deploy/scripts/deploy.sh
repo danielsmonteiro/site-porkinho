@@ -117,12 +117,17 @@ fi
 # ------------------------------------------------------------- 3. rsync
 passo "Enviando public/ para $REMOTO:$DEPLOY_DESTINO"
 
+# --rsync-path="sudo rsync" e o que faz o segundo deploy funcionar: depois do
+# primeiro, tudo la dentro pertence a www-data e o usuario do deploy nao
+# consegue mais escrever nos subdiretorios. Rodando o rsync remoto como root,
+# a permissao deixa de importar. Exige sudo sem senha para DEPLOY_USER.
 RSYNC=(rsync -avz --delete --human-readable
        --exclude '.DS_Store' --exclude 'Thumbs.db' --exclude '*.swp'
+       --rsync-path="sudo rsync"
        -e "ssh -p $DEPLOY_PORT -o BatchMode=yes")
 [[ "$SECO" -eq 1 ]] && RSYNC+=(--dry-run)
 
-"${SSH[@]}" "sudo install -d -m 755 '$DEPLOY_DESTINO' && sudo chown '$DEPLOY_USER' '$DEPLOY_DESTINO'"
+"${SSH[@]}" "sudo install -d -m 755 '$DEPLOY_DESTINO'"
 "${RSYNC[@]}" "$RAIZ/public/" "$REMOTO:$DEPLOY_DESTINO/"
 
 # --------------------------------------------------- 4. dono e permissoes
