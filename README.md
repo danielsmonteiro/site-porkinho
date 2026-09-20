@@ -55,6 +55,19 @@ deploy/
 > no snippet. **Regra: todo `location` que tiver qualquer `add_header` precisa
 > do `include /etc/nginx/snippets/porkinho-seguranca.conf;`.**
 
+> **O `<head>` tem um `<script>` de uma linha** que põe a classe `js` no
+> `<html>` antes da primeira pintura — é ele que revela o botão de
+> geolocalização sem empurrar a página. Fazer isso no `DOMContentLoaded`
+> custava 0,015 de CLS. Ele é liberado na CSP **por hash**, não por
+> `'unsafe-inline'`. **Se mudar uma vírgula nesse script, recalcule o hash** e
+> troque em `deploy/nginx/seguranca.conf`, senão o navegador bloqueia e o
+> botão some:
+>
+> ```bash
+> printf '%s' 'document.documentElement.classList.add("js");' \
+>   | openssl dgst -sha256 -binary | openssl base64
+> ```
+
 > **Por que os logs não ficam em `/var/log/nginx`:** o pacote nginx do Ubuntu já
 > traz `/etc/logrotate.d/nginx` cobrindo `/var/log/nginx/*.log`. Listar os
 > mesmos arquivos numa segunda regra faz o logrotate abortar com
