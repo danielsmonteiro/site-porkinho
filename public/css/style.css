@@ -463,7 +463,7 @@ html.js #btn-geo { display: flex; }
  * Kits — o produto. Sempre visiveis, logo depois dos botoes dos apps,
  * com a foto real em largura cheia. Trocar a foto: mesmo nome, 800x600.
  * ------------------------------------------------------------------ */
-.kits { list-style: none; margin: 0; padding: 0; }
+.kits { list-style: none; margin: 10px 0 0; padding: 0; }
 
 .kit {
   margin-bottom: 12px;
@@ -473,6 +473,14 @@ html.js #btn-geo { display: flex; }
   overflow: hidden;
 }
 .kit:last-child { margin-bottom: 0; }
+
+/* O aviso de preco vem DEPOIS dos cartoes: a primeira coisa lida na secao
+   e o produto, nao a ressalva. */
+.kits__nota {
+  margin: 10px 0 0;
+  color: var(--texto-2);
+  font-size: var(--fs-meta);
+}
 
 /* A foto e o que vende: largura cheia, 4:3, no topo do cartao. O arquivo
    tem 800x600 (2x a largura do cartao no celular); width/height no HTML
