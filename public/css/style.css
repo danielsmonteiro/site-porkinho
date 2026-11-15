@@ -56,6 +56,14 @@
   --foco: #FFE9A3;
   --sombra: 0 6px 18px rgba(0, 0, 0, .38);
 
+  /* Escala tipografica: cinco degraus e nada no meio. Antes eram 14
+     tamanhos entre 12,5 e 28 px, quase todos a 0,3 px um do outro. */
+  --fs-meta: .8125rem;     /* 13px: rotulos, porcao, rodape, avisos      */
+  --fs-apoio: .9375rem;    /* 15px: textos de apoio e descricoes          */
+  --fs-texto: 1rem;        /* 16px: corpo, botoes, nomes                  */
+  --fs-destaque: 1.25rem;  /* 20px: titulos de secao e precos             */
+  --fs-titulo: 1.75rem;    /* 28px: nome da marca e titulo das paginas    */
+
   --raio: 14px;
   --raio-g: 20px;
   --largura: 520px;
@@ -163,28 +171,40 @@ a { color: var(--primaria-texto); }
 /* ------------------------------------------------------------------ *
  * Cabecalho
  * ------------------------------------------------------------------ */
-.topo { text-align: center; }
+/* Cabecalho compacto: logo de 56px ao lado do nome, status embaixo. Com
+   a logo de 96px empilhada, o cabecalho ocupava ~300px e a foto do kit so
+   comecava no fim da primeira tela do celular. */
+.topo {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  column-gap: 14px;
+  align-items: center;
+  text-align: left;
+}
+.topo > picture { grid-row: 1 / span 2; }
+.topo .status { grid-column: 1 / -1; }
 
 .topo__logo {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 14px;
+  width: 56px;
+  height: 56px;
+  margin: 0;
   border-radius: 50%;
   object-fit: contain;
 }
 
 .topo__titulo {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: var(--fs-titulo);
   line-height: 1.15;
   font-weight: 700;
   letter-spacing: -.015em;
 }
 
 .topo__linha {
-  margin: 6px 0 0;
+  margin: 2px 0 0;
   color: var(--texto-2);
-  font-size: .95rem;
+  font-size: var(--fs-apoio);
+  line-height: 1.35;
 }
 
 /* ------------------------------------------------------------------ *
@@ -200,12 +220,12 @@ a { color: var(--primaria-texto); }
   justify-content: flex-start;
   gap: 9px;
   width: 100%;
-  margin: 18px auto 0;
+  margin: 16px auto 0;
   padding: 10px 18px;
   border: 1px solid var(--borda-suave);
   border-radius: 999px;
   background: var(--superficie);
-  font-size: .95rem;
+  font-size: var(--fs-apoio);
   font-weight: 700;
   text-align: left;
   min-height: 48px;
@@ -225,9 +245,12 @@ a { color: var(--primaria-texto); }
    pulsacao de "aberto". O JS ja nao deixa isso acontecer (renderizarStatus
    remove as tres antes de por a certa); aqui e so para o erro ser impossivel
    de aparecer, e nao apenas improvavel. */
-.status--fechado .status__ponto { background: var(--fechado); animation: none; }
+.status--fechado .status__ponto { background: var(--primaria-texto); animation: none; }
 .status--aberto { color: var(--aberto); }
-.status--fechado { color: var(--fechado); }
+/* Fechado nao e erro: e "abre daqui a pouco". Texto normal e ponto
+   dourado, nada de vermelho — vermelho le como "pare" e desanimava o
+   pedido na maior parte da semana. --fechado fica so para erro. */
+.status--fechado { color: var(--texto); }
 .status--neutro { color: var(--texto-2); font-weight: 400; }
 
 @keyframes pulsar {
@@ -242,20 +265,21 @@ a { color: var(--primaria-texto); }
 
 .secao__titulo {
   margin: 0 0 4px;
-  font-size: 1.05rem;
+  font-size: var(--fs-destaque);
+  line-height: 1.25;
   font-weight: 700;
 }
 
 .secao__apoio {
   margin: 0 0 14px;
   color: var(--texto-2);
-  font-size: .88rem;
+  font-size: var(--fs-apoio);
 }
 
 .cta-titulo {
   margin: 0 0 12px;
   text-align: center;
-  font-size: 1.05rem;
+  font-size: var(--fs-texto);
   font-weight: 700;
   color: var(--texto);
 }
@@ -298,14 +322,14 @@ a { color: var(--primaria-texto); }
 
 .botao__rotulo {
   display: block;
-  font-size: 1.02rem;
+  font-size: var(--fs-texto);
   font-weight: 700;
   line-height: 1.25;
 }
 
 .botao__apoio {
   display: block;
-  font-size: .8rem;
+  font-size: var(--fs-meta);
   line-height: 1.3;
   color: var(--texto-2);
 }
@@ -367,7 +391,7 @@ html.js #btn-geo { display: flex; }
   border: 1px dashed var(--borda);
   border-radius: var(--raio);
   background: var(--superficie);
-  font-size: .88rem;
+  font-size: var(--fs-apoio);
   color: var(--texto-2);
 }
 .aviso-retirada strong { color: var(--texto); }
@@ -405,14 +429,14 @@ html.js #btn-geo { display: flex; }
 
 .ponto__detalhe {
   display: block;
-  font-size: .82rem;
+  font-size: var(--fs-meta);
   color: var(--texto-2);
   line-height: 1.35;
 }
 
 .ponto__distancia {
   display: block;
-  font-size: .82rem;
+  font-size: var(--fs-meta);
   font-weight: 700;
   color: var(--primaria-texto);
 }
@@ -423,15 +447,13 @@ html.js #btn-geo { display: flex; }
   border-radius: 999px;
   background: var(--primaria);
   color: var(--primaria-tinta);
-  font-size: .7rem;
+  font-size: var(--fs-meta);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .04em;
 }
 
 .geo-aviso {
   margin: 10px 0 0;
-  font-size: .85rem;
+  font-size: var(--fs-meta);
   color: var(--texto-2);
 }
 .geo-aviso--erro { color: var(--fechado); }
@@ -469,20 +491,20 @@ html.js #btn-geo { display: flex; }
 
 .kit__nome {
   margin: 0;
-  font-size: 1.02rem;
+  font-size: var(--fs-texto);
   font-weight: 700;
   line-height: 1.25;
 }
 
 .kit__porcao {
   margin: 2px 0 0;
-  font-size: .84rem;
+  font-size: var(--fs-meta);
   color: var(--texto-2);
 }
 
 .kit__preco {
   margin: 4px 0 0;
-  font-size: 1.25rem;
+  font-size: var(--fs-destaque);
   font-weight: 700;
   line-height: 1.2;
   color: var(--primaria-texto);
@@ -490,7 +512,7 @@ html.js #btn-geo { display: flex; }
 
 .kit__descricao {
   margin: 6px 0 0;
-  font-size: .86rem;
+  font-size: var(--fs-apoio);
   color: var(--texto-2);
 }
 
@@ -559,15 +581,13 @@ html.js #btn-geo { display: flex; }
 
 .item__porcao {
   display: block;
-  font-size: .78rem;
+  font-size: var(--fs-meta);
   color: var(--texto-2);
-  text-transform: uppercase;
-  letter-spacing: .04em;
 }
 
 .item__descricao {
   margin: 4px 0 0;
-  font-size: .86rem;
+  font-size: var(--fs-apoio);
   color: var(--texto-2);
 }
 
@@ -577,7 +597,7 @@ html.js #btn-geo { display: flex; }
   border-radius: 10px;
   background: var(--fundo);
   border: 1px solid var(--borda-suave);
-  font-size: .82rem;
+  font-size: var(--fs-meta);
   color: var(--texto-2);
 }
 .nota strong { color: var(--texto); }
@@ -616,7 +636,7 @@ html.js #btn-geo { display: flex; }
   content: "+";
   margin-left: auto;
   flex: 0 0 auto;
-  font-size: 1.25rem;
+  font-size: var(--fs-destaque);
   font-weight: 400;
   color: var(--primaria-texto);
 }
@@ -625,9 +645,55 @@ html.js #btn-geo { display: flex; }
 .pergunta__resposta {
   margin: 0;
   padding: 0 16px 14px;
-  font-size: .9rem;
+  font-size: var(--fs-apoio);
   color: var(--texto-2);
   max-width: 62ch;
+}
+
+/* ------------------------------------------------------------------ *
+ * Barra fixa de pedido (ver prepararBarra no app.js). Mesma largura da
+ * pagina, presa ao rodape da tela, respeitando a area segura do iPhone.
+ * ------------------------------------------------------------------ */
+.barra-pedido {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  gap: 10px;
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: var(--fundo);
+  border-top: 1px solid var(--borda-suave);
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, .25);
+  animation: barra-entra 180ms ease-out;
+}
+
+.barra-pedido__botao {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--primaria-borda);
+  border-radius: var(--raio);
+  background: var(--primaria);
+  color: var(--primaria-tinta);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.barra-pedido__botao:hover { background: var(--primaria-forte); }
+
+/* A barra cobre o fim da pagina: o rodape ganha espaco quando ela aparece. */
+html.com-barra .pagina { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+
+@keyframes barra-entra {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
 }
 
 /* ------------------------------------------------------------------ *
@@ -638,7 +704,7 @@ html.js #btn-geo { display: flex; }
   padding-top: 20px;
   border-top: 1px solid var(--borda-suave);
   text-align: center;
-  font-size: .8rem;
+  font-size: var(--fs-meta);
   color: var(--texto-2);
 }
 .rodape p { margin: 0 0 8px; }
@@ -663,14 +729,17 @@ html.js #btn-geo { display: flex; }
  * Paginas de texto (politica de privacidade, 404, 50x)
  * ------------------------------------------------------------------ */
 .texto { margin-top: 26px; }
-.texto h1 { font-size: 1.5rem; margin: 0 0 6px; }
-.texto h2 { font-size: 1.05rem; margin: 26px 0 6px; }
-.texto p, .texto li { color: var(--texto-2); font-size: .93rem; }
+.texto h1 { font-size: var(--fs-titulo); margin: 0 0 6px; }
+.texto h2 { font-size: var(--fs-destaque); margin: 26px 0 6px; }
+.texto p, .texto li { color: var(--texto-2); font-size: var(--fs-apoio); }
 .texto strong { color: var(--texto); }
 .texto ul { padding-left: 20px; }
 .texto li { margin-bottom: 6px; }
 
 .centro { text-align: center; }
+/* 404 e 50x reaproveitam a logo, mas grande e centralizada (o cabecalho
+   compacto do index nao vale para elas). */
+.centro .topo__logo { width: 96px; height: 96px; margin: 0 auto 14px; }
 .centro .botao { margin-top: 18px; }
 
 /* ------------------------------------------------------------------ *
@@ -678,7 +747,6 @@ html.js #btn-geo { display: flex; }
  * ------------------------------------------------------------------ */
 @media (min-width: 760px) {
   .pagina { padding-top: 44px; padding-bottom: 44px; }
-  .topo__titulo { font-size: 2rem; }
   .cardapio__resumo { cursor: default; }
 }
 

@@ -200,11 +200,25 @@
         cta: 'Peça agora'
       };
     }
+    /* Fechado: o texto olha para a frente ("Abre hoje às 09:00") e o
+       chamado usa o MESMO dia do status. Antes o chamado era fixo em
+       "Peça para o próximo fim de semana" e, num sabado de madrugada,
+       contradizia o "abre hoje" logo acima. */
     var prox = proximaAbertura(t);
+    var dia = rotuloDoDia(prox);
+    var hora = doisDigitos(h.abreHora) + ':00';
+    var cta;
+    if (prox.emDias === 0) {
+      cta = 'Peça hoje, a partir das ' + hora;
+    } else if (prox.emDias === 1) {
+      cta = 'Peça para amanhã, a partir das ' + hora;
+    } else {
+      cta = 'Peça para ' + dia + ', a partir das ' + hora;
+    }
     return {
       aberto: false,
-      status: 'Fechado · abre ' + rotuloDoDia(prox) + ' às ' + doisDigitos(h.abreHora) + ':00',
-      cta: 'Peça para o próximo fim de semana'
+      status: 'Abre ' + dia + ' às ' + hora,
+      cta: cta
     };
   }
   window.__porkinhoStatus = function (base) { return textoDoStatus(agoraEmFortaleza(base)); };
@@ -372,6 +386,30 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * 4. Barra fixa de pedido — aparece quando os botoes do topo (iFood e
+   *    99 Food) ja ficaram para cima, e some quando eles voltam a tela.
+   *    Nao aparece antes de rolar: no topo ela so duplicaria os botoes.
+   * ------------------------------------------------------------------ */
+  function prepararBarra() {
+    var barra = $('#barra-pedido');
+    var topo = $$('#comprar > .botao--primario');
+    if (!barra || !topo.length || !('IntersectionObserver' in window)) { return; }
+
+    var naTela = [];
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        /* conta como "na tela" tambem o que ainda esta abaixo dela; so o
+           que saiu pelo alto libera a barra */
+        naTela[topo.indexOf(e.target)] = e.isIntersecting || e.boundingClientRect.top > 0;
+      });
+      var algumNaTela = topo.some(function (_, i) { return naTela[i] !== false; });
+      barra.hidden = algumNaTela;
+      document.documentElement.classList.toggle('com-barra', !algumNaTela);
+    });
+    topo.forEach(function (b) { obs.observe(b); });
+  }
+
+  /* ------------------------------------------------------------------ *
    * Inicializacao
    * ------------------------------------------------------------------ */
   function iniciar() {
@@ -390,6 +428,7 @@
     }
 
     prepararCardapio();
+    prepararBarra();
   }
 
   if (document.readyState === 'loading') {

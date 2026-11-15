@@ -77,9 +77,9 @@ function redirecionar(destino, status) {
   return semCorpo(status, { Location: destino }, status === 302 ? 'no-store' : 'public, max-age=3600');
 }
 
-// rota: o que vira indice e blob1 | r: resultado do evento (ou '')
+// rota: o que vira indice e blob1 | query: '?r=...' ou '?de=barra' (ou '')
 // original: caminho cru, so para o balde de desconhecidos (blob5)
-function registrarClique(env, request, rota, r, status, original = '') {
+function registrarClique(env, request, rota, query, status, original = '') {
   if (!env.CLIQUES) return;
   let origem = '';
   try {
@@ -89,9 +89,9 @@ function registrarClique(env, request, rota, r, status, original = '') {
   try {
     env.CLIQUES.writeDataPoint({
       indexes: [rota],
-      // blob1 rota | blob2 query (?r=...) | blob3 pais | blob4 dominio de origem
+      // blob1 rota | blob2 query (?r=... ou ?de=barra) | blob3 pais | blob4 dominio de origem
       // blob5 caminho original (so em /go/(desconhecido))
-      blobs: [rota, r ? `?r=${r}` : '', request.cf?.country || '', origem.slice(0, 100),
+      blobs: [rota, query, request.cf?.country || '', origem.slice(0, 100),
         original.slice(0, 100)],
       // double1 status
       doubles: [status],
@@ -105,14 +105,17 @@ function tratarGo(env, request, url) {
   const caminho = url.pathname;
   const destino = DESTINOS[caminho];
   if (destino) {
-    registrarClique(env, request, caminho, '', 302);
+    // ?de=barra: o clique veio da barra fixa do rodape, nao do botao do
+    // topo. So esse valor e aceito; qualquer outra query e descartada.
+    const query = url.searchParams.get('de') === 'barra' ? '?de=barra' : '';
+    registrarClique(env, request, caminho, query, 302);
     return redirecionar(destino, 302);
   }
   if (caminho.startsWith('/go/evento/')) {
     const nome = caminho.slice('/go/evento/'.length);
     const r = url.searchParams.get('r') || '';
     if (Object.hasOwn(EVENTOS, nome) && EVENTOS[nome].includes(r)) {
-      registrarClique(env, request, caminho, r, 204);
+      registrarClique(env, request, caminho, `?r=${r}`, 204);
     } else {
       registrarClique(env, request, DESCONHECIDO, '', 204, caminho);
     }
