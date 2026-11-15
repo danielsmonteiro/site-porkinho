@@ -18,6 +18,22 @@ que faz os redirects `/go/` e os cabeçalhos).
 Depois vêm petiscos e bebidas (recolhidos no celular) e as **perguntas
 frequentes**, que existem tanto para quem compra quanto para buscadores e IAs.
 
+Três regras de tela que vieram de uma análise de design (15/11/2026):
+
+- **Cabeçalho compacto** (logo de 56 px ao lado do nome) para a foto do Kit
+  Completa caber inteira na primeira tela do celular.
+- **Fora do horário, nada de vermelho.** O status diz quando abre ("Abre hoje
+  às 09:00") com ponto dourado, e o chamado acima dos botões usa o mesmo dia
+  ("Peça hoje, a partir das 09:00"). Os dois saem de `textoDoStatus` no
+  `app.js`.
+- **Barra fixa de pedido** no rodapé da tela, com iFood e 99 Food. Aparece só
+  depois que os botões do topo saem da tela e some quando eles voltam. Os
+  cliques dela vão para as mesmas rotas, com `?de=barra`.
+
+Tamanhos de fonte só da escala em `:root` do `style.css` (`--fs-meta` 13,
+`--fs-apoio` 15, `--fs-texto` 16, `--fs-destaque` 20, `--fs-titulo` 28). Nada
+de tamanho solto.
+
 ---
 
 ## Estrutura
@@ -249,6 +265,10 @@ WHERE blob1 = '/go/(desconhecido)' GROUP BY caminho ORDER BY n DESC
 > evento contava quem abria o cardápio inteiro para ver os kits; desde então
 > os kits ficam sempre visíveis e o bloco recolhido só tem petiscos e bebidas.
 > As duas séries medem coisas diferentes e não se comparam.
+>
+> **Barra fixa:** cliques nela chegam como `/go/ifood?de=barra` e
+> `/go/99food?de=barra`. O relatório soma tudo na rota; para separar:
+> `SELECT blob1, blob2, SUM(_sample_interval) FROM porkinho_cliques WHERE blob1 IN ('/go/ifood', '/go/99food') GROUP BY blob1, blob2`.
 
 O relatório roda na sua máquina e lê de lá:
 
