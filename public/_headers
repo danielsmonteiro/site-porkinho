@@ -1,0 +1,31 @@
+# Cabecalhos dos arquivos servidos direto pela Cloudflare, sem passar pelo
+# Worker (ver run_worker_first no wrangler.jsonc). Fonte unica da CSP: o
+# Worker NAO repete estes valores, ele so herda o que vem daqui.
+#
+# Se mudar o <script> inline do <head>, recalcule o hash da CSP (ver README).
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://cloudflareinsights.com; img-src 'self' data:; font-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; manifest-src 'self'
+
+# Cache busting por ?v= no HTML: cache longo. Vale tambem para o 404 de um
+# arquivo que nao existe nessas pastas; inofensivo porque toda troca de
+# arquivo muda o ?v=, e com ele a URL.
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon.ico
+  Cache-Control: public, max-age=2592000
+/robots.txt
+  Cache-Control: public, max-age=86400
+/sitemap.xml
+  Cache-Control: public, max-age=86400

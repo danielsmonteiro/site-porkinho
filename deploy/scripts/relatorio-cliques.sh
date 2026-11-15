@@ -22,6 +22,7 @@
 #
 # Formato interno (TAB entre os campos) — o mesmo do log do nginx:
 #   1 horario ISO, ja no fuso de Fortaleza | 2 request_uri | ...
+#   10 peso (quantos cliques a linha representa; vazio = 1)
 #
 set -uo pipefail
 
@@ -31,20 +32,8 @@ LOG="${1:-}"
 LARGURA="${LARGURA:-34}"
 
 cd "$(dirname "$0")/../.."
-# Mesmo leitor de deploy/.env do deploy.sh: o ambiente ganha do arquivo.
-if [[ -z "$LOG" && -f deploy/.env ]]; then
-  while IFS= read -r _linha || [[ -n "$_linha" ]]; do
-    [[ "$_linha" =~ ^[[:space:]]*(#|$) ]] && continue
-    _chave="${_linha%%=*}"; _chave="${_chave//[[:space:]]/}"
-    [[ "$_chave" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
-    [[ -n "${!_chave+ja_definida}" ]] && continue
-    _valor="${_linha#*=}"
-    _valor="${_valor#"${_valor%%[![:space:]]*}"}"
-    [[ "$_valor" == \"*\" || "$_valor" == \'*\' ]] && _valor="${_valor:1:${#_valor}-2}"
-    export "$_chave=$_valor"
-  done < deploy/.env
-  unset _linha _chave _valor
-fi
+# deploy/.env so interessa na consulta ao Analytics Engine.
+[[ -z "$LOG" ]] && source deploy/scripts/carregar-env.sh
 
 # Precisamos de um locale UTF-8 para que ${#texto} conte caracteres, e nao
 # bytes: sem isso "terça" e "Eusébio" saem desalinhados nas colunas.
@@ -77,8 +66,10 @@ reunir() {
 }
 
 # ------------------------------------------------------ Analytics Engine
-# Agrupa por hora, rota e query string e expande cada grupo em N linhas no
-# formato do log antigo, para o resto do script nao mudar. Fortaleza e UTC-3
+# Agrupa por hora, rota e query string e devolve UMA linha por grupo no
+# formato do log antigo, com a contagem no campo 10 (peso). As linhas do log
+# do nginx nao tem campo 10 e valem 1. Todas as somas abaixo usam o peso, entao
+# um milhao de cliques continua sendo poucas centenas de linhas. Fortaleza e UTC-3
 # o ano inteiro (sem horario de verao), entao o deslocamento e fixo.
 analytics_engine() {
   : "${CLOUDFLARE_ACCOUNT_ID:?defina CLOUDFLARE_ACCOUNT_ID (ambiente ou deploy/.env)}"
@@ -89,14 +80,13 @@ GROUP BY h, blob1, blob2 FORMAT TabSeparated"
   curl -fsS --max-time 30 \
     "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
     -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" --data-binary "$sql" \
-  | awk -F'\t' 'NF>=4 { t=$1; sub(/ /, "T", t); for (i=0; i<$4; i++) print t "\t" $2 $3 }'
+  | awk -F'\t' 'NF>=4 { t=$1; sub(/ /, "T", t); printf "%s\t%s%s\t\t\t\t\t\t\t\t%d\n", t, $2, $3, $4 }'
 }
 
 if [[ -z "$LOG" ]]; then
   analytics_engine > "$tmp/ae" || { echo "Falha ao consultar o Analytics Engine."; exit 1; }
   LOG="$tmp/ae"
   ORIGEM="Cloudflare Analytics Engine (dataset porkinho_cliques)"
-  FUSO="America/Fortaleza"
 else
   ORIGEM="$LOG (+ rotacionados)"
 fi
@@ -109,12 +99,13 @@ fi
 
 reunir "$LOG" | awk -F'\t' 'NF>=2 && $2 ~ /^\/go\//' > "$tmp/todos" || true
 
-TOTAL_LINHAS=$(wc -l < "$tmp/todos" | tr -d ' ')
+soma() { awk -F'\t' '{n += ($10 == "" ? 1 : $10)} END {print n+0}' "$1"; }
+TOTAL_LINHAS=$(soma "$tmp/todos")
 
-if [[ -z "${FUSO:-}" ]]; then
-  FUSO=$( (timedatectl show -p Timezone --value 2>/dev/null) || cat /etc/timezone 2>/dev/null || echo "?" )
-  FUSO=${FUSO:-?}
-fi
+# Tudo no fuso de Fortaleza: os carimbos do Analytics Engine sao convertidos
+# na consulta, e os do log do nginx ja vinham no fuso do servidor, que era
+# America/Fortaleza. Fortaleza e UTC-3 o ano inteiro.
+FUSO="America/Fortaleza"
 # As datas de corte no fuso de Fortaleza, seja qual for o fuso desta maquina.
 HOJE=$(TZ=America/Fortaleza date +%F)
 INI7=$(TZ=America/Fortaleza date -d '6 days ago' +%F 2>/dev/null || TZ=America/Fortaleza date -v-6d +%F)
@@ -146,7 +137,7 @@ pct() { # $1 = parte  $2 = total
 # $'\t/go/ifood\t' deixava esses de fora e as duas metades do relatorio
 # (total por rota x proporcao entre canais) discordavam entre si.
 conta_rota() {   # $1 = arquivo  $2 = rota exata
-  awk -F'\t' -v r="$2" '{split($2, a, "?"); if (a[1] == r) n++} END {print n+0}' "$1"
+  awk -F'\t' -v r="$2" '{split($2, a, "?"); if (a[1] == r) n += ($10 == "" ? 1 : $10)} END {print n+0}' "$1"
 }
 
 # ------------------------------------------------------- nome dos pontos
@@ -165,7 +156,7 @@ periodo() {
   local rotulo="$1" inicio="$2" arq="$tmp/p"
 
   awk -F'\t' -v ini="$inicio" 'substr($1,1,10) >= ini' "$tmp/todos" > "$arq"
-  local n; n=$(wc -l < "$arq" | tr -d ' ')
+  local n; n=$(soma "$arq")
 
   echo
   linha
@@ -181,8 +172,8 @@ periodo() {
   # ---------------------------------------------------- total por rota
   echo
   echo "TOTAL POR ROTA"
-  awk -F'\t' '{split($2,a,"?"); print a[1]}' "$arq" \
-    | sort | uniq -c | sort -rn \
+  awk -F'\t' '{split($2,a,"?"); s[a[1]] += ($10 == "" ? 1 : $10)} END {for (k in s) print s[k], k}' "$arq" \
+    | sort -rn \
     | while read -r c rota; do
         printf '  %-28s %6s  %s%%  %s\n' "$rota" "$c" "$(pct "$c" "$n")" "$(barra "$c" "$n")"
       done
@@ -236,8 +227,8 @@ periodo() {
         sub(/^\/go\/evento\//, "", a[1]);
         r = "-";
         if (a[2] ~ /(^|&)r=/) { split(a[2], q, "r="); split(q[2], w, "&"); r = w[1] }
-        print a[1] " " r
-      }' "$arq" | sort | uniq -c | sort -rn \
+        s[a[1] " " r] += ($10 == "" ? 1 : $10)
+      } END {for (k in s) print s[k], k}' "$arq" | sort -rn \
       | while read -r c ev; do printf '  %-30s %6s\n' "$ev" "$c"; done
   fi
 
@@ -255,7 +246,7 @@ periodo() {
     {
       d = substr($1,1,10)
       y = substr(d,1,4)+0; m = substr(d,6,2)+0; dd = substr(d,9,2)+0
-      c[zeller(y,m,dd)]++
+      c[zeller(y,m,dd)] += ($10 == "" ? 1 : $10)
     }
     END {
       nome[1]="domingo"; nome[2]="segunda"; nome[3]="terça"; nome[4]="quarta"
@@ -272,7 +263,7 @@ periodo() {
   # ------------------------------------------------------- por hora
   echo
   echo "POR HORA (fuso: $FUSO)"
-  awk -F'\t' '{h[substr($1,12,2)]++} END {for (i=0;i<24;i++) {k=sprintf("%02d",i); printf "%s\t%d\n", k, h[k]+0}}' "$arq" > "$tmp/horas"
+  awk -F'\t' '{h[substr($1,12,2)] += ($10 == "" ? 1 : $10)} END {for (i=0;i<24;i++) {k=sprintf("%02d",i); printf "%s\t%d\n", k, h[k]+0}}' "$arq" > "$tmp/horas"
   local max_h; max_h=$(cut -f2 "$tmp/horas" | sort -rn | head -1)
   while IFS=$'\t' read -r h c; do
     [[ "$c" -eq 0 ]] && continue
@@ -286,7 +277,7 @@ echo " Feijoada Porkinho — relatório de cliques"
 echo "============================================================"
 echo "Fonte .......: $ORIGEM"
 echo "Gerado em ...: $(date '+%d/%m/%Y %H:%M:%S')"
-echo "Linhas /go/ .: $TOTAL_LINHAS"
+echo "Cliques /go/ : $TOTAL_LINHAS"
 if [[ "$TOTAL_LINHAS" -gt 0 ]]; then
   # min/max de verdade: `reunir` emite o log corrente e depois os
   # rotacionados em ordem de glob (.1, .10, .2, ...), entao head/tail
