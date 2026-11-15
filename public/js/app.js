@@ -34,7 +34,7 @@
       whatsapp: {
         rotulo: 'WhatsApp',
         rota: '/go/whatsapp',
-        url: 'https://wa.me/5585985900985'
+        url: 'https://wa.me/5585985900985?text=Ol%C3%A1%2C%20Sr.%20Monteiro%21%20Vim%20pelo%20site%20da%20Feijoada%20Porkinho%20e%20quero%20fazer%20uma%20encomenda.%0AData%3A%0AN%C3%BAmero%20de%20pessoas%3A%0ABairro%3A'
       },
       instagram: {
         rotulo: 'Instagram',

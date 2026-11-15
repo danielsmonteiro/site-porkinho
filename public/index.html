@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Feijoada Porkinho — Peça pelo iFood, 99 Food ou retire em Fortaleza</title>
-<meta name="description" content="Feijoada e torresmo caseiro em Fortaleza. Peça no iFood ou no 99 Food, ou retire nos food trucks de Guararapes, Eusébio, Parque del Sol e Sapiranga.">
+<title>Feijoada em Fortaleza e Eusébio | Feijoada Porkinho</title>
+<meta name="description" content="Feijoada e torresmo caseiro de sexta a domingo em Fortaleza e no Eusébio. Kits para 1 a 4 pessoas no iFood e no 99 Food, ou para retirar em um dos 4 food trucks.">
 <link rel="canonical" href="https://feijoadaporkinho.com.br/">
 <meta name="theme-color" content="#1A120C" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#FBF5EC" media="(prefers-color-scheme: light)">
@@ -61,7 +61,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 .botao__apoio{display:block;font-size:.8rem;line-height:1.3;color:var(--texto-2)}
 .botao--primario{background:var(--primaria);border-color:var(--primaria-borda);color:var(--primaria-tinta);box-shadow:var(--sombra);min-height:64px}.botao--primario .botao__apoio{color:var(--primaria-apoio)}
 </style>
-<link rel="stylesheet" href="/css/style.css?v=7">
+<link rel="stylesheet" href="/css/style.css?v=8">
 <!-- Marca que ha JavaScript ANTES da primeira pintura. Sem isto, o botao
      de geolocalizacao so aparecia no DOMContentLoaded e empurrava a lista
      de pontos para baixo (layout shift). Liberado na CSP por hash, nao
@@ -81,7 +81,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
            alt="Logo da Feijoada Porkinho" fetchpriority="high" decoding="async">
     </picture>
     <h1 class="topo__titulo">Feijoada Porkinho</h1>
-    <p class="topo__linha">Feijoada e torresmo caseiro · Fortaleza/CE</p>
+    <p class="topo__linha">Feijoada e torresmo caseiro de sexta a domingo, em Fortaleza e no Eusébio</p>
 
     <p class="status status--neutro" id="status" role="status" aria-live="polite">
       <span class="status__ponto" aria-hidden="true"></span>
@@ -123,6 +123,42 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </span>
     </a>
 
+    <!-- Os kits sao o produto: ficam logo abaixo dos botoes dos apps, sempre
+         visiveis. Precos de referencia — iguais no JSON-LD, no app.js e no
+         llms.txt (ver README). -->
+    <section class="secao" id="kits" aria-labelledby="titulo-kits">
+      <h2 class="secao__titulo" id="titulo-kits">Kits de feijoada</h2>
+      <p class="secao__apoio">Preço de referência. O valor final, com promoções e entrega, aparece no app.</p>
+      <ul class="kits">
+        <li class="kit">
+          <picture>
+            <source srcset="/img/kit-completa.webp?v=2" type="image/webp">
+            <img class="kit__foto" src="/img/kit-completa.jpg?v=2" width="88" height="88"
+                 alt="Kit Feijoada Completa" loading="lazy" decoding="async">
+          </picture>
+          <div class="kit__corpo">
+            <h3 class="kit__nome">Kit Feijoada Completa</h3>
+            <p class="kit__porcao">3 a 4 pessoas, 1,2 kg de feijoada</p>
+            <p class="kit__preco">R$&nbsp;119,90</p>
+            <p class="kit__descricao">Feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais.</p>
+          </div>
+        </li>
+        <li class="kit">
+          <picture>
+            <source srcset="/img/kit-executiva.webp?v=2" type="image/webp">
+            <img class="kit__foto" src="/img/kit-executiva.jpg?v=2" width="88" height="88"
+                 alt="Kit Feijoada Executiva" loading="lazy" decoding="async">
+          </picture>
+          <div class="kit__corpo">
+            <h3 class="kit__nome">Kit Feijoada Executiva</h3>
+            <p class="kit__porcao">1 a 2 pessoas, 600 g de feijoada</p>
+            <p class="kit__preco">R$&nbsp;69,90</p>
+            <p class="kit__descricao">Feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
     <!-- 2. Retirada nos food trucks. -->
     <section class="secao" aria-labelledby="titulo-retirada">
       <h2 class="secao__titulo" id="titulo-retirada">Retirar em um food truck</h2>
@@ -142,7 +178,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       <p class="geo-aviso" id="geo-aviso" hidden></p>
 
       <ul class="pontos" id="pontos">
-        <li data-ponto="guararapes">
+        <li data-ponto="guararapes" id="ponto-guararapes">
           <a class="ponto" href="/go/ponto/guararapes" rel="nofollow noopener noreferrer"
              title="https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A">
             <span class="ponto__pino" aria-hidden="true">
@@ -157,7 +193,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
             <span class="selo" data-selo-proximo hidden>Mais perto</span>
           </a>
         </li>
-        <li data-ponto="eusebio">
+        <li data-ponto="eusebio" id="ponto-eusebio">
           <a class="ponto" href="/go/ponto/eusebio" rel="nofollow noopener noreferrer"
              title="https://goo.gl/maps/rtKKp78Pbua8ryKr8">
             <span class="ponto__pino" aria-hidden="true">
@@ -172,7 +208,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
             <span class="selo" data-selo-proximo hidden>Mais perto</span>
           </a>
         </li>
-        <li data-ponto="parque-del-sol">
+        <li data-ponto="parque-del-sol" id="ponto-parque-del-sol">
           <a class="ponto" href="/go/ponto/parque-del-sol" rel="nofollow noopener noreferrer"
              title="https://goo.gl/maps/Dm4Ts9Kn9oQHNPrBA">
             <span class="ponto__pino" aria-hidden="true">
@@ -187,7 +223,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
             <span class="selo" data-selo-proximo hidden>Mais perto</span>
           </a>
         </li>
-        <li data-ponto="sapiranga">
+        <li data-ponto="sapiranga" id="ponto-sapiranga">
           <a class="ponto" href="/go/ponto/sapiranga" rel="nofollow noopener noreferrer"
              title="https://goo.gl/maps/FM5NELs2QDhqmfeTA">
             <span class="ponto__pino" aria-hidden="true">
@@ -205,10 +241,11 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </ul>
     </section>
 
-    <!-- 3. WhatsApp: so evento, encomenda grande ou Pix. -->
-    <section class="secao" aria-labelledby="titulo-whatsapp">
-      <h2 class="secao__titulo" id="titulo-whatsapp">Evento, encomenda grande ou Pix</h2>
-      <p class="secao__apoio">Fale direto com o Sr. Monteiro. Para pedido do dia a dia, o app é mais rápido.</p>
+    <!-- 3. WhatsApp: evento, encomenda grande ou Pix. A mensagem ja abre
+         preenchida (ver o destino de /go/whatsapp no src/worker.js). -->
+    <section class="secao" id="encomenda" aria-labelledby="titulo-whatsapp">
+      <h2 class="secao__titulo" id="titulo-whatsapp">Feijoada para festa ou evento</h2>
+      <p class="secao__apoio">Para evento, encomenda grande ou pagamento via Pix, fale direto com o Sr. Monteiro. Para o pedido do dia a dia, o app é mais rápido.</p>
 
       <a class="botao botao--secundario botao--whatsapp" href="/go/whatsapp"
          rel="nofollow noopener noreferrer" title="https://wa.me/5585985900985">
@@ -216,8 +253,8 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.17-1.35a9.94 9.94 0 0 0 4.87 1.26h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.86c2.17 0 4.2.84 5.73 2.38a8.05 8.05 0 0 1 2.37 5.72c0 4.47-3.63 8.1-8.1 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-2.99-.19-.31a8.06 8.06 0 0 1-1.24-4.29c0-4.47 3.64-8.1 8.11-8.1Zm-3.1 4.3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34 1 2.5c.12.17 1.68 2.66 4.12 3.62 2.03.8 2.45.64 2.89.6.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46Z"/></svg>
         </span>
         <span class="botao__texto">
-          <span class="botao__rotulo">Falar no WhatsApp</span>
-          <span class="botao__apoio">Só para evento, encomenda grande ou pagamento via Pix</span>
+          <span class="botao__rotulo">Pedir orçamento no WhatsApp</span>
+          <span class="botao__apoio">A mensagem já abre pedindo a data, o número de pessoas e o bairro</span>
         </span>
         <span class="botao__seta" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -239,15 +276,16 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </a>
     </section>
 
-    <!-- 4. Cardapio. Recolhido no mobile, aberto no desktop via JS. -->
+    <!-- 4. Petiscos e bebidas. Recolhido no mobile, aberto no desktop via JS.
+         Os kits ficam fora, na secao #kits. -->
     <section class="secao" aria-labelledby="titulo-cardapio">
-      <h2 class="visualmente-oculto" id="titulo-cardapio">Cardápio</h2>
+      <h2 class="visualmente-oculto" id="titulo-cardapio">Petiscos e bebidas</h2>
       <details class="cardapio" id="cardapio">
         <summary class="cardapio__resumo">
           <span class="botao__icone" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>
           </span>
-          <span>Ver o cardápio e os preços</span>
+          <span>Petiscos e bebidas</span>
           <span class="botao__seta" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </span>
@@ -255,37 +293,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 
         <div class="cardapio__corpo">
           <ul class="itens">
-            <li class="item">
-              <picture>
-                <source srcset="/img/kit-executiva.webp?v=2" type="image/webp">
-                <img class="item__foto" src="/img/kit-executiva.jpg?v=2" width="64" height="64"
-                     alt="Kit Feijoada Executiva" loading="lazy" decoding="async">
-              </picture>
-              <div class="item__corpo">
-                <div class="item__cabeca">
-                  <span class="item__nome">Kit Feijoada Executiva</span>
-                  <span class="item__preco">R$&nbsp;69,90</span>
-                </div>
-                <span class="item__porcao">1 a 2 pessoas</span>
-                <p class="item__descricao">600 g de feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa.</p>
-              </div>
-            </li>
 
-            <li class="item">
-              <picture>
-                <source srcset="/img/kit-completa.webp?v=2" type="image/webp">
-                <img class="item__foto" src="/img/kit-completa.jpg?v=2" width="64" height="64"
-                     alt="Kit Feijoada Completa" loading="lazy" decoding="async">
-              </picture>
-              <div class="item__corpo">
-                <div class="item__cabeca">
-                  <span class="item__nome">Kit Feijoada Completa</span>
-                  <span class="item__preco">R$&nbsp;119,90</span>
-                </div>
-                <span class="item__porcao">3 a 4 pessoas</span>
-                <p class="item__descricao">1,2 kg de feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais.</p>
-              </div>
-            </li>
 
             <li class="item">
               <div class="item__corpo">
@@ -359,6 +367,50 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
         </div>
       </details>
     </section>
+
+    <!-- 5. Perguntas frequentes. O texto e o mesmo do FAQPage no JSON-LD:
+         mudou aqui, mude la (ver README). -->
+    <section class="secao" id="perguntas" aria-labelledby="titulo-perguntas">
+      <h2 class="secao__titulo" id="titulo-perguntas">Perguntas frequentes</h2>
+      <div class="perguntas">
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Quantas pessoas cada kit serve?</summary>
+          <p class="pergunta__resposta">O Kit Feijoada Executiva, com 600 g de feijoada, serve de 1 a 2 pessoas. O Kit Feijoada Completa, com 1,2 kg, serve de 3 a 4 pessoas.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Em que dias e horários a Feijoada Porkinho funciona?</summary>
+          <p class="pergunta__resposta">Sexta, sábado e domingo, das 09:00 às 15:00, no horário de Fortaleza. Os pedidos pelo iFood e pelo 99 Food e a retirada nos food trucks seguem esse horário.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Onde fica a Feijoada Porkinho?</summary>
+          <p class="pergunta__resposta">São 4 food trucks de retirada: Guararapes, Parque del Sol e Sapiranga, em Fortaleza, e Av. Eusébio de Queiroz, 3409, no Eusébio. O endereço da Rua Marcelino Lopes é da fábrica e não atende ao público.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Dá para comer no food truck?</summary>
+          <p class="pergunta__resposta">Não. Os food trucks são exclusivamente para retirada: não há mesas nem consumo no local.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Tem entrega?</summary>
+          <p class="pergunta__resposta">Sim, pelo iFood e pelo 99 Food. A área e a taxa de entrega aparecem no app, de acordo com o seu endereço.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Qual é o pedido mínimo?</summary>
+          <p class="pergunta__resposta">R$&nbsp;59,00 no iFood.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Os kits vêm com pratos e talheres?</summary>
+          <p class="pergunta__resposta">Não. Os kits não acompanham pratos nem talheres descartáveis.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Aceita Pix?</summary>
+          <p class="pergunta__resposta">Sim, pelo WhatsApp, direto com o Sr. Monteiro. No iFood e no 99 Food, o pagamento é feito pelo próprio app.</p>
+        </details>
+        <details class="pergunta">
+          <summary class="pergunta__titulo">Faz feijoada para festa ou evento?</summary>
+          <p class="pergunta__resposta">Sim. Para evento ou encomenda grande, chame no WhatsApp informando a data, o número de pessoas e o bairro.</p>
+        </details>
+      </div>
+    </section>
   </main>
 
   <footer class="rodape">
@@ -378,174 +430,453 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Restaurant",
-  "@id": "https://feijoadaporkinho.com.br/#restaurante",
-  "name": "Feijoada Porkinho",
-  "description": "Feijoada e torresmo caseiro em Fortaleza/CE. Pedido pelo iFood e pelo 99 Food ou retirada em um dos 4 food trucks.",
-  "url": "https://feijoadaporkinho.com.br/",
-  "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=2",
-  "logo": "https://feijoadaporkinho.com.br/img/icon-512.png?v=2",
-  "telephone": "+5585985900985",
-  "email": "contato@feijoadaporkinho.com.br",
-  "servesCuisine": "Brasileira",
-  "priceRange": "R$$",
-  "currenciesAccepted": "BRL",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Rua Marcelino Lopes, 4100",
-    "addressLocality": "Fortaleza",
-    "addressRegion": "CE",
-    "postalCode": "60833-075",
-    "addressCountry": "BR"
-  },
-  "openingHoursSpecification": [
+  "@graph": [
     {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Friday", "Saturday", "Sunday"],
-      "opens": "09:00",
-      "closes": "15:00"
-    }
-  ],
-  "sameAs": [
-    "https://instagram.com/feijoadaporkinho",
-    "https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share"
-  ],
-  "potentialAction": {
-    "@type": "OrderAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": "https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share",
-      "actionPlatform": [
-        "http://schema.org/DesktopWebPlatform",
-        "http://schema.org/MobileWebPlatform"
-      ]
-    },
-    "deliveryMethod": [
-      "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
-      "http://purl.org/goodrelations/v1#DeliveryModePickUp"
-    ]
-  },
-  "hasMenu": {
-    "@type": "Menu",
-    "name": "Cardápio Feijoada Porkinho",
-    "inLanguage": "pt-BR",
-    "hasMenuSection": [
-      {
-        "@type": "MenuSection",
-        "name": "Kits de feijoada",
-        "hasMenuItem": [
-          {
-            "@type": "MenuItem",
-            "name": "Kit Feijoada Executiva",
-            "description": "600 g de feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa. Serve 1 a 2 pessoas.",
-            "offers": { "@type": "Offer", "price": "69.90", "priceCurrency": "BRL" }
-          },
-          {
-            "@type": "MenuItem",
-            "name": "Kit Feijoada Completa",
-            "description": "1,2 kg de feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais. Serve 3 a 4 pessoas.",
-            "offers": { "@type": "Offer", "price": "119.90", "priceCurrency": "BRL" }
-          }
-        ]
-      },
-      {
-        "@type": "MenuSection",
-        "name": "Petiscos",
-        "hasMenuItem": [
-          {
-            "@type": "MenuItem",
-            "name": "Bolinha de Feijoada (12 unidades)",
-            "description": "Petisco crocante por fora, recheado de feijoada.",
-            "offers": { "@type": "Offer", "price": "24.90", "priceCurrency": "BRL" }
-          },
-          {
-            "@type": "MenuItem",
-            "name": "Porção de Torresmo Caseiro (80 g)",
-            "description": "Frito até ficar sequinho.",
-            "offers": { "@type": "Offer", "price": "14.90", "priceCurrency": "BRL" }
-          }
-        ]
-      },
-      {
-        "@type": "MenuSection",
-        "name": "Bebidas",
-        "hasMenuItem": [
-          {
-            "@type": "MenuItem",
-            "name": "Coca-Cola garrafa 2 L",
-            "offers": { "@type": "Offer", "price": "19.90", "priceCurrency": "BRL" }
-          },
-          {
-            "@type": "MenuItem",
-            "name": "Coca-Cola lata 350 ml",
-            "offers": { "@type": "Offer", "price": "8.90", "priceCurrency": "BRL" }
-          }
-        ]
+      "@type": "WebSite",
+      "@id": "https://feijoadaporkinho.com.br/#site",
+      "url": "https://feijoadaporkinho.com.br/",
+      "name": "Feijoada Porkinho",
+      "inLanguage": "pt-BR",
+      "publisher": {
+        "@id": "https://feijoadaporkinho.com.br/#empresa"
       }
-    ]
-  },
-  "department": [
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://feijoadaporkinho.com.br/#empresa",
+      "name": "Feijoada Porkinho",
+      "description": "Feijoada e torresmo caseiro de sexta a domingo em Fortaleza e no Eusébio (CE). Pedido pelo iFood e pelo 99 Food ou retirada em um dos 4 food trucks.",
+      "url": "https://feijoadaporkinho.com.br/",
+      "logo": "https://feijoadaporkinho.com.br/img/icon-512.png?v=2",
+      "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=2",
+      "telephone": "+5585985900985",
+      "email": "contato@feijoadaporkinho.com.br",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Rua Marcelino Lopes, 4100",
+        "addressLocality": "Fortaleza",
+        "addressRegion": "CE",
+        "postalCode": "60833-075",
+        "addressCountry": "BR",
+        "description": "Sede e fábrica. Não atende ao público."
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Fortaleza"
+        },
+        {
+          "@type": "City",
+          "name": "Eusébio"
+        }
+      ],
+      "sameAs": [
+        "https://instagram.com/feijoadaporkinho",
+        "https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share",
+        "https://oia.99app.com/dlp9/0DRh5f"
+      ],
+      "subOrganization": [
+        {
+          "@id": "https://feijoadaporkinho.com.br/#ponto-guararapes"
+        },
+        {
+          "@id": "https://feijoadaporkinho.com.br/#ponto-eusebio"
+        },
+        {
+          "@id": "https://feijoadaporkinho.com.br/#ponto-parque-del-sol"
+        },
+        {
+          "@id": "https://feijoadaporkinho.com.br/#ponto-sapiranga"
+        }
+      ],
+      "potentialAction": [
+        {
+          "@type": "OrderAction",
+          "name": "Pedir no iFood",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share",
+            "actionPlatform": [
+              "http://schema.org/DesktopWebPlatform",
+              "http://schema.org/MobileWebPlatform"
+            ]
+          },
+          "deliveryMethod": [
+            "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
+            "http://purl.org/goodrelations/v1#DeliveryModePickUp"
+          ]
+        },
+        {
+          "@type": "OrderAction",
+          "name": "Pedir no 99 Food",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://oia.99app.com/dlp9/0DRh5f",
+            "actionPlatform": [
+              "http://schema.org/MobileWebPlatform"
+            ]
+          },
+          "deliveryMethod": [
+            "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
+          ]
+        }
+      ]
+    },
     {
       "@type": "FoodEstablishment",
+      "@id": "https://feijoadaporkinho.com.br/#ponto-guararapes",
       "name": "Feijoada Porkinho — Guararapes",
-      "description": "Food truck exclusivamente para retirada.",
-      "url": "https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A",
+      "description": "Food truck da Feijoada Porkinho, exclusivamente para retirada: não há mesas nem consumo no local.",
+      "url": "https://feijoadaporkinho.com.br/#ponto-guararapes",
+      "hasMap": "https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A",
+      "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=2",
       "telephone": "+5585985900985",
-      "servesCuisine": "Brasileira",
+      "servesCuisine": [
+        "Brasileira",
+        "Feijoada"
+      ],
       "priceRange": "R$$",
-      "geo": { "@type": "GeoCoordinates", "latitude": -3.765045, "longitude": -38.487662 },
-      "address": { "@type": "PostalAddress", "addressLocality": "Fortaleza", "addressRegion": "CE", "addressCountry": "BR" },
+      "currenciesAccepted": "BRL",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -3.765045,
+        "longitude": -38.487662
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Fortaleza",
+        "addressRegion": "CE",
+        "addressCountry": "BR"
+      },
       "openingHoursSpecification": [
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
-      ]
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "15:00"
+        }
+      ],
+      "parentOrganization": {
+        "@id": "https://feijoadaporkinho.com.br/#empresa"
+      },
+      "hasMenu": {
+        "@id": "https://feijoadaporkinho.com.br/#cardapio"
+      },
+      "acceptsReservations": false
     },
     {
       "@type": "FoodEstablishment",
+      "@id": "https://feijoadaporkinho.com.br/#ponto-eusebio",
       "name": "Feijoada Porkinho — Eusébio",
-      "description": "Food truck exclusivamente para retirada.",
-      "url": "https://goo.gl/maps/rtKKp78Pbua8ryKr8",
+      "description": "Food truck da Feijoada Porkinho, exclusivamente para retirada: não há mesas nem consumo no local.",
+      "url": "https://feijoadaporkinho.com.br/#ponto-eusebio",
+      "hasMap": "https://goo.gl/maps/rtKKp78Pbua8ryKr8",
+      "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=2",
       "telephone": "+5585985900985",
-      "servesCuisine": "Brasileira",
+      "servesCuisine": [
+        "Brasileira",
+        "Feijoada"
+      ],
       "priceRange": "R$$",
-      "geo": { "@type": "GeoCoordinates", "latitude": -3.882846, "longitude": -38.459273 },
-      "address": { "@type": "PostalAddress", "streetAddress": "Av. Eusébio de Queiroz, 3409", "addressLocality": "Eusébio", "addressRegion": "CE", "addressCountry": "BR" },
+      "currenciesAccepted": "BRL",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -3.882846,
+        "longitude": -38.459273
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Av. Eusébio de Queiroz, 3409",
+        "addressLocality": "Eusébio",
+        "addressRegion": "CE",
+        "addressCountry": "BR"
+      },
       "openingHoursSpecification": [
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
-      ]
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "15:00"
+        }
+      ],
+      "parentOrganization": {
+        "@id": "https://feijoadaporkinho.com.br/#empresa"
+      },
+      "hasMenu": {
+        "@id": "https://feijoadaporkinho.com.br/#cardapio"
+      },
+      "acceptsReservations": false
     },
     {
       "@type": "FoodEstablishment",
+      "@id": "https://feijoadaporkinho.com.br/#ponto-parque-del-sol",
       "name": "Feijoada Porkinho — Parque del Sol",
-      "description": "Food truck exclusivamente para retirada.",
-      "url": "https://goo.gl/maps/Dm4Ts9Kn9oQHNPrBA",
+      "description": "Food truck da Feijoada Porkinho, exclusivamente para retirada: não há mesas nem consumo no local.",
+      "url": "https://feijoadaporkinho.com.br/#ponto-parque-del-sol",
+      "hasMap": "https://goo.gl/maps/Dm4Ts9Kn9oQHNPrBA",
+      "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=2",
       "telephone": "+5585985900985",
-      "servesCuisine": "Brasileira",
+      "servesCuisine": [
+        "Brasileira",
+        "Feijoada"
+      ],
       "priceRange": "R$$",
-      "geo": { "@type": "GeoCoordinates", "latitude": -3.804495, "longitude": -38.498675 },
-      "address": { "@type": "PostalAddress", "addressLocality": "Fortaleza", "addressRegion": "CE", "addressCountry": "BR" },
+      "currenciesAccepted": "BRL",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -3.804495,
+        "longitude": -38.498675
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Fortaleza",
+        "addressRegion": "CE",
+        "addressCountry": "BR"
+      },
       "openingHoursSpecification": [
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
-      ]
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "15:00"
+        }
+      ],
+      "parentOrganization": {
+        "@id": "https://feijoadaporkinho.com.br/#empresa"
+      },
+      "hasMenu": {
+        "@id": "https://feijoadaporkinho.com.br/#cardapio"
+      },
+      "acceptsReservations": false
     },
     {
       "@type": "FoodEstablishment",
+      "@id": "https://feijoadaporkinho.com.br/#ponto-sapiranga",
       "name": "Feijoada Porkinho — Sapiranga",
-      "description": "Food truck exclusivamente para retirada.",
-      "url": "https://goo.gl/maps/FM5NELs2QDhqmfeTA",
+      "description": "Food truck da Feijoada Porkinho, exclusivamente para retirada: não há mesas nem consumo no local.",
+      "url": "https://feijoadaporkinho.com.br/#ponto-sapiranga",
+      "hasMap": "https://goo.gl/maps/FM5NELs2QDhqmfeTA",
+      "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=2",
       "telephone": "+5585985900985",
-      "servesCuisine": "Brasileira",
+      "servesCuisine": [
+        "Brasileira",
+        "Feijoada"
+      ],
       "priceRange": "R$$",
-      "geo": { "@type": "GeoCoordinates", "latitude": -3.787895, "longitude": -38.463066 },
-      "address": { "@type": "PostalAddress", "addressLocality": "Fortaleza", "addressRegion": "CE", "addressCountry": "BR" },
+      "currenciesAccepted": "BRL",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -3.787895,
+        "longitude": -38.463066
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Fortaleza",
+        "addressRegion": "CE",
+        "addressCountry": "BR"
+      },
       "openingHoursSpecification": [
-        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday", "Saturday", "Sunday"], "opens": "09:00", "closes": "15:00" }
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "09:00",
+          "closes": "15:00"
+        }
+      ],
+      "parentOrganization": {
+        "@id": "https://feijoadaporkinho.com.br/#empresa"
+      },
+      "hasMenu": {
+        "@id": "https://feijoadaporkinho.com.br/#cardapio"
+      },
+      "acceptsReservations": false
+    },
+    {
+      "@type": "Menu",
+      "@id": "https://feijoadaporkinho.com.br/#cardapio",
+      "url": "https://feijoadaporkinho.com.br/#kits",
+      "name": "Cardápio Feijoada Porkinho",
+      "inLanguage": "pt-BR",
+      "hasMenuSection": [
+        {
+          "@type": "MenuSection",
+          "name": "Kits de feijoada",
+          "hasMenuItem": [
+            {
+              "@type": "MenuItem",
+              "name": "Kit Feijoada Executiva",
+              "description": "600 g de feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa. Serve 1 a 2 pessoas.",
+              "offers": {
+                "@type": "Offer",
+                "price": "69.90",
+                "priceCurrency": "BRL"
+              }
+            },
+            {
+              "@type": "MenuItem",
+              "name": "Kit Feijoada Completa",
+              "description": "1,2 kg de feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais. Serve 3 a 4 pessoas.",
+              "offers": {
+                "@type": "Offer",
+                "price": "119.90",
+                "priceCurrency": "BRL"
+              }
+            }
+          ]
+        },
+        {
+          "@type": "MenuSection",
+          "name": "Petiscos",
+          "hasMenuItem": [
+            {
+              "@type": "MenuItem",
+              "name": "Bolinha de Feijoada (12 unidades)",
+              "description": "Petisco crocante por fora, recheado de feijoada.",
+              "offers": {
+                "@type": "Offer",
+                "price": "24.90",
+                "priceCurrency": "BRL"
+              }
+            },
+            {
+              "@type": "MenuItem",
+              "name": "Porção de Torresmo Caseiro (80 g)",
+              "description": "Frito até ficar sequinho.",
+              "offers": {
+                "@type": "Offer",
+                "price": "14.90",
+                "priceCurrency": "BRL"
+              }
+            }
+          ]
+        },
+        {
+          "@type": "MenuSection",
+          "name": "Bebidas",
+          "hasMenuItem": [
+            {
+              "@type": "MenuItem",
+              "name": "Coca-Cola garrafa 2 L",
+              "offers": {
+                "@type": "Offer",
+                "price": "19.90",
+                "priceCurrency": "BRL"
+              }
+            },
+            {
+              "@type": "MenuItem",
+              "name": "Coca-Cola lata 350 ml",
+              "offers": {
+                "@type": "Offer",
+                "price": "8.90",
+                "priceCurrency": "BRL"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://feijoadaporkinho.com.br/#perguntas",
+      "url": "https://feijoadaporkinho.com.br/#perguntas",
+      "inLanguage": "pt-BR",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quantas pessoas cada kit serve?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Kit Feijoada Executiva, com 600 g de feijoada, serve de 1 a 2 pessoas. O Kit Feijoada Completa, com 1,2 kg, serve de 3 a 4 pessoas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Em que dias e horários a Feijoada Porkinho funciona?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sexta, sábado e domingo, das 09:00 às 15:00, no horário de Fortaleza. Os pedidos pelo iFood e pelo 99 Food e a retirada nos food trucks seguem esse horário."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Onde fica a Feijoada Porkinho?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "São 4 food trucks de retirada: Guararapes, Parque del Sol e Sapiranga, em Fortaleza, e Av. Eusébio de Queiroz, 3409, no Eusébio. O endereço da Rua Marcelino Lopes é da fábrica e não atende ao público."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Dá para comer no food truck?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não. Os food trucks são exclusivamente para retirada: não há mesas nem consumo no local."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Tem entrega?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, pelo iFood e pelo 99 Food. A área e a taxa de entrega aparecem no app, de acordo com o seu endereço."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual é o pedido mínimo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "R$ 59,00 no iFood."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Os kits vêm com pratos e talheres?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não. Os kits não acompanham pratos nem talheres descartáveis."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Aceita Pix?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, pelo WhatsApp, direto com o Sr. Monteiro. No iFood e no 99 Food, o pagamento é feito pelo próprio app."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Faz feijoada para festa ou evento?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. Para evento ou encomenda grande, chame no WhatsApp informando a data, o número de pessoas e o bairro."
+          }
+        }
       ]
     }
   ]
 }
 </script>
 
-<script src="/js/app.js?v=3" defer></script>
+<script src="/js/app.js?v=4" defer></script>
 
 <!-- Cloudflare Web Analytics: sem cookie, agregado. Token no README. -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "SEU_TOKEN_AQUI"}'></script>

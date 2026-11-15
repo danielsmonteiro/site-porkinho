@@ -51,6 +51,16 @@ jobs:
           grep -oE "url: '[^']*'|mapa: '[^']*'" public/js/app.js | cut -d"'" -f2 | sort > /tmp/app
           diff -u /tmp/worker /tmp/app
 
+      - name: JSON-LD do index.html e JSON valido
+        run: |
+          node -e '
+            const html = require("fs").readFileSync("public/index.html", "utf8");
+            const blocos = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+            if (!blocos.length) throw new Error("nenhum bloco JSON-LD no index.html");
+            for (const b of blocos) JSON.parse(b[1]);
+            console.log(blocos.length + " bloco(s) JSON-LD ok");
+          '
+
       - name: Ensaio do deploy
         run: npx -y "$WRANGLER" deploy --dry-run
 
@@ -67,10 +77,17 @@ jobs:
       url: https://feijoadaporkinho.com.br
     steps:
       - uses: actions/checkout@v7
+        with:
+          # historico completo: o atualizar-sitemap.sh pega a data de cada
+          # pagina no git
+          fetch-depth: 0
 
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+
+      - name: Datas do sitemap.xml
+        run: ./deploy/scripts/atualizar-sitemap.sh
 
       - name: Publicar na Cloudflare
         env:
