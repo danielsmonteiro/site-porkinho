@@ -6,10 +6,19 @@ o caso de precisar voltar. Os arquivos citados continuam em `deploy/nginx/` e
 `deploy/scripts/` (`deploy.sh`, `emitir-certificado.sh`, `update-cloudflare-ips.sh`,
 `gerar-csr-origem.sh`).
 
-> **Para voltar ao VPS:** remova as rotas do Worker (`npx wrangler@4.156.0 delete`
-> ou Workers & Pages → feijoadaporkinho → Settings → Domains & Routes). Os
-> registros DNS continuam apontando para a origem, então o tráfego volta para
-> o nginx assim que as rotas somem.
+> **Voltar ao VPS não é só tirar as rotas do Worker.** O VPS está em
+> `192.168.51.106`, um IP **privado**: a borda da Cloudflare não tem como
+> chegar nele. Era exatamente o que acontecia antes da migração — o site
+> respondia **522**. Remover as rotas do Worker com o DNS assim troca um site no
+> ar por um site fora do ar.
+>
+> Para o VPS voltar a servir, antes de mexer no Worker é preciso dar à borda um
+> caminho até ele: um IP público com as portas 80/443 liberadas para as faixas
+> da Cloudflare (e os registros `A` apontando para esse IP), ou um
+> **Cloudflare Tunnel** (`cloudflared`) rodando no servidor. Só depois disso,
+> e com `curl -k --resolve feijoadaporkinho.com.br:443:<ip> https://feijoadaporkinho.com.br/health`
+> respondendo `ok`, remova as rotas (Workers & Pages → feijoadaporkinho →
+> Settings → Domains & Routes).
 
 ---
 

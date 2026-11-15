@@ -6,16 +6,24 @@
   "main": "src/worker.js",
   "compatibility_date": "2026-10-30",
 
-  // public/ inteiro vira Static Assets. O worker roda ANTES de qualquer
-  // arquivo para aplicar CSP/HSTS, Cache-Control e as rotas /go/.
+  // public/ inteiro vira Static Assets. O worker so roda onde ha logica
+  // (HTML, /go/*, /health, www -> apex). css/js/img/fonts e os arquivos de
+  // raiz vao direto, com os cabecalhos do public/_headers: nao contam na
+  // cota de 100 mil requisicoes/dia do Worker no plano Free. Sem isso, cada
+  // visita gastava ~10 requisicoes e um pico de ~10 mil visitas derrubava o
+  // site inteiro (erro 1027) ate a cota zerar.
   // html_handling "none": as URLs ficam exatamente como no nginx
   // (/politica-de-privacidade.html continua com .html, sem redirect 307).
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": true,
+    "run_worker_first": [
+      "/*",
+      "!/css/*", "!/js/*", "!/img/*", "!/fonts/*",
+      "!/favicon.ico", "!/robots.txt", "!/sitemap.xml"
+    ],
     "html_handling": "none",
-    "not_found_handling": "none"
+    "not_found_handling": "404-page"
   },
 
   // Rotas sobre os registros DNS que ja existem na zona (nuvem laranja).
@@ -24,7 +32,9 @@
     { "pattern": "feijoadaporkinho.com.br/*", "zone_name": "feijoadaporkinho.com.br" },
     { "pattern": "www.feijoadaporkinho.com.br/*", "zone_name": "feijoadaporkinho.com.br" }
   ],
-  "workers_dev": true,
+  // Sem *.workers.dev: o site so existe no dominio proprio, e cliques
+  // vindos de outro host nao entram na contagem.
+  "workers_dev": false,
   "preview_urls": false,
 
   // Contagem de cliques das rotas /go/* (sem IP, sem user-agent).

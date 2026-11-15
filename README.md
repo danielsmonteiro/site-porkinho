@@ -28,13 +28,15 @@ public/                         tudo o que vai para a Cloudflare (Static Assets)
   img/                          logo, ícones, og-image, fotos dos kits
   fonts/outfit-latin-var.woff2  fonte self-hosted (32 KB, pesos 400–700)
   favicon.ico  site.webmanifest  robots.txt  sitemap.xml
+  _headers                      CSP, HSTS e Cache-Control dos arquivos (fonte única)
   .assetsignore                 o que NÃO sobe para a Cloudflare
 
-src/worker.js                   redirects /go/, cabeçalhos, cache, páginas de erro
+src/worker.js                   redirects /go/, www → apex, cache do HTML, páginas de erro
 wrangler.jsonc                  configuração do Worker (rotas, dataset de cliques)
 
 deploy/
   scripts/relatorio-cliques.sh  relatório de cliques (Analytics Engine)
+  scripts/carregar-env.sh       lê deploy/.env (usado pelos dois scripts)
   .env.exemplo                  copie para .env (está no .gitignore)
   LEGADO-VPS.md                 como era no VPS com nginx, para voltar se preciso
   nginx/  scripts/deploy.sh ... arquivos da época do VPS (ver LEGADO-VPS.md)
@@ -45,7 +47,7 @@ deploy/
 > geolocalização sem empurrar a página. Fazer isso no `DOMContentLoaded`
 > custava 0,015 de CLS. Ele é liberado na CSP **por hash**, não por
 > `'unsafe-inline'`. **Se mudar uma vírgula nesse script, recalcule o hash** e
-> troque em `SEGURANCA` no `src/worker.js`, senão o navegador bloqueia e o
+> troque no `public/_headers`, senão o navegador bloqueia e o
 > botão some:
 >
 > ```bash
@@ -163,8 +165,22 @@ chega no Maps, e o relatório mostra que o link antigo ainda circula.
 ## Relatório de cliques
 
 Cada `/go/*` grava um ponto no **Workers Analytics Engine** (dataset
-`porkinho_cliques`) com rota, query string, status, país e o domínio de origem
-— **sem IP e sem user-agent**. O relatório roda na sua máquina e lê de lá:
+`porkinho_cliques`) com rota, resultado do evento (`?r=`), status, país e o
+domínio de origem — **sem IP e sem user-agent**. Só entram as rotas de
+`DESTINOS` e os eventos de `EVENTOS` (`src/worker.js`) com os `?r=` previstos;
+qualquer outra coisa em `/go/` cai num balde único, **`/go/(desconhecido)`**,
+com o caminho original guardado à parte (`blob5`). Assim varredura de robô não
+enche o relatório, e link velho circulando ainda aparece:
+
+```sql
+SELECT blob5 AS caminho, SUM(_sample_interval) AS n FROM porkinho_cliques
+WHERE blob1 = '/go/(desconhecido)' GROUP BY caminho ORDER BY n DESC
+```
+
+> **Evento novo no `app.js`** (`registrarEvento`) precisa de entrada em
+> `EVENTOS`, senão é contado como desconhecido.
+
+O relatório roda na sua máquina e lê de lá:
 
 ```bash
 ./deploy/scripts/relatorio-cliques.sh                     # lê CLOUDFLARE_* do deploy/.env
@@ -199,18 +215,29 @@ O Analytics Engine guarda os pontos por **3 meses**.
 ## Infraestrutura — Cloudflare Worker
 
 Desde 11/2026 o site roda num **Cloudflare Worker** com *Static Assets*. Não há
-servidor próprio: `public/` é enviado para a Cloudflare e o `src/worker.js`
-roda na frente de cada requisição, fazendo o que o nginx fazia:
+servidor próprio: `public/` é enviado para a Cloudflare, e o que o nginx fazia
+se divide assim:
 
 | O quê | Onde |
 |---|---|
 | `www` → apex e `http` → `https` (301) | `src/worker.js` |
 | `/health` responde `ok` | `src/worker.js` |
-| rotas `/go/*` (302 + `no-store`) e contagem do clique | `src/worker.js`, tabela `DESTINOS` |
-| CSP, HSTS, `nosniff`, Referrer/Permissions-Policy em **toda** resposta | `src/worker.js`, `SEGURANCA` |
-| `Cache-Control` por tipo de arquivo | `src/worker.js`, `cacheControl()` |
-| 404.html e 50x.html no visual do site | `src/worker.js` |
-| nome, rotas da zona, dataset de cliques | `wrangler.jsonc` |
+| rotas `/go/*` (302 + `no-store`) e contagem do clique | `src/worker.js`, tabelas `DESTINOS` e `EVENTOS` |
+| CSP, HSTS, `nosniff`, Referrer/Permissions-Policy | `public/_headers` (fonte única) |
+| `Cache-Control` de css/js/img/fonts e arquivos de raiz | `public/_headers` |
+| `Cache-Control` do HTML, 404.html e 50x.html | `src/worker.js` |
+| quais caminhos passam pelo Worker, rotas da zona, dataset | `wrangler.jsonc` |
+
+> **O Worker não roda para css/js/img/fonts, favicon, robots e sitemap**
+> (`run_worker_first` no `wrangler.jsonc`). Esses arquivos saem direto, de
+> graça e sem limite. A conta está no plano **Free**, com **100 mil execuções do
+> Worker por dia**; se cada imagem passasse por ele, uma visita gastaria ~10
+> execuções e um pico de ~10 mil visitas derrubaria o site inteiro (erro 1027)
+> até a cota zerar. Hoje uma visita gasta 1–2. **Arquivo novo fora dessas pastas
+> passa pelo Worker** — ponha imagem em `img/`, nunca na raiz.
+>
+> Os 301/302/204 que o Worker monta não têm corpo e saem sem CSP; o HSTS chega
+> pelas páginas HTML.
 
 O Worker está preso às **rotas** `feijoadaporkinho.com.br/*` e
 `www.feijoadaporkinho.com.br/*`, sobre os registros DNS que já existiam com

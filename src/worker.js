@@ -1,23 +1,31 @@
 // ------------------------------------------------------------------------
 // Feijoada Porkinho — Cloudflare Worker
 //
-// Substitui o nginx do VPS. Os arquivos de public/ sao servidos pelo
-// Workers Static Assets (binding ASSETS); este script roda ANTES deles
-// (run_worker_first) e faz o que o nginx fazia:
+// Os arquivos de public/ sao servidos pelo Workers Static Assets. Este
+// script so roda nas requisicoes que precisam de logica (ver
+// run_worker_first no wrangler.jsonc): HTML, /go/*, /health e o resto que
+// nao for css/js/img/fonts/favicon/robots/sitemap. Os estaticos vao direto,
+// sem consumir a cota diaria de requisicoes do Worker.
 //
-//   - www -> apex (301) e http -> https (301)
+// O que ele faz:
+//   - www -> apex e http -> https (301)
 //   - /health responde "ok"
 //   - rotas /go/*: 302 para o destino real + contagem do clique
-//   - cabecalhos de seguranca (CSP, HSTS, nosniff...) em TODA resposta
-//   - Cache-Control por tipo de arquivo
-//   - 404.html e 50x.html no visual do site
+//   - Cache-Control do HTML e paginas 404/50x no visual do site
+//
+// CABECALHOS DE SEGURANCA (CSP, HSTS, nosniff...) moram em public/_headers,
+// fonte unica. Tudo o que sai de env.ASSETS.fetch() ja vem com eles. Os
+// 301/302/204 montados aqui nao tem corpo e saem sem eles (o HSTS chega
+// pelo HTML).
 //
 // CONTAGEM DE CLIQUES
 // Cada /go/* grava um ponto no Workers Analytics Engine (dataset
-// porkinho_cliques). SEM IP e SEM user-agent: so rota, status, pais e o
-// dominio de origem. O relatorio sai de deploy/scripts/relatorio-cliques.sh.
+// porkinho_cliques). SEM IP e SEM user-agent: so rota, resultado do evento,
+// pais e o dominio de origem. So entram rotas e eventos conhecidos; o resto
+// cai num balde unico (/go/(desconhecido)), para varredura de robo nao
+// encher o dataset nem baguncar o relatorio.
 //
-// REGRAS QUE NAO PODEM MUDAR (herdadas do nginx)
+// REGRAS QUE NAO PODEM MUDAR
 //  - 302, nunca 301, nas rotas /go/. O 301 fica no cache do navegador e a
 //    partir do segundo clique a contagem para.
 //  - Cache-Control: no-store em todo o /go/.
@@ -40,59 +48,48 @@ const DESTINOS = {
   '/go/ponto/sapiranga': 'https://goo.gl/maps/FM5NELs2QDhqmfeTA',
 };
 
-// Se mudar o <script> inline do <head>, recalcule o hash (ver README).
-const SEGURANCA = {
-  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
-  'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()',
-  'Content-Security-Policy':
-    "default-src 'self'; " +
-    "script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=' https://static.cloudflareinsights.com; " +
-    "style-src 'self' 'unsafe-inline'; connect-src 'self' https://cloudflareinsights.com; " +
-    "img-src 'self' data:; font-src 'self'; form-action 'none'; frame-ancestors 'none'; " +
-    "base-uri 'self'; object-src 'none'; manifest-src 'self'",
+// Eventos internos que public/js/app.js dispara (registrarEvento), com os
+// valores possiveis de ?r=. Evento novo no app.js = entrada nova aqui.
+const EVENTOS = {
+  geolocalizacao: ['sucesso', 'negado', 'erro'],
+  cardapio: ['aberto'],
 };
 
-const IMUTAVEL = 'public, max-age=31536000, immutable';
+const DESCONHECIDO = '/go/(desconhecido)';
 
-function cacheControl(caminho, status) {
-  if (status === 404 || status >= 500) return 'no-store';
-  if (/^\/(css|js|img|fonts)\//.test(caminho)) return IMUTAVEL;
-  if (caminho === '/favicon.ico') return 'public, max-age=2592000';
-  if (caminho === '/site.webmanifest' || caminho === '/robots.txt' || caminho === '/sitemap.xml') {
-    return 'public, max-age=86400';
-  }
+// Content-Type que o Static Assets nao acerta sozinho.
+const TIPOS = { '/site.webmanifest': 'application/manifest+json' };
+
+function cacheControl(caminho) {
+  if (caminho === '/site.webmanifest') return 'public, max-age=86400';
   // HTML: sempre revalida
   return 'public, max-age=0, must-revalidate';
 }
 
-function comSeguranca(resposta, extras = {}) {
-  const r = new Response(resposta.body, resposta);
-  for (const [k, v] of Object.entries(SEGURANCA)) r.headers.set(k, v);
-  for (const [k, v] of Object.entries(extras)) r.headers.set(k, v);
-  return r;
+function semCorpo(status, headers, cache) {
+  return new Response(null, { status, headers: { ...headers, 'Cache-Control': cache } });
 }
 
 function redirecionar(destino, status) {
-  return comSeguranca(new Response(null, { status, headers: { Location: destino } }), {
-    'Cache-Control': status === 302 ? 'no-store' : 'public, max-age=3600',
-  });
+  return semCorpo(status, { Location: destino }, status === 302 ? 'no-store' : 'public, max-age=3600');
 }
 
-function registrarClique(env, request, caminho, status) {
+// rota: o que vira indice e blob1 | r: resultado do evento (ou '')
+// original: caminho cru, so para o balde de desconhecidos (blob5)
+function registrarClique(env, request, rota, r, status, original = '') {
   if (!env.CLIQUES) return;
   let origem = '';
   try {
     const ref = request.headers.get('Referer');
     if (ref) origem = new URL(ref).hostname;
   } catch (_) { /* referer invalido: ignora */ }
-  const url = new URL(request.url);
   try {
     env.CLIQUES.writeDataPoint({
-      indexes: [caminho.slice(0, 96)],
+      indexes: [rota],
       // blob1 rota | blob2 query (?r=...) | blob3 pais | blob4 dominio de origem
-      blobs: [caminho, url.search.slice(0, 200), request.cf?.country || '', origem],
+      // blob5 caminho original (so em /go/(desconhecido))
+      blobs: [rota, r ? `?r=${r}` : '', request.cf?.country || '', origem.slice(0, 100),
+        original.slice(0, 100)],
       // double1 status
       doubles: [status],
     });
@@ -101,15 +98,35 @@ function registrarClique(env, request, caminho, status) {
   }
 }
 
+function tratarGo(env, request, url) {
+  const caminho = url.pathname;
+  const destino = DESTINOS[caminho];
+  if (destino) {
+    registrarClique(env, request, caminho, '', 302);
+    return redirecionar(destino, 302);
+  }
+  if (caminho.startsWith('/go/evento/')) {
+    const nome = caminho.slice('/go/evento/'.length);
+    const r = url.searchParams.get('r') || '';
+    if (Object.hasOwn(EVENTOS, nome) && EVENTOS[nome].includes(r)) {
+      registrarClique(env, request, caminho, r, 204);
+    } else {
+      registrarClique(env, request, DESCONHECIDO, '', 204, caminho);
+    }
+    return semCorpo(204, {}, 'no-store');
+  }
+  // Qualquer outra coisa em /go/: conta no balde (ajuda a achar link velho
+  // circulando) e devolve 404.
+  registrarClique(env, request, DESCONHECIDO, '', 404, caminho);
+  return paginaDeErro(env, request, '/404.html', 404);
+}
+
 async function paginaDeErro(env, request, arquivo, status) {
-  const url = new URL(request.url);
-  url.pathname = arquivo;
-  url.search = '';
-  const r = await env.ASSETS.fetch(new Request(url, { method: 'GET' }));
-  return comSeguranca(new Response(request.method === 'HEAD' ? null : r.body, {
-    status,
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-  }), { 'Cache-Control': 'no-store' });
+  const r = await env.ASSETS.fetch(new Request(new URL(arquivo, request.url), { method: 'GET' }));
+  const resposta = new Response(request.method === 'HEAD' ? null : r.body, { status, headers: r.headers });
+  resposta.headers.set('Content-Type', 'text/html; charset=utf-8');
+  resposta.headers.set('Cache-Control', 'no-store');
+  return resposta;
 }
 
 async function tratar(request, env) {
@@ -124,32 +141,18 @@ async function tratar(request, env) {
   }
 
   // --- www -> apex e http -> https ---------------------------------------
-  if (url.hostname === `www.${DOMINIO}` || url.protocol === 'http:') {
-    if (url.hostname === `www.${DOMINIO}` || url.hostname === DOMINIO) {
-      return redirecionar(`https://${DOMINIO}${caminho}${url.search}`, 301);
-    }
+  if (url.hostname === `www.${DOMINIO}` || (url.hostname === DOMINIO && url.protocol === 'http:')) {
+    return redirecionar(`https://${DOMINIO}${caminho}${url.search}`, 301);
   }
 
   // --- contagem de cliques -----------------------------------------------
-  if (caminho === '/go' || caminho.startsWith('/go/')) {
-    const destino = DESTINOS[caminho];
-    if (destino) {
-      registrarClique(env, request, caminho, 302);
-      return redirecionar(destino, 302);
-    }
-    if (caminho.startsWith('/go/evento/')) {
-      registrarClique(env, request, caminho, 204);
-      return comSeguranca(new Response(null, { status: 204 }), { 'Cache-Control': 'no-store' });
-    }
-    // qualquer outra coisa em /go/: registra (ajuda a achar link velho) e 404
-    registrarClique(env, request, caminho, 404);
-    return paginaDeErro(env, request, '/404.html', 404);
-  }
+  if (caminho === '/go' || caminho.startsWith('/go/')) return tratarGo(env, request, url);
 
   if (request.method !== 'GET' && request.method !== 'HEAD') {
-    return comSeguranca(new Response('Method Not Allowed\n', {
-      status: 405, headers: { Allow: 'GET, HEAD', 'Content-Type': 'text/plain' },
-    }), { 'Cache-Control': 'no-store' });
+    return new Response('Method Not Allowed\n', {
+      status: 405,
+      headers: { Allow: 'GET, HEAD', 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' },
+    });
   }
 
   // --- arquivos escondidos e paginas de erro nao sao acessiveis direto ---
@@ -160,21 +163,15 @@ async function tratar(request, env) {
   // --- estaticos ----------------------------------------------------------
   // Equivale ao `try_files $uri $uri/ =404` + `index index.html` do nginx.
   let alvo = request;
-  if (caminho.endsWith('/')) {
-    const u = new URL(url);
-    u.pathname = caminho + 'index.html';
-    alvo = new Request(u, request);
-  }
+  if (caminho.endsWith('/')) alvo = new Request(new URL(caminho + 'index.html', url), request);
   const resposta = await env.ASSETS.fetch(alvo);
 
-  if (resposta.status === 404) {
-    return paginaDeErro(env, request, '/404.html', 404);
-  }
+  if (resposta.status === 404) return paginaDeErro(env, request, '/404.html', 404);
 
-  const extras = { 'Cache-Control': cacheControl(caminho, resposta.status) };
-  if (caminho === '/site.webmanifest') extras['Content-Type'] = 'application/manifest+json';
-  if (caminho.endsWith('.woff2')) extras['Content-Type'] = 'font/woff2';
-  return comSeguranca(resposta, extras);
+  const r = new Response(resposta.body, resposta);
+  r.headers.set('Cache-Control', cacheControl(caminho));
+  if (TIPOS[caminho]) r.headers.set('Content-Type', TIPOS[caminho]);
+  return r;
 }
 
 export default {
