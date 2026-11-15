@@ -4,8 +4,9 @@ Hub de links de <https://feijoadaporkinho.com.br>. A pessoa chega pela bio do
 Instagram, pelo QR Code no food truck ou por um link no WhatsApp e precisa
 decidir em menos de 5 segundos como comprar.
 
-HTML, CSS e JavaScript puros. Sem framework, sem bundler, sem Node no servidor,
-sem etapa de build. Só nginx servindo arquivo estático.
+HTML, CSS e JavaScript puros. Sem framework, sem bundler, sem etapa de build.
+Servido por um Cloudflare Worker (arquivos estáticos + um script de ~200 linhas
+que faz os redirects `/go/` e os cabeçalhos).
 
 **Hierarquia da página — não mexa nesta ordem:**
 
@@ -18,7 +19,7 @@ sem etapa de build. Só nginx servindo arquivo estático.
 ## Estrutura
 
 ```
-public/                         tudo o que vai para o servidor
+public/                         tudo o que vai para a Cloudflare (Static Assets)
   index.html                    a página
   politica-de-privacidade.html
   404.html  50x.html            páginas de erro no visual do site
@@ -27,40 +28,24 @@ public/                         tudo o que vai para o servidor
   img/                          logo, ícones, og-image, fotos dos kits
   fonts/outfit-latin-var.woff2  fonte self-hosted (32 KB, pesos 400–700)
   favicon.ico  site.webmanifest  robots.txt  sitemap.xml
+  .assetsignore                 o que NÃO sobe para a Cloudflare
+
+src/worker.js                   redirects /go/, cabeçalhos, cache, páginas de erro
+wrangler.jsonc                  configuração do Worker (rotas, dataset de cliques)
 
 deploy/
-  nginx/
-    feijoadaporkinho.com.br.conf   server blocks (sites-available)
-    cliques.conf                   rotas /go/ (snippets, contexto server)
-    seguranca.conf                 cabeçalhos de segurança (snippets)
-    log-cliques.conf               log_format (conf.d, contexto http)
-    cloudflare-realip.conf         GERADO pelo script — não edite
-    logrotate-feijoadaporkinho     retenção de 30 dias
-  scripts/
-    deploy.sh                      publica public/ no servidor
-    update-cloudflare-ips.sh       gera o cloudflare-realip.conf
-    relatorio-cliques.sh           lê o log e imprime o relatório
-  .env.exemplo                     copie para .env (está no .gitignore)
+  scripts/relatorio-cliques.sh  relatório de cliques (Analytics Engine)
+  .env.exemplo                  copie para .env (está no .gitignore)
+  LEGADO-VPS.md                 como era no VPS com nginx, para voltar se preciso
+  nginx/  scripts/deploy.sh ... arquivos da época do VPS (ver LEGADO-VPS.md)
 ```
-
-> **Por que `log-cliques.conf` é separado de `cliques.conf`:** a diretiva
-> `log_format` só vale no contexto `http` e blocos `location` só valem no
-> contexto `server`. Os dois não cabem no mesmo `include`. O formato do log vai
-> para `conf.d/` e as rotas vão para `snippets/`.
-
-> **Por que `seguranca.conf` existe:** no nginx, um `add_header` dentro de um
-> bloco filho **descarta todos os `add_header` herdados do pai**. Como quase
-> todo `location` define o próprio `Cache-Control`, cada um deles perderia CSP,
-> `nosniff` e HSTS. Em vez de repetir seis diretivas em onze blocos, elas ficam
-> no snippet. **Regra: todo `location` que tiver qualquer `add_header` precisa
-> do `include /etc/nginx/snippets/porkinho-seguranca.conf;`.**
 
 > **O `<head>` tem um `<script>` de uma linha** que põe a classe `js` no
 > `<html>` antes da primeira pintura — é ele que revela o botão de
 > geolocalização sem empurrar a página. Fazer isso no `DOMContentLoaded`
 > custava 0,015 de CLS. Ele é liberado na CSP **por hash**, não por
 > `'unsafe-inline'`. **Se mudar uma vírgula nesse script, recalcule o hash** e
-> troque em `deploy/nginx/seguranca.conf`, senão o navegador bloqueia e o
+> troque em `SEGURANCA` no `src/worker.js`, senão o navegador bloqueia e o
 > botão some:
 >
 > ```bash
@@ -68,32 +53,29 @@ deploy/
 >   | openssl dgst -sha256 -binary | openssl base64
 > ```
 
-> **Por que os logs não ficam em `/var/log/nginx`:** o pacote nginx do Ubuntu já
-> traz `/etc/logrotate.d/nginx` cobrindo `/var/log/nginx/*.log`. Listar os
-> mesmos arquivos numa segunda regra faz o logrotate abortar com
-> `duplicate log entry` e **pular o arquivo do pacote inteiro** — o `logrotate`
-> diário passa a sair com erro e o `access.log` do próprio nginx deixa de ser
-> rotacionado. Com os nossos logs em `/var/log/feijoadaporkinho/`, as duas
-> regras convivem. Para conferir colisão use o ensaio **global**
-> (`sudo logrotate -d /etc/logrotate.conf`); o ensaio de um arquivo isolado não
-> mostra o conflito.
-
 ---
 
 ## Rodar localmente
+
+Com o Worker inteiro (rotas `/go/`, cabeçalhos, 404):
+
+```bash
+npx wrangler@4.156.0 dev --local --local-protocol https
+```
+
+Abra <https://localhost:8787> (o certificado é local, aceite o aviso). Use
+`--local-protocol https` mesmo: em HTTP o Worker vê `http://feijoadaporkinho.com.br`
+e responde 301 para HTTPS, como em produção.
+
+Sem Node, só os arquivos:
 
 ```bash
 cd public
 python3 -m http.server 8000
 ```
 
-Abra <http://localhost:8000>.
-
-O que **não** funciona no servidor local, e isso é esperado:
-
-- as rotas `/go/*` (quem faz o 302 e conta o clique é o nginx) — os botões
-  devolvem 404;
-- o beacon da Cloudflare.
+Nesse modo as rotas `/go/*` devolvem 404 (quem faz o 302 é o Worker) e o beacon
+da Cloudflare não funciona — é esperado.
 
 Para conferir o comportamento sem JavaScript, desligue o JS no DevTools e
 recarregue: todos os links e o cardápio inteiro estão no HTML. O JS só
@@ -131,7 +113,7 @@ O destino real aparece em **três** lugares. Os três precisam mudar juntos:
 | Onde | O quê |
 |---|---|
 | `public/js/app.js` | `SITE_DATA.canais.<canal>.url` |
-| `deploy/nginx/cliques.conf` | o `return 302 "..."` da rota |
+| `src/worker.js` | a entrada da rota em `DESTINOS` |
 | `public/index.html` | o atributo `title="..."` do link **e** o JSON-LD |
 
 **Mantenha o nome da rota `/go/...` igual.** É ele que identifica o canal no
@@ -141,13 +123,13 @@ continuam comparáveis. Trocando o nome da rota, o histórico se parte em dois.
 Depois de editar:
 
 ```bash
-./deploy/scripts/deploy.sh --configs     # sobe site + configs, roda nginx -t e recarrega
+npx wrangler@4.156.0 deploy     # ver "Publicar"
 ```
 
 Confira se os três arquivos ficaram idênticos:
 
 ```bash
-grep -o 'https://[^"]*' deploy/nginx/cliques.conf | sort > /tmp/a
+grep -oE "': 'https://[^']*'" src/worker.js | cut -d"'" -f3 | sort > /tmp/a
 grep -oE "url: '[^']*'|mapa: '[^']*'" public/js/app.js | cut -d"'" -f2 | sort > /tmp/b
 diff /tmp/a /tmp/b && echo "batem"
 ```
@@ -161,18 +143,18 @@ São quatro mexidas, nesta ordem:
 1. **`public/js/app.js`** — entrada nova em `SITE_DATA.pontos` com `id`, `nome`,
    `endereco`, `lat`, `lon`, `rota` e `mapa`. As coordenadas alimentam o cálculo
    de distância; sem elas o ponto nunca aparece como "mais perto".
-2. **`deploy/nginx/cliques.conf`** — `location = /go/ponto/<id>` com o
-   `return 302` para o Google Maps.
+2. **`src/worker.js`** — entrada `'/go/ponto/<id>': '<link do Google Maps>'`
+   em `DESTINOS`.
 3. **`public/index.html`** — o `<li data-ponto="<id>">` na lista `#pontos`
    (copie um dos existentes) **e** a entrada em `department` no JSON-LD.
-4. Publique com `./deploy/scripts/deploy.sh --configs`.
+4. Publique (ver "Publicar").
 
 O `data-ponto` do `<li>` tem que ser exatamente igual ao `id` do `SITE_DATA` —
 é assim que o JavaScript liga o cartão às coordenadas.
 
 Para **remover**, apague a entrada nos três arquivos. A rota `/go/ponto/<id>`
-pode ficar em `cliques.conf` por um tempo: quem tiver o link velho salvo ainda
-chega no Maps, e o log mostra que o link antigo ainda circula.
+pode ficar em `DESTINOS` por um tempo: quem tiver o link velho salvo ainda
+chega no Maps, e o relatório mostra que o link antigo ainda circula.
 
 > O ponto do **Cidade Alpha** não opera mais e não deve voltar para o site.
 
@@ -180,279 +162,105 @@ chega no Maps, e o log mostra que o link antigo ainda circula.
 
 ## Relatório de cliques
 
+Cada `/go/*` grava um ponto no **Workers Analytics Engine** (dataset
+`porkinho_cliques`) com rota, query string, status, país e o domínio de origem
+— **sem IP e sem user-agent**. O relatório roda na sua máquina e lê de lá:
+
 ```bash
-sudo ./deploy/scripts/relatorio-cliques.sh
-sudo ./deploy/scripts/relatorio-cliques.sh /var/log/feijoadaporkinho/cliques.log
-LARGURA=60 sudo ./deploy/scripts/relatorio-cliques.sh      # barras mais largas
+./deploy/scripts/relatorio-cliques.sh                     # lê CLOUDFLARE_* do deploy/.env
+LARGURA=60 ./deploy/scripts/relatorio-cliques.sh          # barras mais largas
+./deploy/scripts/relatorio-cliques.sh logs/cliques-nginx-anonimo.log   # histórico do VPS
 ```
 
-Imprime, para **hoje**, **7 dias** e **30 dias**:
+Imprime, para **hoje**, **7 dias** e **30 dias** (horário de Fortaleza):
 
 - total por rota, ordenado;
 - proporção iFood × 99 Food × WhatsApp;
 - ranking dos 4 pontos de retirada;
 - cliques por dia da semana e por hora.
 
-Lê também os arquivos rotacionados (`.1`, `.2.gz`…) e roda sem erro em log
-vazio. Só usa `awk`, `sort` e `uniq`.
+O histórico da época do nginx (20/09 a 07/10/2026, 217 cliques) foi salvo em
+`logs/cliques-nginx-anonimo.log` — fora do git, já sem IP e sem user-agent.
 
-### GoAccess
-
-O mesmo arquivo pode ser lido pelo GoAccess. O log é separado por TAB; ponto de
-partida para `~/.goaccessrc` (ajuste se a sua versão reclamar):
-
-```
-time-format %H:%M:%S
-date-format %Y-%m-%d
-log-format %dT%t%^	%U	%s	%h	%^	%^	%R	%u	%^
-```
+Para consultas avulsas, a SQL API aceita qualquer `SELECT`:
 
 ```bash
-sudo goaccess /var/log/feijoadaporkinho/cliques.log -o /tmp/cliques.html
+set -a; . deploy/.env; set +a
+curl -s "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  --data "SELECT blob1 AS rota, SUM(_sample_interval) AS cliques FROM porkinho_cliques
+          WHERE timestamp > NOW() - INTERVAL '7' DAY GROUP BY rota ORDER BY cliques DESC"
 ```
+
+O Analytics Engine guarda os pontos por **3 meses**.
 
 ---
 
-## Instalação no VPS, na ordem certa
+## Infraestrutura — Cloudflare Worker
 
-Ubuntu 24.04. Os comandos abaixo rodam **no servidor**.
+Desde 11/2026 o site roda num **Cloudflare Worker** com *Static Assets*. Não há
+servidor próprio: `public/` é enviado para a Cloudflare e o `src/worker.js`
+roda na frente de cada requisição, fazendo o que o nginx fazia:
 
-### 1. nginx
+| O quê | Onde |
+|---|---|
+| `www` → apex e `http` → `https` (301) | `src/worker.js` |
+| `/health` responde `ok` | `src/worker.js` |
+| rotas `/go/*` (302 + `no-store`) e contagem do clique | `src/worker.js`, tabela `DESTINOS` |
+| CSP, HSTS, `nosniff`, Referrer/Permissions-Policy em **toda** resposta | `src/worker.js`, `SEGURANCA` |
+| `Cache-Control` por tipo de arquivo | `src/worker.js`, `cacheControl()` |
+| 404.html e 50x.html no visual do site | `src/worker.js` |
+| nome, rotas da zona, dataset de cliques | `wrangler.jsonc` |
 
-```bash
-sudo apt update && sudo apt install -y nginx
-sudo systemctl enable --now nginx
+O Worker está preso às **rotas** `feijoadaporkinho.com.br/*` e
+`www.feijoadaporkinho.com.br/*`, sobre os registros DNS que já existiam com
+nuvem laranja. Os registros ainda apontam para o IP do VPS, mas esse IP deixa de
+ser consultado: o Worker responde antes. Como ele roda antes do cache da
+Cloudflare, **a Cache Rule de bypass em `/go/*` não é mais necessária** — cada
+clique sempre passa pelo Worker.
 
-# O site de exemplo do Ubuntu tambem declara `default_server` na porta 80 e
-# briga com o nosso catch-all. Sem remover, o `nginx -t` reprova.
-sudo rm -f /etc/nginx/sites-enabled/default
+### Publicar
 
-# Fuso do servidor. Os carimbos de hora do log alimentam o relatorio por
-# hora e por dia da semana; em UTC os numeros sairiam 3 horas deslocados.
-sudo timedatectl set-timezone America/Fortaleza
-
-# Diretorio proprio de log (o deploy.sh --configs tambem cria).
-sudo install -d -m 755 -o root -g adm /var/log/feijoadaporkinho
-
-sudo systemctl restart nginx
-```
-
-> **`reload` x `restart`:** o `reload` mantem os workers antigos vivos
-> atendendo conexoes keep-alive, entao uma mudanca de cabecalho pode demorar
-> a aparecer nos seus testes. Em caso de duvida durante a conferencia, use
-> `restart`. No dia a dia, `reload` basta.
-
-### 2. Certificado (Let's Encrypt, via DNS-01)
-
-O certificado é do **Let's Encrypt**, publicamente confiável e renovado sozinho
-pelo timer do certbot. Por ser confiável, funciona com o SSL da Cloudflare em
-**Full (strict)** e continua válido se um dia o proxy for pausado.
+Precisa de Node (só na sua máquina, nunca no site) e de `deploy/.env` com
+`CLOUDFLARE_ACCOUNT_ID` e `CLOUDFLARE_API_TOKEN` (permissões no
+`deploy/.env.exemplo`).
 
 ```bash
-# --- na sua máquina: leva os scripts de manutenção para o servidor ---
-# Tem que ser AGORA, não no passo 4: o --configs instala a config do nginx que
-# já aponta para /etc/letsencrypt/live/..., e o `nginx -t` reprova enquanto o
-# certificado não existir. O --scripts não toca no nginx nem em /var/www.
-./deploy/scripts/deploy.sh --scripts
-
-# --- no servidor ---
-sudo apt install -y certbot python3-certbot-dns-cloudflare
-sudo CF_DNS_TOKEN=<token> /opt/porkinho-scripts/emitir-certificado.sh --ensaio contato@feijoadaporkinho.com.br
-sudo CF_DNS_TOKEN=<token> /opt/porkinho-scripts/emitir-certificado.sh          contato@feijoadaporkinho.com.br
+set -a; . deploy/.env; set +a
+npx wrangler@4.156.0 deploy --dry-run     # ensaio: mostra os arquivos e as rotas
+npx wrangler@4.156.0 deploy               # publica
+curl -s https://feijoadaporkinho.com.br/health   # tem que responder ok
 ```
 
-O token é da Cloudflare, com permissão **Zone → DNS → Edit** restrita à zona
-`feijoadaporkinho.com.br` (modelo pronto "Edit zone DNS"). Ele fica em
-`/etc/letsencrypt/cloudflare.ini` com `chmod 600` e **nunca** no repositório.
-Se o token for revogado, a renovação automática para de funcionar.
+Mantenha a versão do wrangler **fixa** (`@4.156.0`): o `compatibility_date` do
+`wrangler.jsonc` não pode ser mais novo que o runtime que a versão traz, senão o
+`wrangler dev` nem sobe.
 
-> **Por que DNS-01 e não HTTP-01:** com a nuvem laranja ligada, o HTTP-01 exige
-> que a borda da Cloudflare consiga falar com a origem — exatamente o que deixa
-> de funcionar quando o certificado da origem está com problema. Seria uma
-> dependência circular: consertar o certificado dependeria de ele já estar bom.
-> Foi o que aconteceu de fato aqui: com o SSL em Full (strict) e um certificado
-> provisório na origem, a borda respondia **526** e nenhum desafio HTTP chegava.
-> O DNS-01 valida por registro TXT e não passa pela porta 80 nem pela origem.
+Para voltar uma versão: `npx wrangler@4.156.0 rollback`.
 
-> **O `location ~ /\.`** que barra `.git` e `.env` também barrava
-> `/.well-known/` inteiro, devolvendo 403 no desafio ACME. Por isso existe o
-> `location ^~ /.well-known/acme-challenge/` — o prefixo `^~` ganha do regex.
-> O webroot é `/var/www/acme`, **fora** de `/var/www/feijoadaporkinho/public`,
-> porque o deploy roda `rsync --delete` e apagaria o desafio no meio da emissão.
+**Nenhum segredo neste repositório.** O token fica em `deploy/.env`, que está no
+`.gitignore`.
 
-A renovação roda pelo `certbot.timer` e recarrega o nginx pelo gancho em
-`/etc/letsencrypt/renewal-hooks/deploy/`. Para conferir:
+### Painel da Cloudflare — o que precisa estar ligado
 
-```bash
-sudo certbot certificates
-sudo certbot renew --dry-run
-systemctl list-timers certbot.timer
-```
+| Onde | Valor |
+|---|---|
+| SSL/TLS → Edge Certificates | **Always Use HTTPS** ligado, **Minimum TLS** 1.2 |
+| Analytics & Logs → Web Analytics | ligado; token no `index.html` (ver acima) |
+| Rules → Redirect Rules / Page Rules | **nenhuma** regra para este domínio — ela vence o Worker. Em 19/09/2026 havia uma mandando tudo para o Linktree. |
+| Scrape Shield → Email Address Obfuscation | tanto faz: o HTML se protege com `<!--email_off-->` (ver abaixo) |
 
-**Alternativa:** um **Cloudflare Origin Certificate** (SSL/TLS → Origin Server),
-válido 15 anos mas só para tráfego vindo da Cloudflare.
-`deploy/scripts/gerar-csr-origem.sh` gera a chave e o CSR no servidor, sem a
-chave privada sair de lá.
+O modo SSL (Full/Flexible) e o certificado da origem **não importam mais**: com
+o Worker não existe conexão com origem.
 
-> Trocar exige **duas** coisas: instalar os arquivos em `/etc/ssl/cloudflare/`
-> **e** apontar os dois pares `ssl_certificate` / `ssl_certificate_key` da
-> config para lá. Só copiar os arquivos não muda nada — o nginx recarrega sem
-> erro e segue servindo o Let's Encrypt, dando a impressão de que a troca
-> funcionou.
-
-### 3. Faixas de IP da Cloudflare
-
-```bash
-sudo ./deploy/scripts/update-cloudflare-ips.sh
-```
-
-Sem isso, o IP registrado no log seria sempre o da borda da Cloudflare e a
-contagem de cliques não serviria para nada. As faixas mudam — rode de novo de
-vez em quando. Cron mensal (deixe comentado até conferir o caminho):
-
-```cron
-# 17 4 1 * * root /opt/site-porkinho/deploy/scripts/update-cloudflare-ips.sh >> /var/log/cf-ips.log 2>&1
-```
-
-### 4. Arquivos do nginx e o site
-
-Da sua máquina:
-
-```bash
-cp deploy/.env.exemplo deploy/.env   # preencha DEPLOY_HOST e DEPLOY_USER
-./deploy/scripts/deploy.sh --configs
-```
-
-### 5. Authenticated Origin Pulls (recomendado, dois passos)
-
-Primeiro baixe a CA que valida o certificado de cliente que a Cloudflare
-apresenta — **nada mais no repositório cria esse arquivo**, e sem ele o
-`nginx -t` reprova com "cannot load certificate":
-
-```bash
-sudo install -d -m 755 /etc/ssl/cloudflare
-sudo curl -fsSL -o /etc/ssl/cloudflare/origin-pull-ca.pem \
-  https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
-```
-
-As duas linhas abaixo vêm **comentadas** em
-`deploy/nginx/feijoadaporkinho.com.br.conf`:
-
-```nginx
-# ssl_client_certificate /etc/ssl/cloudflare/origin-pull-ca.pem;
-# ssl_verify_client on;
-```
-
-Ligue **primeiro no painel** (SSL/TLS → Origin Server → Authenticated Origin
-Pulls) e **só depois** descomente e recarregue. Na ordem invertida o nginx passa
-a recusar todo mundo — inclusive a Cloudflare — e o site cai.
-
-### 6. Firewall
-
-Gere e confira antes de aplicar. **Não execute às cegas: uma regra errada de SSH
-te tranca para fora do servidor.**
-
-```bash
-# SSH primeiro, senão você se tranca para fora
-sudo ufw allow from SEU.IP.FIXO.AQUI to any port 22 proto tcp comment 'ssh admin'
-
-# 80 e 443 só das faixas da Cloudflare
-for faixa in $(curl -s https://www.cloudflare.com/ips-v4); do
-  sudo ufw allow from "$faixa" to any port 80,443 proto tcp comment 'cloudflare'
-done
-for faixa in $(curl -s https://www.cloudflare.com/ips-v6); do
-  sudo ufw allow from "$faixa" to any port 80,443 proto tcp comment 'cloudflare'
-done
-
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw enable
-sudo ufw status numbered
-```
-
----
-
-## Painel da Cloudflare — o que precisa estar ligado
-
-| # | Onde | Valor |
-|---|---|---|
-| 1 | SSL/TLS → Overview | **Full (strict)**. Nunca Flexible — ver o quadro abaixo. |
-| 2 | SSL/TLS → Edge Certificates | **Always Use HTTPS**: ligado |
-| 3 | SSL/TLS → Edge Certificates | **Automatic HTTPS Rewrites**: ligado |
-| 4 | SSL/TLS → Edge Certificates | **Minimum TLS Version**: 1.2 |
-| 5 | Speed → Optimization → Content | **Brotli**: ligado |
-| 6 | SSL/TLS → Origin Server | **Authenticated Origin Pulls**: ligado (ver passo 5 acima) |
-| 7 | DNS | `A @` e `A www` → IP do VPS, **os dois com nuvem laranja** |
-| 8 | Analytics & Logs → Web Analytics | ligado; copie o token para o `index.html` |
-| 9 | Caching → Cache Rules | `URI Path starts with /go/` → **Bypass cache** |
-| 10 | Scrape Shield → Email Address Obfuscation | Tanto faz — o HTML já se protege com `<!--email_off-->`. Ver abaixo. |
-
-### A Cloudflare reescreve o e-mail do rodapé
-
-Com **Email Address Obfuscation** ligada (Scrape Shield), a borda troca
-`<a href="mailto:...">` por `/cdn-cgi/l/email-protection` e o texto visível por
-`[email protected]`, que só volta ao normal com um script injetado. Resultado:
-**sem JavaScript o contato fica ilegível** — inclusive na política de
-privacidade, que é onde o endereço para exercício de direitos da LGPD precisa
-estar.
-
-Os `<!--email_off-->` em volta de cada `mailto:` já resolvem isso no HTML, sem
-depender de configuração de conta. **Se algum dia acrescentar um e-mail novo,
-envolva com os marcadores também**, e confira:
-
-```bash
-curl -s https://feijoadaporkinho.com.br/ | grep -c '__cf_email__'   # tem que ser 0
-```
-
-### Se o site entrar em loop de redirecionamento
-
-Sintoma: `https://feijoadaporkinho.com.br/` responde **301 para ela mesma**, sem
-parar. Causa quase certa: **SSL/TLS em Flexible**. Nesse modo a Cloudflare
-conecta na origem em **http/80**, recebe o nosso 301 para HTTPS, devolve ao
-navegador, que volta pela borda, e assim por diante. De quebra, o trecho
-Cloudflare↔VPS trafega sem criptografia.
-
-Como confirmar em dez segundos, olhando a coluna `esquema/porta` do log:
-
-```bash
-sudo tail -3 /var/log/feijoadaporkinho/access.log
-# http/80   -> SSL está em Flexible. É esse o problema.
-# https/443 -> a origem está sendo acessada certo.
-```
-
-Correção: **SSL/TLS → Overview → Full**. Use *Full (strict)* somente depois de
-instalar o Cloudflare Origin Certificate — com um certificado auto-assinado na
-origem, o *strict* responde erro 526.
-
-O item **9 não é opcional**. Sem ele a borda responde o redirect do próprio
-cache, a requisição não chega ao VPS e o clique não é contado.
-
-Se existir alguma **Redirect Rule / Page Rule antiga** mandando o domínio para
-outro lugar, desative antes — ela vence o site. Em 19/09/2026 havia uma regra
-ativa mandando `feijoadaporkinho.com.br` para `https://linktr.ee/porkinho`:
-**enquanto ela existir, ninguém chega neste site.**
-
----
-
-## Publicar
-
-```bash
-export DEPLOY_HOST=... DEPLOY_USER=...     # ou preencha deploy/.env
-./deploy/scripts/deploy.sh --seco          # ensaio: mostra o que faria
-./deploy/scripts/deploy.sh                 # só o site
-./deploy/scripts/deploy.sh --configs       # site + arquivos do nginx
-./deploy/scripts/deploy.sh --scripts       # só os scripts de manutenção (bootstrap)
-```
-
-O script confere a branch e a árvore de trabalho, sobe `public/` com
-`rsync --delete`, ajusta `www-data:www-data` com 644/755, roda `nginx -t`,
-recarrega o nginx, opcionalmente limpa o cache da Cloudflare
-(`CF_ZONE_ID` + `CF_API_TOKEN`) e no fim exige que
-`https://feijoadaporkinho.com.br/health` responda `ok`. Se não responder, o
-script falha.
-
-**Nenhum segredo neste repositório.** Host, usuário e tokens vêm do ambiente ou
-de `deploy/.env`, que está no `.gitignore`.
+> **E-mail no HTML:** com *Email Address Obfuscation* ligada, a borda troca o
+> `mailto:` por `/cdn-cgi/l/email-protection`, que só volta ao normal com JS — e
+> o contato da LGPD fica ilegível sem JavaScript. Todo `mailto:` vai entre
+> `<!--email_off-->` e `<!--email_on-->`. Confira depois de publicar:
+>
+> ```bash
+> curl -s https://feijoadaporkinho.com.br/ | grep -c '__cf_email__'   # tem que ser 0
+> ```
 
 ### Cache busting
 
@@ -506,11 +314,10 @@ já visitou continua com a imagem velha.
 - **Nenhum cookie.** Nenhum identificador persistente. Por isso não existe, e
   não deve existir, banner de consentimento.
 - **Cloudflare Web Analytics**, que mede sem cookie e sem impressão digital.
-- **Logs com IP** (`/var/log/feijoadaporkinho/{cliques,access,error}.log`),
-  apagados automaticamente em **30 dias** pelo logrotate.
-- Anonimização do IP fica **pronta e comentada** em
-  `deploy/nginx/log-cliques.conf`: descomente o `map` e troque `$remote_addr`
-  por `$ip_anon` nos dois `log_format`.
+- **Contagem de cliques sem IP e sem user-agent** (Analytics Engine: rota,
+  horário, país, domínio de origem), guardada por 3 meses.
+- **Logs do Worker** (Workers Logs, ligados em `observability`) ficam poucos
+  dias na Cloudflare — bem dentro dos 30 dias da política.
 - `public/politica-de-privacidade.html` conta tudo isso em português claro, com
   `contato@feijoadaporkinho.com.br` para exercício de direitos.
 
@@ -523,9 +330,10 @@ já visitou continua com a imagem velha.
 - Não gravar cookie nem identificador persistente.
 - Não usar `301` nas rotas `/go/` — o navegador guarda o redirect permanente e a
   partir do segundo clique a contagem para. É sempre `302` + `no-store`.
-- Não deixar a Cloudflare cachear `/go/*`.
-- Não usar SSL Flexible.
-- Não adicionar framework, bundler, Node, Docker ou banco de dados.
+- Não deixar a Cloudflare cachear `/go/*` (não criar Cache Rule que "cache everything" na frente do Worker).
+- Não gravar IP nem user-agent no Analytics Engine.
+- Não adicionar framework, bundler, Docker ou banco de dados. Node só na sua
+  máquina, para o `wrangler`; o site não depende dele.
 - Não criar formulário de contato, chat, newsletter ou pop-up.
 - Não pedir geolocalização no carregamento da página — só no clique do botão.
 - Não inventar preço, prazo, taxa de entrega ou telefone.
