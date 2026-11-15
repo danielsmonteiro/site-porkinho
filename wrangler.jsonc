@@ -1,4 +1,4 @@
-// Feijoada Porkinho — configuracao do Worker (substitui o nginx do VPS).
+// Feijoada Porkinho — configuracao do Worker.
 // Publicar: ver "Publicar" no README.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
@@ -12,7 +12,7 @@
   // cota de 100 mil requisicoes/dia do Worker no plano Free. Sem isso, cada
   // visita gastava ~10 requisicoes e um pico de ~10 mil visitas derrubava o
   // site inteiro (erro 1027) ate a cota zerar.
-  // html_handling "none": as URLs ficam exatamente como no nginx
+  // html_handling "none": as URLs ficam como sempre foram
   // (/politica-de-privacidade.html continua com .html, sem redirect 307).
   "assets": {
     "directory": "./public",
@@ -26,8 +26,8 @@
     "not_found_handling": "404-page"
   },
 
-  // Rotas sobre os registros DNS que ja existem na zona (nuvem laranja).
-  // O worker intercepta tudo; o IP de origem nos registros deixa de ser usado.
+  // As rotas precisam de um registro DNS com nuvem laranja para cada nome; o
+  // conteudo do registro nao importa, o worker responde antes da origem.
   "routes": [
     { "pattern": "feijoadaporkinho.com.br/*", "zone_name": "feijoadaporkinho.com.br" },
     { "pattern": "www.feijoadaporkinho.com.br/*", "zone_name": "feijoadaporkinho.com.br" }
