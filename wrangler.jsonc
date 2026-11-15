@@ -1,0 +1,36 @@
+// Feijoada Porkinho — configuracao do Worker (substitui o nginx do VPS).
+// Publicar: ver "Publicar" no README.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "feijoadaporkinho",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-30",
+
+  // public/ inteiro vira Static Assets. O worker roda ANTES de qualquer
+  // arquivo para aplicar CSP/HSTS, Cache-Control e as rotas /go/.
+  // html_handling "none": as URLs ficam exatamente como no nginx
+  // (/politica-de-privacidade.html continua com .html, sem redirect 307).
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "none"
+  },
+
+  // Rotas sobre os registros DNS que ja existem na zona (nuvem laranja).
+  // O worker intercepta tudo; o IP de origem nos registros deixa de ser usado.
+  "routes": [
+    { "pattern": "feijoadaporkinho.com.br/*", "zone_name": "feijoadaporkinho.com.br" },
+    { "pattern": "www.feijoadaporkinho.com.br/*", "zone_name": "feijoadaporkinho.com.br" }
+  ],
+  "workers_dev": true,
+  "preview_urls": false,
+
+  // Contagem de cliques das rotas /go/* (sem IP, sem user-agent).
+  "analytics_engine_datasets": [
+    { "binding": "CLIQUES", "dataset": "porkinho_cliques" }
+  ],
+
+  "observability": { "enabled": true }
+}

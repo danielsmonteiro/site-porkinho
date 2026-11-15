@@ -2,27 +2,49 @@
 #
 # Feijoada Porkinho — relatorio de cliques.
 #
-# Le /var/log/nginx/cliques.log (mais os rotacionados) e imprime, para hoje,
-# 7 dias e 30 dias: total por rota, proporcao entre os canais, ranking dos
-# pontos de retirada e distribuicao por dia da semana e por hora.
+# Imprime, para hoje, 7 dias e 30 dias: total por rota, proporcao entre os
+# canais, ranking dos pontos de retirada e distribuicao por dia da semana e
+# por hora.
 #
-# So awk/sort/uniq. Nenhuma dependencia.
+# FONTE DOS DADOS
+#  - Padrao (site no Cloudflare Worker): consulta o Workers Analytics Engine,
+#    dataset porkinho_cliques, pela SQL API. Roda na SUA maquina e precisa de
+#    CLOUDFLARE_ACCOUNT_ID e CLOUDFLARE_API_TOKEN (permissao Account >
+#    Account Analytics > Read), do ambiente ou de deploy/.env.
+#  - Com um caminho de arquivo: le um cliques.log da epoca do nginx (o
+#    historico ate a migracao esta em logs/cliques-nginx-anonimo.log, fora
+#    do git, sem IP e sem user-agent).
 #
 # Uso:
-#   ./relatorio-cliques.sh                      # /var/log/feijoadaporkinho/cliques.log
-#   ./relatorio-cliques.sh /caminho/do/log      # outro arquivo
-#   LARGURA=60 ./relatorio-cliques.sh           # barras mais largas
+#   ./relatorio-cliques.sh                                # Analytics Engine
+#   ./relatorio-cliques.sh logs/cliques-nginx-anonimo.log  # historico do nginx
+#   LARGURA=60 ./relatorio-cliques.sh                     # barras mais largas
 #
-# O mesmo arquivo pode ser lido pelo GoAccess — ver README.
-#
-# Formato do log (TAB entre os campos), definido em deploy/nginx/log-cliques.conf:
-#   1 horario ISO | 2 request_uri | 3 status | 4 ip_real | 5 ip_cf
-#   6 pais | 7 referer | 8 user-agent | 9 cf-ray
+# Formato interno (TAB entre os campos) — o mesmo do log do nginx:
+#   1 horario ISO, ja no fuso de Fortaleza | 2 request_uri | ...
 #
 set -uo pipefail
 
-LOG="${1:-/var/log/feijoadaporkinho/cliques.log}"
+LOG="${1:-}"
+# Caminho relativo vale a partir de onde o script foi chamado, nao da raiz.
+[[ -n "$LOG" && "$LOG" != /* ]] && LOG="$PWD/$LOG"
 LARGURA="${LARGURA:-34}"
+
+cd "$(dirname "$0")/../.."
+# Mesmo leitor de deploy/.env do deploy.sh: o ambiente ganha do arquivo.
+if [[ -z "$LOG" && -f deploy/.env ]]; then
+  while IFS= read -r _linha || [[ -n "$_linha" ]]; do
+    [[ "$_linha" =~ ^[[:space:]]*(#|$) ]] && continue
+    _chave="${_linha%%=*}"; _chave="${_chave//[[:space:]]/}"
+    [[ "$_chave" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
+    [[ -n "${!_chave+ja_definida}" ]] && continue
+    _valor="${_linha#*=}"
+    _valor="${_valor#"${_valor%%[![:space:]]*}"}"
+    [[ "$_valor" == \"*\" || "$_valor" == \'*\' ]] && _valor="${_valor:1:${#_valor}-2}"
+    export "$_chave=$_valor"
+  done < deploy/.env
+  unset _linha _chave _valor
+fi
 
 # Precisamos de um locale UTF-8 para que ${#texto} conte caracteres, e nao
 # bytes: sem isso "terça" e "Eusébio" saem desalinhados nas colunas.
@@ -54,6 +76,31 @@ reunir() {
   return 0
 }
 
+# ------------------------------------------------------ Analytics Engine
+# Agrupa por hora, rota e query string e expande cada grupo em N linhas no
+# formato do log antigo, para o resto do script nao mudar. Fortaleza e UTC-3
+# o ano inteiro (sem horario de verao), entao o deslocamento e fixo.
+analytics_engine() {
+  : "${CLOUDFLARE_ACCOUNT_ID:?defina CLOUDFLARE_ACCOUNT_ID (ambiente ou deploy/.env)}"
+  : "${CLOUDFLARE_API_TOKEN:?defina CLOUDFLARE_API_TOKEN (ambiente ou deploy/.env)}"
+  local sql="SELECT toStartOfInterval(timestamp - INTERVAL '3' HOUR, INTERVAL '1' HOUR) AS h, blob1, blob2, SUM(_sample_interval) AS n
+FROM porkinho_cliques WHERE timestamp > NOW() - INTERVAL '31' DAY
+GROUP BY h, blob1, blob2 FORMAT TabSeparated"
+  curl -fsS --max-time 30 \
+    "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" --data-binary "$sql" \
+  | awk -F'\t' 'NF>=4 { t=$1; sub(/ /, "T", t); for (i=0; i<$4; i++) print t "\t" $2 $3 }'
+}
+
+if [[ -z "$LOG" ]]; then
+  analytics_engine > "$tmp/ae" || { echo "Falha ao consultar o Analytics Engine."; exit 1; }
+  LOG="$tmp/ae"
+  ORIGEM="Cloudflare Analytics Engine (dataset porkinho_cliques)"
+  FUSO="America/Fortaleza"
+else
+  ORIGEM="$LOG (+ rotacionados)"
+fi
+
 if [[ ! -r "$LOG" ]] && ! compgen -G "$LOG.[0-9]*" >/dev/null && ! compgen -G "$LOG-[0-9]*" >/dev/null; then
   echo "Não consegui ler $LOG."
   echo "Confira o caminho, ou rode com sudo se o arquivo for do root."
@@ -64,11 +111,14 @@ reunir "$LOG" | awk -F'\t' 'NF>=2 && $2 ~ /^\/go\//' > "$tmp/todos" || true
 
 TOTAL_LINHAS=$(wc -l < "$tmp/todos" | tr -d ' ')
 
-FUSO=$( (timedatectl show -p Timezone --value 2>/dev/null) || cat /etc/timezone 2>/dev/null || echo "?" )
-FUSO=${FUSO:-?}
-HOJE=$(date +%F)
-INI7=$(date -d '6 days ago' +%F 2>/dev/null || date -v-6d +%F)
-INI30=$(date -d '29 days ago' +%F 2>/dev/null || date -v-29d +%F)
+if [[ -z "${FUSO:-}" ]]; then
+  FUSO=$( (timedatectl show -p Timezone --value 2>/dev/null) || cat /etc/timezone 2>/dev/null || echo "?" )
+  FUSO=${FUSO:-?}
+fi
+# As datas de corte no fuso de Fortaleza, seja qual for o fuso desta maquina.
+HOJE=$(TZ=America/Fortaleza date +%F)
+INI7=$(TZ=America/Fortaleza date -d '6 days ago' +%F 2>/dev/null || TZ=America/Fortaleza date -v-6d +%F)
+INI30=$(TZ=America/Fortaleza date -d '29 days ago' +%F 2>/dev/null || TZ=America/Fortaleza date -v-29d +%F)
 
 linha() { printf '%s\n' "------------------------------------------------------------"; }
 
@@ -221,7 +271,7 @@ periodo() {
 
   # ------------------------------------------------------- por hora
   echo
-  echo "POR HORA (fuso do servidor: $FUSO)"
+  echo "POR HORA (fuso: $FUSO)"
   awk -F'\t' '{h[substr($1,12,2)]++} END {for (i=0;i<24;i++) {k=sprintf("%02d",i); printf "%s\t%d\n", k, h[k]+0}}' "$arq" > "$tmp/horas"
   local max_h; max_h=$(cut -f2 "$tmp/horas" | sort -rn | head -1)
   while IFS=$'\t' read -r h c; do
@@ -234,7 +284,7 @@ periodo() {
 echo "============================================================"
 echo " Feijoada Porkinho — relatório de cliques"
 echo "============================================================"
-echo "Arquivo .....: $LOG (+ rotacionados)"
+echo "Fonte .......: $ORIGEM"
 echo "Gerado em ...: $(date '+%d/%m/%Y %H:%M:%S')"
 echo "Linhas /go/ .: $TOTAL_LINHAS"
 if [[ "$TOTAL_LINHAS" -gt 0 ]]; then
@@ -244,8 +294,7 @@ if [[ "$TOTAL_LINHAS" -gt 0 ]]; then
   echo "Período .....: $(awk -F'\t' '{d=substr($1,1,10); if (min=="" || d<min) min=d; if (d>max) max=d} END{print min" a "max}' "$tmp/todos")"
 else
   echo
-  echo "Log vazio: nenhum clique registrado ainda."
-  echo "Confira se a Cache Rule da Cloudflare está com Bypass cache em /go/*."
+  echo "Nenhum clique registrado ainda."
   exit 0
 fi
 
@@ -255,4 +304,4 @@ periodo "ÚLTIMOS 30 DIAS" "$INI30"
 
 echo
 linha
-echo "Os logs são apagados automaticamente após 30 dias (logrotate)."
+echo "Fonte sem IP e sem user-agent: só rota, horário, país e domínio de origem."

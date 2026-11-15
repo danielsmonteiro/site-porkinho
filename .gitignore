@@ -31,3 +31,6 @@ desktop.ini
 
 # Nada de Node neste projeto, mas se alguem rodar npx por engano:
 node_modules/
+
+# wrangler
+.wrangler/
