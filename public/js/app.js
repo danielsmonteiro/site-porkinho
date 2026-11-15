@@ -238,8 +238,11 @@
     banner.classList.remove('status--neutro', 'status--aberto', 'status--fechado');
     banner.classList.add(s.aberto ? 'status--aberto' : 'status--fechado');
     banner.setAttribute('data-aberto', s.aberto ? 'sim' : 'nao');
-    if (texto) { texto.textContent = s.status; }
-    if (cta) { cta.textContent = s.cta; }
+    /* #status e uma regiao anunciada (role="status"). Reescrever o mesmo
+       texto a cada minuto fazia alguns leitores de tela repetirem o horario
+       sem parar; so troca quando muda. */
+    if (texto && texto.textContent !== s.status) { texto.textContent = s.status; }
+    if (cta && cta.textContent !== s.cta) { cta.textContent = s.cta; }
   }
 
   /* ------------------------------------------------------------------ *
@@ -264,9 +267,11 @@
   function avisoGeo(mensagem, tipo) {
     var el = $('#geo-aviso');
     if (!el) { return; }
-    el.textContent = mensagem || '';
-    el.hidden = !mensagem;
+    /* O <p> e role="status" e fica sempre na arvore de acessibilidade:
+       com `hidden` alternando junto com o texto, o leitor de tela nao
+       anunciava nada. Vazio, ele tem altura zero (:empty no CSS). */
     el.className = 'geo-aviso' + (tipo ? ' geo-aviso--' + tipo : '');
+    el.textContent = mensagem || '';
   }
 
   function ordenarPontos(lat, lon) {
@@ -305,13 +310,18 @@
   };
 
   function pedirLocalizacao(botao) {
+    /* Busca em andamento: ignora toques repetidos. */
+    if (botao.getAttribute('aria-disabled') === 'true') { return; }
     if (!navigator.geolocation) {
       avisoGeo(MSG_GEO.indisponivel, 'erro');
       registrarEvento('geolocalizacao', 'erro');
       return;
     }
 
-    botao.disabled = true;
+    /* aria-disabled, nao `disabled`: desabilitar o botao focado jogava o
+       foco do teclado para o <body>, e quem navega por teclado ou leitor de
+       tela perdia o lugar na pagina. */
+    botao.setAttribute('aria-disabled', 'true');
     botao.setAttribute('aria-busy', 'true');
     var rotuloOriginal = botao.querySelector('[data-rotulo]');
     var textoOriginal = rotuloOriginal ? rotuloOriginal.textContent : '';
@@ -319,7 +329,7 @@
     avisoGeo('', null);
 
     function encerrar() {
-      botao.disabled = false;
+      botao.removeAttribute('aria-disabled');
       botao.removeAttribute('aria-busy');
       if (rotuloOriginal) { rotuloOriginal.textContent = textoOriginal; }
     }
