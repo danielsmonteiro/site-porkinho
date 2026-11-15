@@ -178,6 +178,11 @@ chega no Maps, e o relatório mostra que o link antigo ainda circula.
 
 > O ponto do **Cidade Alpha** não opera mais e não deve voltar para o site.
 
+> **Food truck não tem endereço:** ele fica estacionado na rua, então o que
+> identifica cada ponto é a **coordenada** (`lat`/`lon` no `SITE_DATA` e `geo`
+> no JSON-LD) e o **link do Google Maps**. Só o Eusébio tem um endereço de
+> referência. Não invente rua e número: buscador e IA usam a coordenada.
+
 ---
 
 ## Busca e inteligências artificiais
@@ -397,13 +402,13 @@ acompanha.
 
 | Arquivo | Tamanho | Situação |
 |---|---|---|
-| `img/kit-executiva.*` | 128×128 | **Placeholder** — ilustração de tigela. Entra foto real do Kit Executiva, quadrada, com **pelo menos 256×256** (o cartão mostra em 88 px, e tela de celular tem 2 a 3 pixels por ponto). |
-| `img/kit-completa.*` | 128×128 | **Placeholder** — idem, foto do Kit Completa. **É a foto que mais vende**: o Kit Completa é o primeiro cartão da página. |
-| `img/og-image.jpg` | 1200×630, < 300 KB | Funcional, montada com a logo. O ideal é uma **foto do Kit Completa** bem iluminada: é isto que aparece quando o link é colado no WhatsApp. |
+| `img/kit-completa.*` | 800×600 (4:3) | Pronto — foto real do kit na caixa da Porkinho. **É a foto que mais vende**: primeiro cartão da página, em largura cheia. |
+| `img/kit-executiva.*` | 800×600 (4:3) | Pronto — foto real do kit. |
+| `img/og-image.jpg` | 1200×630 | Pronto — recorte da foto do Kit Completa: é o que aparece quando o link é colado no WhatsApp. |
 | `img/logo.webp` / `.png` | 192×192 | Pronto — logo oficial, com transparência. |
 | `img/icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `../favicon.ico` | — | Prontos, gerados da logo oficial. |
 
-Para trocar, sobrescreva mantendo **o mesmo nome e a proporção quadrada** — o
+Para trocar, sobrescreva mantendo **o mesmo nome e as mesmas dimensões** — o
 HTML já declara `width`/`height`, então não há layout shift. Gere sempre o par
 **WebP + JPG**: o `<picture>` entrega WebP a quem aceita e JPG ao resto.
 

@@ -438,37 +438,34 @@ html.js #btn-geo { display: flex; }
 .geo-aviso--ok { color: var(--aberto); }
 
 /* ------------------------------------------------------------------ *
- * Kits — o produto. Sempre visiveis, logo depois dos botoes dos apps.
- * A foto ja tem lugar de 88px; quando entrar a foto real, e so trocar
- * o arquivo (mesmo nome, mesmas proporcoes quadradas).
+ * Kits — o produto. Sempre visiveis, logo depois dos botoes dos apps,
+ * com a foto real em largura cheia. Trocar a foto: mesmo nome, 800x600.
  * ------------------------------------------------------------------ */
 .kits { list-style: none; margin: 0; padding: 0; }
 
 .kit {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  padding: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   border: 1px solid var(--borda-suave);
   border-radius: var(--raio);
   background: var(--superficie);
+  overflow: hidden;
 }
 .kit:last-child { margin-bottom: 0; }
 
-/* O item flexivel e o <picture>, nao o <img>: sem largura fixa nele, o
-   flexbox espreme a foto numa tira. */
-.kit > picture { flex: 0 0 88px; display: block; }
+/* A foto e o que vende: largura cheia, 4:3, no topo do cartao. O arquivo
+   tem 800x600 (2x a largura do cartao no celular); width/height no HTML
+   reservam o espaco e evitam layout shift. */
+.kit > picture { display: block; }
 
 .kit__foto {
-  width: 88px;
-  height: 88px;
-  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   background: var(--superficie-alta);
 }
 
-.kit__corpo { flex: 1 1 auto; min-width: 0; }
+.kit__corpo { padding: 12px 14px 14px; }
 
 .kit__nome {
   margin: 0;
