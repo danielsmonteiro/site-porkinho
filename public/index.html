@@ -61,7 +61,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 .botao__apoio{display:block;font-size:.8125rem;line-height:1.3;color:var(--texto-2)}
 .botao--primario{background:var(--primaria);border-color:var(--primaria-borda);color:var(--primaria-tinta);box-shadow:var(--sombra);min-height:64px}.botao--primario .botao__apoio{color:var(--primaria-apoio)}
 </style>
-<link rel="stylesheet" href="/css/style.css?v=11">
+<link rel="stylesheet" href="/css/style.css?v=12">
 <!-- Marca que ha JavaScript ANTES da primeira pintura. Sem isto, o botao
      de geolocalizacao so aparecia no DOMContentLoaded e empurrava a lista
      de pontos para baixo (layout shift). Liberado na CSP por hash, nao
@@ -78,7 +78,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
     <picture>
       <source srcset="/img/logo.webp?v=3" type="image/webp">
       <img class="topo__logo" src="/img/logo.png?v=3" width="56" height="56"
-           alt="Logo da Feijoada Porkinho" fetchpriority="high" decoding="async">
+           alt="" fetchpriority="high" decoding="async">
     </picture>
     <h1 class="topo__titulo">Feijoada Porkinho</h1>
     <p class="topo__linha">Feijoada e torresmo caseiro de sexta a domingo, em Fortaleza e no Eusébio</p>
@@ -94,8 +94,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
     <p class="cta-titulo" id="cta-titulo">Peça pelo aplicativo</p>
 
     <a class="botao botao--primario" href="/go/ifood"
-       rel="nofollow noopener noreferrer"
-       title="https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share">
+       rel="nofollow noopener noreferrer">
       <span class="botao__icone" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
       </span>
@@ -109,8 +108,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
     </a>
 
     <a class="botao botao--primario" href="/go/99food"
-       rel="nofollow noopener noreferrer"
-       title="https://oia.99app.com/dlp9/0DRh5f">
+       rel="nofollow noopener noreferrer">
       <span class="botao__icone" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3"/><circle cx="18.5" cy="17.5" r="3"/><path d="M8.5 17.5h7"/><path d="m5.5 17.5 3.2-8.5H13l2.6 5.4"/><path d="M13 5h3l2.5 12.5"/></svg>
       </span>
@@ -177,12 +175,11 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
         </span>
         <span class="botao__texto"><span class="botao__rotulo" data-rotulo>Ver o food truck mais perto de mim</span></span>
       </button>
-      <p class="geo-aviso" id="geo-aviso" hidden></p>
+      <p class="geo-aviso" id="geo-aviso" role="status"></p>
 
       <ul class="pontos" id="pontos">
         <li data-ponto="guararapes" id="ponto-guararapes">
-          <a class="ponto" href="/go/ponto/guararapes" rel="nofollow noopener noreferrer"
-             title="https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A">
+          <a class="ponto" href="/go/ponto/guararapes" rel="nofollow noopener noreferrer">
             <span class="ponto__pino" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
             </span>
@@ -195,8 +192,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           </a>
         </li>
         <li data-ponto="eusebio" id="ponto-eusebio">
-          <a class="ponto" href="/go/ponto/eusebio" rel="nofollow noopener noreferrer"
-             title="https://goo.gl/maps/rtKKp78Pbua8ryKr8">
+          <a class="ponto" href="/go/ponto/eusebio" rel="nofollow noopener noreferrer">
             <span class="ponto__pino" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
             </span>
@@ -210,8 +206,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           </a>
         </li>
         <li data-ponto="parque-del-sol" id="ponto-parque-del-sol">
-          <a class="ponto" href="/go/ponto/parque-del-sol" rel="nofollow noopener noreferrer"
-             title="https://goo.gl/maps/Dm4Ts9Kn9oQHNPrBA">
+          <a class="ponto" href="/go/ponto/parque-del-sol" rel="nofollow noopener noreferrer">
             <span class="ponto__pino" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
             </span>
@@ -224,8 +219,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           </a>
         </li>
         <li data-ponto="sapiranga" id="ponto-sapiranga">
-          <a class="ponto" href="/go/ponto/sapiranga" rel="nofollow noopener noreferrer"
-             title="https://goo.gl/maps/FM5NELs2QDhqmfeTA">
+          <a class="ponto" href="/go/ponto/sapiranga" rel="nofollow noopener noreferrer">
             <span class="ponto__pino" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
             </span>
@@ -247,7 +241,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       <p class="secao__apoio">Para evento, encomenda grande ou pagamento via Pix, fale direto com o Sr. Monteiro. Para o pedido do dia a dia, o app é mais rápido.</p>
 
       <a class="botao botao--secundario botao--whatsapp" href="/go/whatsapp"
-         rel="nofollow noopener noreferrer" title="https://wa.me/5585985900985">
+         rel="nofollow noopener noreferrer">
         <span class="botao__icone" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.17-1.35a9.94 9.94 0 0 0 4.87 1.26h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.86c2.17 0 4.2.84 5.73 2.38a8.05 8.05 0 0 1 2.37 5.72c0 4.47-3.63 8.1-8.1 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-2.99-.19-.31a8.06 8.06 0 0 1-1.24-4.29c0-4.47 3.64-8.1 8.11-8.1Zm-3.1 4.3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34 1 2.5c.12.17 1.68 2.66 4.12 3.62 2.03.8 2.45.64 2.89.6.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46Z"/></svg>
         </span>
@@ -261,7 +255,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </a>
 
       <a class="botao botao--secundario" href="/go/instagram"
-         rel="nofollow noopener noreferrer" title="https://instagram.com/feijoadaporkinho">
+         rel="nofollow noopener noreferrer">
         <span class="botao__icone" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
         </span>
@@ -342,8 +336,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 
           <div class="cardapio__acoes">
             <a class="botao botao--primario" href="/go/ifood"
-               rel="nofollow noopener noreferrer"
-               title="https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share">
+               rel="nofollow noopener noreferrer">
               <span class="botao__icone" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
               </span>
@@ -353,7 +346,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
               </span>
             </a>
             <a class="botao botao--primario" href="/go/99food"
-               rel="nofollow noopener noreferrer" title="https://oia.99app.com/dlp9/0DRh5f">
+               rel="nofollow noopener noreferrer">
               <span class="botao__icone" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3"/><circle cx="18.5" cy="17.5" r="3"/><path d="M8.5 17.5h7"/><path d="m5.5 17.5 3.2-8.5H13l2.6 5.4"/><path d="M13 5h3l2.5 12.5"/></svg>
               </span>
@@ -879,7 +872,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 }
 </script>
 
-<script src="/js/app.js?v=7" defer></script>
+<script src="/js/app.js?v=8" defer></script>
 
 <!-- Cloudflare Web Analytics: sem cookie, agregado. Token no README. -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "8e8b0d44a40e4c05b79d54e70756893f"}'></script>

@@ -49,6 +49,7 @@
   --whatsapp: #25D366;
   --whatsapp-texto: #3BE07A;
   --whatsapp-tinta: #10240F;
+  --whatsapp-borda: #25D366;
 
   --aberto: #4ADE80;
   --fechado: #F87171;
@@ -93,6 +94,9 @@
     --whatsapp: #25D366;
     --whatsapp-texto: #0B7C3A;
     --whatsapp-tinta: #0B2A16;
+    /* O verde da marca sobre o creme da 1,83:1, e o botao e branco sobre
+       creme: a borda e o unico limite visivel (WCAG 1.4.11 pede 3:1). */
+    --whatsapp-borda: #0B7C3A;
 
     --aberto: #146C2E;
     --fechado: #B3261E;
@@ -239,7 +243,9 @@ a { color: var(--primaria-texto); }
   background: var(--texto-2);
 }
 
-.status--aberto .status__ponto { background: var(--aberto); animation: pulsar 2.2s ease-in-out infinite; }
+/* Pulsa tres vezes e para (WCAG 2.2.2): animacao sem fim distrai e nao
+   pode ser pausada. */
+.status--aberto .status__ponto { background: var(--aberto); animation: pulsar 2.2s ease-in-out 3; }
 /* O `animation: none` nao e redundante: se as duas classes coexistirem, esta
    regra vem depois e ganha no desempate, entao o ponto vermelho nao herda a
    pulsacao de "aberto". O JS ja nao deixa isso acontecer (renderizarStatus
@@ -357,7 +363,7 @@ a { color: var(--primaria-texto); }
 }
 .botao--secundario:hover { background: var(--superficie-alta); }
 
-.botao--whatsapp { border-color: var(--whatsapp); }
+.botao--whatsapp { border-color: var(--whatsapp-borda); }
 .botao--whatsapp .botao__icone { color: var(--whatsapp-texto); }
 
 .botao--fantasma {
@@ -369,7 +375,7 @@ a { color: var(--primaria-texto); }
 }
 .botao--fantasma .botao__texto { flex: 0 1 auto; }
 .botao--fantasma:hover { background: var(--superficie); }
-.botao--fantasma[disabled] { opacity: .6; cursor: progress; }
+.botao--fantasma[aria-disabled="true"] { opacity: .6; cursor: progress; }
 
 /* O botao de geolocalizacao so existe se houver JavaScript. Quem decide e a
    classe `js` que o script inline do <head> poe em <html> antes da primeira
@@ -456,6 +462,10 @@ html.js #btn-geo { display: flex; }
   font-size: var(--fs-meta);
   color: var(--texto-2);
 }
+/* Vazio, o aviso nao ocupa espaco, mas continua na arvore de
+   acessibilidade: com display:none a regiao role="status" sairia dela e o
+   leitor de tela deixaria de anunciar a mensagem. */
+.geo-aviso:empty { margin: 0; }
 .geo-aviso--erro { color: var(--fechado); }
 .geo-aviso--ok { color: var(--aberto); }
 
@@ -698,6 +708,11 @@ html.js #btn-geo { display: flex; }
 
 /* A barra cobre o fim da pagina: o rodape ganha espaco quando ela aparece. */
 html.com-barra .pagina { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+
+/* Com a barra na tela, o navegador rola o elemento focado (Tab) so ate o
+   rodape da janela, e ele ficava embaixo da barra. O scroll-padding faz a
+   rolagem parar acima dela (WCAG 2.4.7 / 2.4.11). */
+html.com-barra { scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
 
 @keyframes barra-entra {
   from { transform: translateY(100%); }

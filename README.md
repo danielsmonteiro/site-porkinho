@@ -144,12 +144,12 @@ O destino real aparece em **quatro** lugares. Os quatro precisam mudar juntos:
 |---|---|
 | `public/js/app.js` | `SITE_DATA.canais.<canal>.url` |
 | `src/worker.js` | a entrada da rota em `DESTINOS` |
-| `public/index.html` | o atributo `title="..."` do link **e** o JSON-LD |
+| `public/index.html` | o JSON-LD (os links em si apontam para `/go/...`, sem a URL de destino) |
 | `public/llms.txt` | o link em "Como pedir" ou em "Food trucks" |
 
 > **WhatsApp:** o destino de `/go/whatsapp` leva o texto da mensagem já
-> preenchida (`?text=...`, codificado). O `title` do link no `index.html` e o
-> `llms.txt` mostram só o número, sem o texto. A mensagem é **neutra** de
+> preenchida (`?text=...`, codificado). O `llms.txt` mostra só o número, sem
+> o texto. A mensagem é **neutra** de
 > propósito ("Vim pelo site da Feijoada Porkinho."): o mesmo botão serve para
 > evento, encomenda grande e pagamento via Pix. Para mudar a mensagem:
 >
