@@ -33,6 +33,7 @@ public/                         tudo o que vai para a Cloudflare (Static Assets)
 
 src/worker.js                   redirects /go/, www → apex, cache do HTML, páginas de erro
 wrangler.jsonc                  configuração do Worker (rotas, dataset de cliques)
+.github/workflows/publicar.yml  verifica todo PR e publica a cada push na main
 
 deploy/
   scripts/relatorio-cliques.sh  relatório de cliques (Analytics Engine)
@@ -252,9 +253,27 @@ passa por ele: não é preciso Cache Rule de bypass.
 
 ### Publicar
 
-Precisa de Node (só na sua máquina, nunca no site) e de `deploy/.env` com
+**É automático: todo push na `main` publica.** O workflow
+`.github/workflows/publicar.yml` (GitHub Actions) faz duas coisas:
+
+- **em todo PR para a `main`**: confere a sintaxe do JS e dos scripts, confere
+  se os destinos de `/go/` batem entre `src/worker.js` e `public/js/app.js` e
+  roda um `wrangler deploy --dry-run`. É o check que aparece no PR;
+- **em push na `main`** (o merge de um PR): repete a verificação, publica na
+  Cloudflare e falha se `/health` não responder `ok`.
+
+O deploy usa dois secrets do repositório (Settings → Secrets and variables →
+Actions): `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`. O token precisa só de
+Account → Workers Scripts → Edit, Zone → Workers Routes → Edit e Zone → Zone →
+Read na zona `feijoadaporkinho.com.br`. PR vindo de fork não recebe os secrets e
+nunca publica. Para republicar sem commit novo: aba **Actions → Publicar → Run
+workflow**.
+
+**Na mão, da sua máquina** (emergência, ou para testar antes do merge): precisa
+de Node (só na sua máquina, nunca no site) e de `deploy/.env` com
 `CLOUDFLARE_ACCOUNT_ID` e `CLOUDFLARE_API_TOKEN` (permissões no
-`deploy/.env.exemplo`).
+`deploy/.env.exemplo`). Um deploy feito assim é sobrescrito pelo próximo push na
+`main`.
 
 ```bash
 set -a; . deploy/.env; set +a
@@ -263,14 +282,14 @@ npx wrangler@4.156.0 deploy               # publica
 curl -s https://feijoadaporkinho.com.br/health   # tem que responder ok
 ```
 
-Mantenha a versão do wrangler **fixa** (`@4.156.0`): o `compatibility_date` do
-`wrangler.jsonc` não pode ser mais novo que o runtime que a versão traz, senão o
-`wrangler dev` nem sobe.
+Mantenha a versão do wrangler **fixa** (`@4.156.0`, a mesma no README e no
+workflow): o `compatibility_date` do `wrangler.jsonc` não pode ser mais novo que
+o runtime que a versão traz, senão o `wrangler dev` nem sobe.
 
 Para voltar uma versão: `npx wrangler@4.156.0 rollback`.
 
-**Nenhum segredo neste repositório.** O token fica em `deploy/.env`, que está no
-`.gitignore`.
+**Nenhum segredo neste repositório.** O token fica nos secrets do GitHub e, na
+sua máquina, em `deploy/.env`, que está no `.gitignore`.
 
 ### Painel da Cloudflare — o que precisa estar ligado
 
