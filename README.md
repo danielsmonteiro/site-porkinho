@@ -91,25 +91,31 @@ por padrão no desktop.
 
 ---
 
-## Token do Cloudflare Web Analytics
+## Cloudflare Web Analytics
 
-No painel: **Analytics & Logs → Web Analytics → Add a site**, e copie o token.
-
-Cole em `public/index.html`, na última linha antes de `</body>`:
+Ligado desde 15/11/2026. O token (público, não é segredo) está em
+`public/index.html`, na última linha antes de `</body>`:
 
 ```html
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon='{"token": "SEU_TOKEN_AQUI"}'></script>
+        data-cf-beacon='{"token": "8e8b0d44a40e4c05b79d54e70756893f"}'></script>
 ```
+
+Os números ficam no painel em **Analytics & Logs → Web Analytics**. Dividindo
+os cliques do `relatorio-cliques.sh` pelas visitas daqui sai a taxa de
+conversão de cada canal.
 
 É a **única** requisição a domínio de terceiro permitida no site. Sem Google
 Analytics, sem Tag Manager, sem Meta Pixel.
 
-> **Enquanto o token for o placeholder**, a Cloudflare recusa o envio e o
-> navegador registra um erro de CORS no console (`cdn-cgi/rum` sem
-> `Access-Control-Allow-Origin`). Isso não quebra nada na página, mas derruba
-> a nota de Boas Práticas do Lighthouse de 100 para 96. Assim que o token real
-> entrar, o erro some.
+> **Instalação manual, não automática.** No painel, o site precisa estar com a
+> instalação pelo snippet JS; se a instalação automática da Cloudflare também
+> estiver ligada, ela injeta um segundo beacon e cada visita conta duas vezes.
+> Para conferir depois de publicar:
+>
+> ```bash
+> curl -s https://feijoadaporkinho.com.br/ | grep -c 'beacon.min.js'   # tem que ser 1
+> ```
 
 ---
 
