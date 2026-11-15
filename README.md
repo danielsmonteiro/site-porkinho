@@ -93,8 +93,9 @@ por padrão no desktop.
 
 ## Cloudflare Web Analytics
 
-Ligado desde 15/11/2026. O token (público, não é segredo) está em
-`public/index.html`, na última linha antes de `</body>`:
+Ligado desde 15/11/2026, em todas as páginas (`index.html`,
+`politica-de-privacidade.html`, `404.html` e `50x.html`). O token (público,
+não é segredo) fica na última linha antes de `</body>` de cada uma:
 
 ```html
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -132,7 +133,9 @@ O destino real aparece em **quatro** lugares. Os quatro precisam mudar juntos:
 
 > **WhatsApp:** o destino de `/go/whatsapp` leva o texto da mensagem já
 > preenchida (`?text=...`, codificado). O `title` do link no `index.html` e o
-> `llms.txt` mostram só o número, sem o texto. Para mudar a mensagem:
+> `llms.txt` mostram só o número, sem o texto. A mensagem é **neutra** de
+> propósito ("Vim pelo site da Feijoada Porkinho."): o mesmo botão serve para
+> evento, encomenda grande e pagamento via Pix. Para mudar a mensagem:
 >
 > ```bash
 > python3 -c "import urllib.parse as u; print('https://wa.me/5585985900985?text=' + u.quote('''Olá, Sr. Monteiro! ...''', safe=''))"
@@ -212,9 +215,9 @@ bater**, senão buscador e IA desconfiam e deixam de recomendar:
 
 | Fato | Onde aparece |
 |---|---|
-| preços e porções | kits e petiscos no `index.html`, `Menu` do JSON-LD, `SITE_DATA.cardapio` no `app.js`, `llms.txt` |
+| preços e porções | kits e petiscos no `index.html`, `Menu` do JSON-LD, `llms.txt` |
 | horário | `index.html` (status, food trucks, perguntas), JSON-LD, `SITE_DATA.horario`, `llms.txt` |
-| perguntas frequentes | seção `#perguntas` do `index.html` **e** `FAQPage` do JSON-LD, com o mesmo texto |
+| perguntas frequentes | seção `#perguntas` do `index.html` **e** `FAQPage` do JSON-LD, com o mesmo texto (o check do PR reprova se divergirem) |
 | food trucks | lista `#pontos`, JSON-LD, `SITE_DATA.pontos`, pergunta "Onde fica", `llms.txt` |
 
 Fora do site, e com mais peso que tudo isso: ficha no **Google Meu Negócio**
@@ -241,6 +244,11 @@ WHERE blob1 = '/go/(desconhecido)' GROUP BY caminho ORDER BY n DESC
 
 > **Evento novo no `app.js`** (`registrarEvento`) precisa de entrada em
 > `EVENTOS`, senão é contado como desconhecido.
+>
+> **`cardapio aberto` virou `petiscos aberto` em 15/11/2026.** Até ali o
+> evento contava quem abria o cardápio inteiro para ver os kits; desde então
+> os kits ficam sempre visíveis e o bloco recolhido só tem petiscos e bebidas.
+> As duas séries medem coisas diferentes e não se comparam.
 
 O relatório roda na sua máquina e lê de lá:
 
@@ -340,8 +348,10 @@ de Node (só na sua máquina, nunca no site) e de `deploy/.env` com
 
 ```bash
 set -a; . deploy/.env; set +a
+./deploy/scripts/atualizar-sitemap.sh     # datas reais no sitemap (o Actions faz isso sozinho)
 npx wrangler@4.156.0 deploy --dry-run     # ensaio: mostra os arquivos e as rotas
 npx wrangler@4.156.0 deploy               # publica
+git checkout public/sitemap.xml           # o sitemap com datas fica só no ar, não no git
 curl -s https://feijoadaporkinho.com.br/health   # tem que responder ok
 ```
 
