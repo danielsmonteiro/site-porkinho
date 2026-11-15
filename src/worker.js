@@ -39,7 +39,7 @@ const DESTINOS = {
   // --- canais de venda ---
   '/go/ifood': 'https://www.ifood.com.br/delivery/fortaleza-ce/feijoada-porkinho-sapiranga-coite/e4f431c8-ba2c-4a49-bd00-99dbea2c594e?utm_medium=share',
   '/go/99food': 'https://oia.99app.com/dlp9/0DRh5f',
-  '/go/whatsapp': 'https://wa.me/5585985900985',
+  '/go/whatsapp': 'https://wa.me/5585985900985?text=Ol%C3%A1%2C%20Sr.%20Monteiro%21%20Vim%20pelo%20site%20da%20Feijoada%20Porkinho%20e%20quero%20fazer%20uma%20encomenda.%0AData%3A%0AN%C3%BAmero%20de%20pessoas%3A%0ABairro%3A',
   '/go/instagram': 'https://instagram.com/feijoadaporkinho',
   // --- pontos de retirada (4 food trucks) ---
   '/go/ponto/guararapes': 'https://maps.app.goo.gl/XhSkyXLL1qfAMEk8A',

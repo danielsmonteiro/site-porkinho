@@ -10,9 +10,13 @@ que faz os redirects `/go/` e os cabeçalhos).
 
 **Hierarquia da página — não mexa nesta ordem:**
 
-1. **iFood** e **99 Food** — os dois botões mais destacados.
+1. **iFood** e **99 Food** — os dois botões mais destacados, logo seguidos dos
+   **kits** (foto, porção e preço), que são o produto.
 2. **Retirada** em um dos 4 food trucks.
-3. **WhatsApp** com o Sr. Monteiro — só evento, encomenda grande ou Pix.
+3. **WhatsApp** com o Sr. Monteiro — festa, evento, encomenda grande ou Pix.
+
+Depois vêm petiscos e bebidas (recolhidos no celular) e as **perguntas
+frequentes**, que existem tanto para quem compra quanto para buscadores e IAs.
 
 ---
 
@@ -28,6 +32,7 @@ public/                         tudo o que vai para a Cloudflare (Static Assets)
   img/                          logo, ícones, og-image, fotos dos kits
   fonts/outfit-latin-var.woff2  fonte self-hosted (32 KB, pesos 400–700)
   favicon.ico  site.webmanifest  robots.txt  sitemap.xml
+  llms.txt                      resumo do negócio em texto para assistentes de IA
   _headers                      CSP, HSTS e Cache-Control dos arquivos (fonte única)
   .assetsignore                 o que NÃO sobe para a Cloudflare
 
@@ -38,6 +43,7 @@ wrangler.jsonc                  configuração do Worker (rotas, dataset de cliq
 deploy/
   scripts/relatorio-cliques.sh  relatório de cliques (Analytics Engine)
   scripts/carregar-env.sh       lê deploy/.env para o ambiente
+  scripts/atualizar-sitemap.sh  datas do sitemap.xml a partir do git (roda no deploy)
   .env.exemplo                  copie para .env (está no .gitignore)
 ```
 
@@ -109,13 +115,22 @@ Analytics, sem Tag Manager, sem Meta Pixel.
 
 ## Trocar o link de um canal sem quebrar a contagem
 
-O destino real aparece em **três** lugares. Os três precisam mudar juntos:
+O destino real aparece em **quatro** lugares. Os quatro precisam mudar juntos:
 
 | Onde | O quê |
 |---|---|
 | `public/js/app.js` | `SITE_DATA.canais.<canal>.url` |
 | `src/worker.js` | a entrada da rota em `DESTINOS` |
 | `public/index.html` | o atributo `title="..."` do link **e** o JSON-LD |
+| `public/llms.txt` | o link em "Como pedir" ou em "Food trucks" |
+
+> **WhatsApp:** o destino de `/go/whatsapp` leva o texto da mensagem já
+> preenchida (`?text=...`, codificado). O `title` do link no `index.html` e o
+> `llms.txt` mostram só o número, sem o texto. Para mudar a mensagem:
+>
+> ```bash
+> python3 -c "import urllib.parse as u; print('https://wa.me/5585985900985?text=' + u.quote('''Olá, Sr. Monteiro! ...''', safe=''))"
+> ```
 
 **Mantenha o nome da rota `/go/...` igual.** É ele que identifica o canal no
 histórico do log: trocando só o destino, os números de antes e de depois
@@ -127,7 +142,7 @@ Depois de editar:
 npx wrangler@4.156.0 deploy     # ver "Publicar"
 ```
 
-Confira se os três arquivos ficaram idênticos:
+Confira se o `worker.js` e o `app.js` batem (o GitHub Actions confere isso em todo PR):
 
 ```bash
 grep -oE "': 'https://[^']*'" src/worker.js | cut -d"'" -f3 | sort > /tmp/a
@@ -146,18 +161,55 @@ São quatro mexidas, nesta ordem:
    de distância; sem elas o ponto nunca aparece como "mais perto".
 2. **`src/worker.js`** — entrada `'/go/ponto/<id>': '<link do Google Maps>'`
    em `DESTINOS`.
-3. **`public/index.html`** — o `<li data-ponto="<id>">` na lista `#pontos`
-   (copie um dos existentes) **e** a entrada em `department` no JSON-LD.
-4. Publique (ver "Publicar").
+3. **`public/index.html`** — o `<li data-ponto="<id>" id="ponto-<id>">` na lista
+   `#pontos` (copie um dos existentes), o `FoodEstablishment` com
+   `@id` `#ponto-<id>` no JSON-LD **e** a referência a ele em `subOrganization`
+   da `Organization`. Também a resposta "Onde fica a Feijoada Porkinho?", nas
+   perguntas frequentes **e** no `FAQPage` do JSON-LD.
+4. **`public/llms.txt`** — a linha do ponto em "Food trucks de retirada".
+5. Publique (ver "Publicar").
 
 O `data-ponto` do `<li>` tem que ser exatamente igual ao `id` do `SITE_DATA` —
 é assim que o JavaScript liga o cartão às coordenadas.
 
-Para **remover**, apague a entrada nos três arquivos. A rota `/go/ponto/<id>`
+Para **remover**, apague a entrada em todos esses lugares. A rota `/go/ponto/<id>`
 pode ficar em `DESTINOS` por um tempo: quem tiver o link velho salvo ainda
 chega no Maps, e o relatório mostra que o link antigo ainda circula.
 
 > O ponto do **Cidade Alpha** não opera mais e não deve voltar para o site.
+
+---
+
+## Busca e inteligências artificiais
+
+O que faz o site ser encontrado no Google e citado por assistentes como
+ChatGPT, Gemini, Perplexity e Claude:
+
+- **Texto visível com os fatos do negócio**: a linha abaixo do nome, os kits
+  com porção e preço, os food trucks e as perguntas frequentes. Conteúdo
+  fechado em `<details>` continua no HTML e é lido normalmente.
+- **JSON-LD** (`@graph` no fim do `index.html`): `Organization` (a marca; o
+  endereço dela é a sede, marcada como "não atende ao público"), um
+  `FoodEstablishment` por food truck com `@id` `#ponto-<id>`, o `Menu` e o
+  `FAQPage`. O GitHub Actions reprova o PR se o JSON-LD não for JSON válido.
+- **`llms.txt`** na raiz: o mesmo resumo em texto simples.
+- **`sitemap.xml`**: as datas (`lastmod`) saem do git a cada publicação, pelo
+  `atualizar-sitemap.sh`. Página nova = `<url>` nova no sitemap.
+
+**Preço, horário, porção e endereço aparecem em vários lugares e precisam
+bater**, senão buscador e IA desconfiam e deixam de recomendar:
+
+| Fato | Onde aparece |
+|---|---|
+| preços e porções | kits e petiscos no `index.html`, `Menu` do JSON-LD, `SITE_DATA.cardapio` no `app.js`, `llms.txt` |
+| horário | `index.html` (status, food trucks, perguntas), JSON-LD, `SITE_DATA.horario`, `llms.txt` |
+| perguntas frequentes | seção `#perguntas` do `index.html` **e** `FAQPage` do JSON-LD, com o mesmo texto |
+| food trucks | lista `#pontos`, JSON-LD, `SITE_DATA.pontos`, pergunta "Onde fica", `llms.txt` |
+
+Fora do site, e com mais peso que tudo isso: ficha no **Google Meu Negócio**
+para cada food truck, o site no **Google Search Console** e no **Bing Webmaster
+Tools** (o ChatGPT busca pelo índice do Bing) e, no painel da Cloudflare, o
+bloqueio de robôs de IA desligado.
 
 ---
 
@@ -345,13 +397,13 @@ acompanha.
 
 | Arquivo | Tamanho | Situação |
 |---|---|---|
-| `img/kit-executiva.*` | 128×128 | **Placeholder** — ilustração de tigela. Entra foto real do Kit Executiva, enquadrada quadrada. |
-| `img/kit-completa.*` | 128×128 | **Placeholder** — idem, foto do Kit Completa. |
+| `img/kit-executiva.*` | 128×128 | **Placeholder** — ilustração de tigela. Entra foto real do Kit Executiva, quadrada, com **pelo menos 256×256** (o cartão mostra em 88 px, e tela de celular tem 2 a 3 pixels por ponto). |
+| `img/kit-completa.*` | 128×128 | **Placeholder** — idem, foto do Kit Completa. **É a foto que mais vende**: o Kit Completa é o primeiro cartão da página. |
 | `img/og-image.jpg` | 1200×630, < 300 KB | Funcional, montada com a logo. O ideal é uma **foto do Kit Completa** bem iluminada: é isto que aparece quando o link é colado no WhatsApp. |
 | `img/logo.webp` / `.png` | 192×192 | Pronto — logo oficial, com transparência. |
 | `img/icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `../favicon.ico` | — | Prontos, gerados da logo oficial. |
 
-Para trocar, sobrescreva mantendo **o mesmo nome e as mesmas dimensões** — o
+Para trocar, sobrescreva mantendo **o mesmo nome e a proporção quadrada** — o
 HTML já declara `width`/`height`, então não há layout shift. Gere sempre o par
 **WebP + JPG**: o `<picture>` entrega WebP a quem aceita e JPG ao resto.
 
