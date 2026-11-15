@@ -1,0 +1,88 @@
+# Feijoada Porkinho — verificacao e publicacao do Worker.
+#
+#  - Em todo PR para a main e em todo push na main: confere a sintaxe, os
+#    destinos das rotas /go/ e roda um ensaio do deploy (sem credencial).
+#  - So em push na main: publica na Cloudflare e exige /health = ok.
+#
+# Secrets do repositorio (Settings > Secrets and variables > Actions):
+#   CLOUDFLARE_API_TOKEN   Account > Workers Scripts > Edit,
+#                          Zone > Workers Routes > Edit e Zone > Zone > Read
+#                          (zona feijoadaporkinho.com.br)
+#   CLOUDFLARE_ACCOUNT_ID
+#
+# PR vindo de fork nao recebe secrets e nunca publica: so a verificacao roda.
+
+name: Publicar
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Mesma versao fixa do README. O compatibility_date do wrangler.jsonc nao
+  # pode ser mais novo que o runtime que esta versao traz.
+  WRANGLER: wrangler@4.156.0
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Sintaxe do JS e dos scripts
+        run: |
+          node --check src/worker.js
+          node --check public/js/app.js
+          for f in deploy/scripts/*.sh; do bash -n "$f"; done
+
+      - name: Destinos de /go/ batem entre worker.js e app.js
+        run: |
+          grep -oE "': 'https://[^']*'" src/worker.js | cut -d"'" -f3 | sort > /tmp/worker
+          grep -oE "url: '[^']*'|mapa: '[^']*'" public/js/app.js | cut -d"'" -f2 | sort > /tmp/app
+          diff -u /tmp/worker /tmp/app
+
+      - name: Ensaio do deploy
+        run: npx -y "$WRANGLER" deploy --dry-run
+
+  publicar:
+    needs: verificar
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Um deploy por vez; um push novo espera o anterior terminar.
+    concurrency:
+      group: publicar-producao
+      cancel-in-progress: false
+    environment:
+      name: producao
+      url: https://feijoadaporkinho.com.br
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Publicar na Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx -y "$WRANGLER" deploy
+
+      - name: Conferir /health
+        run: |
+          for i in 1 2 3 4 5; do
+            corpo="$(curl -sf --max-time 15 https://feijoadaporkinho.com.br/health || true)"
+            [ "$corpo" = "ok" ] && { echo "/health respondeu ok"; exit 0; }
+            echo "tentativa $i: '${corpo:-vazio}'"; sleep 5
+          done
+          exit 1
