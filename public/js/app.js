@@ -297,9 +297,16 @@
     });
   }
 
+  /* Cada falha diz o que aconteceu e o que fazer, na voz da interface. */
+  var MSG_GEO = {
+    bloqueada: 'Localização bloqueada no navegador. Libere nas configurações do site ou escolha um food truck abaixo.',
+    demorou: 'A localização demorou para responder. Toque de novo ou escolha um food truck abaixo.',
+    indisponivel: 'Não foi possível saber onde você está agora. Escolha um food truck abaixo.'
+  };
+
   function pedirLocalizacao(botao) {
     if (!navigator.geolocation) {
-      avisoGeo('Não consegui pegar sua localização — os 4 pontos estão abaixo.', 'erro');
+      avisoGeo(MSG_GEO.indisponivel, 'erro');
       registrarEvento('geolocalizacao', 'erro');
       return;
     }
@@ -308,7 +315,7 @@
     botao.setAttribute('aria-busy', 'true');
     var rotuloOriginal = botao.querySelector('[data-rotulo]');
     var textoOriginal = rotuloOriginal ? rotuloOriginal.textContent : '';
-    if (rotuloOriginal) { rotuloOriginal.textContent = 'Procurando…'; }
+    if (rotuloOriginal) { rotuloOriginal.textContent = 'Buscando sua localização…'; }
     avisoGeo('', null);
 
     function encerrar() {
@@ -321,20 +328,19 @@
       function (pos) {
         encerrar();
         ordenarPontos(pos.coords.latitude, pos.coords.longitude);
-        avisoGeo('Pontos ordenados do mais perto ao mais longe.', 'ok');
+        avisoGeo('Food trucks em ordem, do mais perto ao mais longe.', 'ok');
         registrarEvento('geolocalizacao', 'sucesso');
       },
       function (err) {
         encerrar();
         /* 1 = PERMISSION_DENIED, 2 = POSITION_UNAVAILABLE, 3 = TIMEOUT */
         var resultado = 'erro';
-        var mensagem = 'Não consegui pegar sua localização — os 4 pontos estão abaixo.';
+        var mensagem = MSG_GEO.indisponivel;
         if (err && err.code === 1) {
           resultado = 'negado';
-          mensagem = 'Não consegui pegar sua localização — os 4 pontos estão abaixo.';
+          mensagem = MSG_GEO.bloqueada;
         } else if (err && err.code === 3) {
-          resultado = 'erro';
-          mensagem = 'Não consegui pegar sua localização — os 4 pontos estão abaixo.';
+          mensagem = MSG_GEO.demorou;
         }
         avisoGeo(mensagem, 'erro');
         registrarEvento('geolocalizacao', resultado);
