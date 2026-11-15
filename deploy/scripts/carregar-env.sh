@@ -1,10 +1,10 @@
 # shellcheck shell=bash
 #
-# Feijoada Porkinho — le deploy/.env para o ambiente. Usado com `source` pelo
-# deploy.sh e pelo relatorio-cliques.sh; chame a partir da raiz do repositorio.
+# Feijoada Porkinho — le deploy/.env para o ambiente. Usado com `source`;
+# chame a partir da raiz do repositorio.
 #
-# O ambiente ganha do arquivo: `SAUDE_URL=... ./deploy.sh` tem que valer
-# mesmo com um SAUDE_URL definido no deploy/.env. Um `set -a; . .env` faria
+# O ambiente ganha do arquivo: `CLOUDFLARE_API_TOKEN=... ./script` tem que
+# valer mesmo com um token definido no deploy/.env. Um `set -a; . .env` faria
 # o contrario, atropelando em silencio o que veio da linha de comando.
 #
 if [[ -f deploy/.env ]]; then

@@ -9,9 +9,9 @@
   /* ------------------------------------------------------------------ *
    * SITE_DATA — FONTE DA VERDADE
    * Ao trocar qualquer link aqui, troque tambem em:
-   *   - deploy/nginx/cliques.conf  (destino do redirect 302)
+   *   - src/worker.js              (DESTINOS: destino do redirect 302)
    *   - public/index.html          (atributo title e JSON-LD)
-   * e recarregue o nginx (sudo nginx -t && sudo systemctl reload nginx).
+   * e publique de novo (ver "Publicar" no README).
    * ------------------------------------------------------------------ */
   var SITE_DATA = {
     nome: 'Feijoada Porkinho',
@@ -19,7 +19,7 @@
     email: 'contato@feijoadaporkinho.com.br',
     telefone: '+5585985900985',
 
-    /* Canais de venda. `rota` e o caminho interno contado pelo nginx. */
+    /* Canais de venda. `rota` e o caminho interno contado pelo Worker. */
     canais: {
       ifood: {
         rotulo: 'iFood',
@@ -147,7 +147,8 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Evento interno: contado pelo nginx (204), sem cookie e sem payload.
+   * Evento interno: contado pelo Worker (204), sem cookie e sem payload.
+   * Evento novo aqui precisa de entrada em EVENTOS no src/worker.js.
    * ------------------------------------------------------------------ */
   var eventosEnviados = {};
   function registrarEvento(nome, resultado) {

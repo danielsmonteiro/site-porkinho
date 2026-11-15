@@ -161,7 +161,7 @@ async function tratar(request, env) {
   }
 
   // --- estaticos ----------------------------------------------------------
-  // Equivale ao `try_files $uri $uri/ =404` + `index index.html` do nginx.
+  // Caminho terminado em / serve o index.html da pasta.
   let alvo = request;
   if (caminho.endsWith('/')) alvo = new Request(new URL(caminho + 'index.html', url), request);
   const resposta = await env.ASSETS.fetch(alvo);

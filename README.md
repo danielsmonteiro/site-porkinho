@@ -36,10 +36,8 @@ wrangler.jsonc                  configuração do Worker (rotas, dataset de cliq
 
 deploy/
   scripts/relatorio-cliques.sh  relatório de cliques (Analytics Engine)
-  scripts/carregar-env.sh       lê deploy/.env (usado pelos dois scripts)
+  scripts/carregar-env.sh       lê deploy/.env para o ambiente
   .env.exemplo                  copie para .env (está no .gitignore)
-  LEGADO-VPS.md                 como era no VPS com nginx, para voltar se preciso
-  nginx/  scripts/deploy.sh ... arquivos da época do VPS (ver LEGADO-VPS.md)
 ```
 
 > **O `<head>` tem um `<script>` de uma linha** que põe a classe `js` no
@@ -185,7 +183,7 @@ O relatório roda na sua máquina e lê de lá:
 ```bash
 ./deploy/scripts/relatorio-cliques.sh                     # lê CLOUDFLARE_* do deploy/.env
 LARGURA=60 ./deploy/scripts/relatorio-cliques.sh          # barras mais largas
-./deploy/scripts/relatorio-cliques.sh logs/cliques-nginx-anonimo.log   # histórico do VPS
+./deploy/scripts/relatorio-cliques.sh logs/cliques-nginx-anonimo.log   # histórico de 09–10/2026
 ```
 
 Imprime, para **hoje**, **7 dias** e **30 dias** (horário de Fortaleza):
@@ -195,7 +193,8 @@ Imprime, para **hoje**, **7 dias** e **30 dias** (horário de Fortaleza):
 - ranking dos 4 pontos de retirada;
 - cliques por dia da semana e por hora.
 
-O histórico da época do nginx (20/09 a 07/10/2026, 217 cliques) foi salvo em
+O histórico de antes do Worker (20/09 a 07/10/2026, 217 cliques, do tempo em
+que o site rodava num servidor próprio com nginx) foi salvo em
 `logs/cliques-nginx-anonimo.log` — fora do git, já sem IP e sem user-agent.
 
 Para consultas avulsas, a SQL API aceita qualquer `SELECT`:
@@ -215,8 +214,7 @@ O Analytics Engine guarda os pontos por **3 meses**.
 ## Infraestrutura — Cloudflare Worker
 
 Desde 11/2026 o site roda num **Cloudflare Worker** com *Static Assets*. Não há
-servidor próprio: `public/` é enviado para a Cloudflare, e o que o nginx fazia
-se divide assim:
+servidor: `public/` é enviado para a Cloudflare e o trabalho se divide assim:
 
 | O quê | Onde |
 |---|---|
@@ -240,11 +238,17 @@ se divide assim:
 > pelas páginas HTML.
 
 O Worker está preso às **rotas** `feijoadaporkinho.com.br/*` e
-`www.feijoadaporkinho.com.br/*`, sobre os registros DNS que já existiam com
-nuvem laranja. Os registros ainda apontam para o IP do VPS, mas esse IP deixa de
-ser consultado: o Worker responde antes. Como ele roda antes do cache da
-Cloudflare, **a Cache Rule de bypass em `/go/*` não é mais necessária** — cada
-clique sempre passa pelo Worker.
+`www.feijoadaporkinho.com.br/*`. As rotas só funcionam se existir um registro
+DNS **com nuvem laranja** para cada um dos dois nomes; o conteúdo do registro
+não importa, porque o Worker responde antes de qualquer origem. **Não apague
+esses registros nem desligue a nuvem laranja** — o site sai do ar.
+
+> Até 11/2026 o site rodou num servidor próprio com nginx. O servidor foi
+> desligado e os arquivos dele saíram do repositório; estão no histórico do git
+> (antes do commit que removeu `deploy/nginx/`), se um dia precisar consultar.
+
+Como o Worker roda antes do cache da Cloudflare, cada clique em `/go/*` sempre
+passa por ele: não é preciso Cache Rule de bypass.
 
 ### Publicar
 
@@ -277,8 +281,8 @@ Para voltar uma versão: `npx wrangler@4.156.0 rollback`.
 | Rules → Redirect Rules / Page Rules | **nenhuma** regra para este domínio — ela vence o Worker. Em 19/09/2026 havia uma mandando tudo para o Linktree. |
 | Scrape Shield → Email Address Obfuscation | tanto faz: o HTML se protege com `<!--email_off-->` (ver abaixo) |
 
-O modo SSL (Full/Flexible) e o certificado da origem **não importam mais**: com
-o Worker não existe conexão com origem.
+O modo SSL (Full/Flexible) e certificado de origem não se aplicam: com o Worker
+não existe conexão com origem.
 
 > **E-mail no HTML:** com *Email Address Obfuscation* ligada, a borda troca o
 > `mailto:` por `/cdn-cgi/l/email-protection`, que só volta ao normal com JS — e
