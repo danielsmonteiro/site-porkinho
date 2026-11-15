@@ -34,7 +34,7 @@
       whatsapp: {
         rotulo: 'WhatsApp',
         rota: '/go/whatsapp',
-        url: 'https://wa.me/5585985900985?text=Ol%C3%A1%2C%20Sr.%20Monteiro%21%20Vim%20pelo%20site%20da%20Feijoada%20Porkinho%20e%20quero%20fazer%20uma%20encomenda.%0AData%3A%0AN%C3%BAmero%20de%20pessoas%3A%0ABairro%3A'
+        url: 'https://wa.me/5585985900985?text=Ol%C3%A1%2C%20Sr.%20Monteiro%21%20Vim%20pelo%20site%20da%20Feijoada%20Porkinho.'
       },
       instagram: {
         rotulo: 'Instagram',
@@ -102,37 +102,7 @@
       cidade: 'Fortaleza',
       uf: 'CE',
       cep: '60833-075'
-    },
-
-    /* Precos de referencia. Promocoes do iFood e do 99 Food alteram o valor final. */
-    cardapio: [
-      {
-        nome: 'Kit Feijoada Executiva',
-        porcao: '1 a 2 pessoas',
-        preco: 69.9,
-        descricao: '600 g de feijoada, torresmo crocante, arroz soltinho, farofa temperada e docinho de sobremesa.'
-      },
-      {
-        nome: 'Kit Feijoada Completa',
-        porcao: '3 a 4 pessoas',
-        preco: 119.9,
-        descricao: '1,2 kg de feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais.'
-      },
-      {
-        nome: 'Bolinha de Feijoada',
-        porcao: '12 unidades',
-        preco: 24.9,
-        descricao: 'Petisco crocante por fora, recheado de feijoada.'
-      },
-      {
-        nome: 'Porção de Torresmo Caseiro',
-        porcao: '80 g',
-        preco: 14.9,
-        descricao: 'Frito até ficar sequinho.'
-      },
-      { nome: 'Coca-Cola garrafa', porcao: '2 L', preco: 19.9, descricao: '' },
-      { nome: 'Coca-Cola lata', porcao: '350 ml', preco: 8.9, descricao: '' }
-    ]
+    }
   };
 
   /* Exposto para depuracao no console; nada depende disso. */
@@ -360,7 +330,11 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * 3. Cardapio — recolhido no mobile, aberto no desktop.
+   * 3. Petiscos e bebidas — recolhido no mobile, aberto no desktop.
+   *    Os kits ficam fora, sempre visiveis (secao #kits). O evento se chama
+   *    `petiscos` desde 15/11/2026; antes era `cardapio` e contava quem
+   *    abria o cardapio inteiro, kits inclusive. As duas series nao se
+   *    comparam.
    * ------------------------------------------------------------------ */
   function prepararCardapio() {
     var det = $('#cardapio');
@@ -378,7 +352,7 @@
     det.addEventListener('toggle', function () {
       if (programatico) { programatico = false; return; }
       det.setAttribute('data-tocado', '1');
-      if (det.open) { registrarEvento('cardapio', 'aberto'); }
+      if (det.open) { registrarEvento('petiscos', 'aberto'); }
     });
 
     function aplicar(mq) {

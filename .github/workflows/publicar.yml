@@ -61,6 +61,24 @@ jobs:
             console.log(blocos.length + " bloco(s) JSON-LD ok");
           '
 
+      - name: Perguntas frequentes iguais na pagina e no FAQPage
+        run: |
+          node -e '
+            const html = require("fs").readFileSync("public/index.html", "utf8");
+            const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1];
+            const faq = JSON.parse(ld)["@graph"].find(n => n["@type"] === "FAQPage").mainEntity
+              .map(q => [q.name, q.acceptedAnswer.text]);
+            const pagina = [...html.matchAll(/<summary class="pergunta__titulo">([^<]*)<\/summary>\s*<p class="pergunta__resposta">([^<]*)<\/p>/g)]
+              .map(m => [m[1], m[2].replace(/&nbsp;/g, " ")]);
+            const a = JSON.stringify(pagina, null, 1), b = JSON.stringify(faq, null, 1);
+            if (a !== b) {
+              console.error("A secao #perguntas e o FAQPage do JSON-LD divergem.");
+              console.error("pagina:", a); console.error("JSON-LD:", b);
+              process.exit(1);
+            }
+            console.log(faq.length + " perguntas iguais");
+          '
+
       - name: Ensaio do deploy
         run: npx -y "$WRANGLER" deploy --dry-run
 
