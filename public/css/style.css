@@ -19,8 +19,10 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Tokens. O amarelo vem do anel dourado da logo oficial, que vai de
- * #945C24 a #F4EC6C; #E9D45C e a faixa clara desse degrade.
+ * Tokens. Cimento e dourado, como no Instagram da marca: o fundo e um
+ * cinza de cimento (grafite levemente quente no escuro, cimento claro no
+ * tema claro) e o unico acento e o amarelo do anel dourado da logo
+ * oficial, que vai de #945C24 a #F4EC6C; #E9D45C e a faixa clara dele.
  *
  * Contraste conferido: nenhum par de texto abaixo de 4.5:1.
  * Sobre o amarelo o texto e sempre a tinta escura (11.43:1) e o texto
@@ -30,14 +32,14 @@
 :root {
   color-scheme: dark light;
 
-  --fundo: #1A120C;
-  --superficie: #2A1F18;
-  --superficie-alta: #34261D;
-  --borda: #8A6C52;
-  --borda-suave: #3D2E23;
+  --fundo: #262624;
+  --superficie: #31312E;
+  --superficie-alta: #3B3B38;
+  --borda: #85827B;
+  --borda-suave: #46453F;
 
-  --texto: #F5EDE3;
-  --texto-2: #B8A594;
+  --texto: #F1EFEA;
+  --texto-2: #B5B1A9;
 
   --primaria: #E9D45C;
   --primaria-forte: #F2DE6B;
@@ -55,7 +57,7 @@
   --fechado: #F87171;
 
   --foco: #FFE9A3;
-  --sombra: 0 6px 18px rgba(0, 0, 0, .38);
+  --sombra: 0 6px 18px rgba(0, 0, 0, .42);
 
   /* Escala tipografica: cinco degraus e nada no meio. Antes eram 14
      tamanhos entre 12,5 e 28 px, quase todos a 0,3 px um do outro. */
@@ -73,20 +75,20 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --fundo: #FBF5EC;
-    --superficie: #FFFFFF;
+    --fundo: #E0E0DD;
+    --superficie: #F1F1EF;
     --superficie-alta: #FFFFFF;
-    --borda: #9C8168;
-    --borda-suave: #EADCC9;
+    --borda: #807C74;
+    --borda-suave: #CFCCC5;
 
-    --texto: #241A14;
-    --texto-2: #6B5443;
+    --texto: #1F1E1C;
+    --texto-2: #57534C;
 
     --primaria: #E9D45C;
     --primaria-forte: #DFC544;
     /* Amarelo claro sobre creme da so 1.38:1. A borda garante o limite
        visivel do controle exigido pela WCAG 1.4.11 (3.64:1). */
-    --primaria-borda: #9C7C20;
+    --primaria-borda: #937520;
     --primaria-tinta: #241A0B;
     --primaria-apoio: #4A3A12;
     --primaria-texto: #6B5410;
@@ -102,7 +104,7 @@
     --fechado: #B3261E;
 
     --foco: #4A3A12;
-    --sombra: 0 6px 18px rgba(72, 48, 26, .12);
+    --sombra: 0 6px 18px rgba(30, 30, 28, .14);
   }
 }
 
