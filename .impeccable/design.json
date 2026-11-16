@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-16T22:37:05+00:00",
+  "generatedAt": "2026-11-16T22:59:24+00:00",
   "title": "Design System: Feijoada Porkinho",
   "extensions": {
     "colorMeta": {
@@ -359,7 +359,7 @@
       },
       {
         "name": "A Regra do Fechado Dourado",
-        "body": "Fora do horário nada fica vermelho: o ponto do status fica dourado e o texto diz quando abre. Vermelho é só para erro.",
+        "body": "Fora do horário nada fica vermelho: o ponto do status fica dourado (com o anel de Borda de Ouro no tema claro) e o texto diz quando abre. Os botões dos apps continuam dourados, mas o apoio diz \"Fechado · abre sexta às 09:00\", e a barra fixa não aparece. Vermelho é só para erro.",
         "section": "colors"
       },
       {
@@ -403,6 +403,8 @@
       "Don't clarear texto com `opacity`.",
       "Don't alargar a coluna além de 520px nem criar layout de várias colunas no desktop.",
       "Don't pôr sombra em cartões, listas ou status.",
+      "Don't pôr caixa com borda e fundo dentro de outro bloco com borda e fundo.",
+      "Don't usar seta de \"sai do site\" em algo que só abre e fecha.",
       "Don't usar animação infinita; o que pulsa, pulsa três vezes e para.",
       "Don't usar fontes, ícones ou imagens de CDN de terceiro; tudo é servido do próprio site."
     ]

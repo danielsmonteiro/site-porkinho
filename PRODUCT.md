@@ -28,7 +28,8 @@ Públicos secundários:
 
 O site é um hub de pedido, não uma loja. Ele existe para levar a pessoa ao
 canal certo o mais rápido possível: iFood e 99 Food para entrega, um dos 4 food
-trucks para retirada, WhatsApp para festas, eventos, encomendas grandes e Pix.
+trucks para retirada, WhatsApp para pedir direto durante o funcionamento (sem
+passar pelos apps), reservas, festas, eventos e encomendas grandes, com Pix.
 
 Sucesso é clique de saída para iFood, 99 Food ou WhatsApp, medido pelas rotas
 `/go/*` (Cloudflare Analytics Engine). A taxa de conversão por canal sai de
@@ -49,14 +50,18 @@ encontrado e recomendado por buscadores e por IAs.
 ## Operating Context
 
 - Funciona de sexta a domingo, das 09:00 às 15:00 (horário de Fortaleza).
-- Pedido para entrega pelo iFood e pelo 99 Food. O pagamento é feito no app.
-  Pedido mínimo no iFood: R$ 59,00.
+- Pedido para entrega pelo iFood e pelo 99 Food. Os apps fazem **só entrega**,
+  sem retirada, e não aceitam pedido agendado: fora do horário a loja não
+  recebe pedido. O pagamento é feito no app. Pedido mínimo no iFood: R$ 59,00.
 - Retirada em 4 food trucks: Guararapes, Parque del Sol e Sapiranga (Fortaleza)
-  e Eusébio. Os food trucks são só para retirada, sem mesas nem consumo no local.
+  e Eusébio. No food truck a compra é feita na hora, no balcão, para levar: sem
+  pedido antecipado, sem mesas e sem consumo no local.
   Os 3 de Fortaleza ficam na rua e não têm endereço, só uma localização no mapa.
   O do Eusébio fica na Av. Eusébio de Queiroz, 3409.
 - A sede/fábrica tem endereço, mas não atende ao público.
-- Pix e encomendas grandes são combinados pelo WhatsApp com o Sr. Monteiro.
+- Pelo WhatsApp com o Sr. Monteiro: pedido direto durante o funcionamento, sem
+  passar pelos apps; reservas; festas, eventos e encomendas grandes. Pagamento
+  via Pix.
 - Os kits não acompanham pratos nem talheres descartáveis.
 
 ## Capabilities and Constraints

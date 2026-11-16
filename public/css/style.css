@@ -127,6 +127,11 @@ body {
 
 img { max-width: 100%; height: auto; display: block; }
 
+/* Sem palavra sozinha na ultima linha ("artesanais.", o CEP do rodape).
+   Navegador sem suporte ignora e quebra como sempre. */
+p, li, .botao__apoio { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+
 /* O `display` de uma regra de autor ganha do `[hidden]{display:none}` da
    folha do navegador. Sem este !important, o #btn-geo — que nasce com
    `hidden` para so aparecer depois que o JS assume — fica visivel e morto
@@ -251,7 +256,11 @@ a { color: var(--primaria-texto); }
    pulsacao de "aberto". O JS ja nao deixa isso acontecer (renderizarStatus
    remove as tres antes de por a certa); aqui e so para o erro ser impossivel
    de aparecer, e nao apenas improvavel. */
-.status--fechado .status__ponto { background: var(--primaria-texto); animation: none; }
+.status--fechado .status__ponto {
+  background: var(--primaria);
+  box-shadow: inset 0 0 0 1px var(--primaria-borda);
+  animation: none;
+}
 .status--aberto { color: var(--aberto); }
 /* Fechado nao e erro: e "abre daqui a pouco". Texto normal e ponto
    dourado, nada de vermelho — vermelho le como "pare" e desanimava o
@@ -282,9 +291,24 @@ a { color: var(--primaria-texto); }
   font-size: var(--fs-apoio);
 }
 
+/* Logo abaixo dos botoes dos apps: o caminho sem app (WhatsApp). Texto,
+   nao botao: o dourado continua so nos apps. */
+.dica-whatsapp {
+  margin: 0;
+  font-size: var(--fs-apoio);
+  color: var(--texto-2);
+}
+.dica-whatsapp a {
+  color: var(--texto);
+  font-weight: 700;
+  text-decoration-color: var(--whatsapp-borda);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.dica-whatsapp a:hover { color: var(--whatsapp-texto); }
+
 .cta-titulo {
   margin: 0 0 12px;
-  text-align: center;
   font-size: var(--fs-texto);
   font-weight: 700;
   color: var(--texto);
@@ -388,21 +412,6 @@ html.js #btn-geo { display: flex; }
 /* ------------------------------------------------------------------ *
  * Pontos de retirada
  * ------------------------------------------------------------------ */
-.aviso-retirada {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin: 0 0 14px;
-  padding: 12px 14px;
-  border: 1px dashed var(--borda);
-  border-radius: var(--raio);
-  background: var(--superficie);
-  font-size: var(--fs-apoio);
-  color: var(--texto-2);
-}
-.aviso-retirada strong { color: var(--texto); }
-.aviso-retirada svg { flex: 0 0 auto; width: 20px; height: 20px; color: var(--primaria-texto); }
-
 .pontos { list-style: none; margin: 0; padding: 0; }
 .pontos > li { margin-bottom: 10px; }
 .pontos > li:last-child { margin-bottom: 0; }
@@ -413,14 +422,14 @@ html.js #btn-geo { display: flex; }
   gap: 12px;
   min-height: 56px;
   padding: 11px 14px;
-  border: 1px solid var(--borda-suave);
+  border: 1px solid var(--borda);
   border-radius: var(--raio);
   background: var(--superficie);
   color: var(--texto);
   text-decoration: none;
   transition: border-color var(--transicao), background-color var(--transicao);
 }
-.ponto:hover { border-color: var(--borda); background: var(--superficie-alta); }
+.ponto:hover { background: var(--superficie-alta); }
 
 /* app.js poe a classe no <li> (e ele que carrega o data-ponto); a borda
    mora no <a> de dentro. Sem o descendente, o destaque nunca aparecia. */
@@ -468,6 +477,12 @@ html.js #btn-geo { display: flex; }
 .geo-aviso:empty { margin: 0; }
 .geo-aviso--erro { color: var(--fechado); }
 .geo-aviso--ok { color: var(--aberto); }
+
+.nota-retirada {
+  margin: 12px 0 14px;
+  font-size: var(--fs-meta);
+  color: var(--texto-2);
+}
 
 /* ------------------------------------------------------------------ *
  * Kits — o produto. Sempre visiveis, logo depois dos botoes dos apps,
@@ -556,8 +571,15 @@ html.js #btn-geo { display: flex; }
 }
 .cardapio__resumo::-webkit-details-marker { display: none; }
 
-.cardapio__resumo .botao__seta { margin-left: auto; transition: transform var(--transicao); }
-.cardapio[open] .cardapio__resumo .botao__seta { transform: rotate(90deg); }
+.cardapio__resumo::after {
+  content: "+";
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-size: var(--fs-destaque);
+  font-weight: 400;
+  color: var(--primaria-texto);
+}
+.cardapio[open] .cardapio__resumo::after { content: "\2212"; }
 
 .cardapio__corpo { padding: 0 16px 16px; }
 
@@ -610,18 +632,15 @@ html.js #btn-geo { display: flex; }
 }
 
 .nota {
-  margin: 14px 0 0;
-  padding: 11px 13px;
-  border-radius: 10px;
-  background: var(--fundo);
-  border: 1px solid var(--borda-suave);
+  margin: 12px 0 0;
   font-size: var(--fs-meta);
   color: var(--texto-2);
 }
-.nota strong { color: var(--texto); }
-.nota + .nota { margin-top: 8px; }
 
 .cardapio__acoes { margin-top: 16px; }
+/* Com JS, a barra fixa (ou, fora do horario, o aviso de fechado) ja cobre
+   o pedido: os dois botoes dourados aqui so duplicariam a barra. */
+html.js .cardapio__acoes { display: none; }
 
 /* ------------------------------------------------------------------ *
  * Perguntas frequentes. <details> nativo: funciona sem JS, e o texto

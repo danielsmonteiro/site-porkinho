@@ -13,7 +13,9 @@ que faz os redirects `/go/` e os cabeçalhos).
 1. **iFood** e **99 Food** — os dois botões mais destacados, logo seguidos dos
    **kits** (foto, porção e preço), que são o produto.
 2. **Retirada** em um dos 4 food trucks.
-3. **WhatsApp** com o Sr. Monteiro — festa, evento, encomenda grande ou Pix.
+3. **WhatsApp** com o Sr. Monteiro — pedido direto no horário (sem app),
+   reserva, festa, evento e encomenda grande, com Pix. Uma linha de texto logo
+   abaixo dos botões dos apps também leva até ele.
 
 Depois vêm petiscos e bebidas (recolhidos no celular) e as **perguntas
 frequentes**, que existem tanto para quem compra quanto para buscadores e IAs.
@@ -23,12 +25,17 @@ Três regras de tela que vieram de uma análise de design (15/11/2026):
 - **Cabeçalho compacto** (logo de 56 px ao lado do nome) para a foto do Kit
   Completa caber inteira na primeira tela do celular.
 - **Fora do horário, nada de vermelho.** O status diz quando abre ("Abre hoje
-  às 09:00") com ponto dourado, e o chamado acima dos botões usa o mesmo dia
-  ("Peça hoje, a partir das 09:00"). Os dois saem de `textoDoStatus` no
-  `app.js`.
+  às 09:00") com ponto dourado. Como o iFood e o 99 Food **não aceitam pedido
+  agendado**, o chamado acima dos botões passa a "Pedidos pelo app só com a
+  loja aberta" e o texto de apoio de cada botão vira "Fechado · abre sexta às
+  09:00". Tudo sai de `textoDoStatus` no `app.js`.
 - **Barra fixa de pedido** no rodapé da tela, com iFood e 99 Food. Aparece só
-  depois que os botões do topo saem da tela e some quando eles voltam. Os
-  cliques dela vão para as mesmas rotas, com `?de=barra`.
+  depois que os botões do topo saem da tela e some quando eles voltam. **Fora
+  do horário ela não aparece.** Os cliques dela vão para as mesmas rotas, com
+  `?de=barra`.
+- **Os apps são só entrega.** Retirada é compra na hora, no balcão do food
+  truck. Não escreva "entrega ou retirada" nos botões, no JSON-LD nem no
+  `llms.txt`.
 
 Tamanhos de fonte só da escala em `:root` do `style.css` (`--fs-meta` 13,
 `--fs-apoio` 15, `--fs-texto` 16, `--fs-destaque` 20, `--fs-titulo` 28). Nada

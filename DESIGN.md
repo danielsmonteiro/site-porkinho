@@ -63,7 +63,6 @@ typography:
     fontWeight: 400
     lineHeight: 1.3
 rounded:
-  nota: "10px"
   raio: "14px"
   raio-g: "20px"
   pilula: "999px"
@@ -193,7 +192,7 @@ entre superfícies e muito contraste no que importa.
 - **Prato Quente** (`superficie-alta`): hover das superfícies e fundo enquanto
   a foto carrega.
 - **Borda de Barro** (`borda` / `borda-claro`): contorno dos controles
-  secundários e do aviso tracejado; precisa passar de 3:1.
+  secundários e das linhas de food truck; precisa passar de 3:1.
 - **Risco Suave** (`borda-suave` / `borda-suave-claro`): divisórias e contorno
   de cartões que não são controles.
 - **Farinha** (`texto` / `texto-claro`): texto principal.
@@ -212,7 +211,9 @@ entre superfícies e muito contraste no que importa.
 no preço. Não é cor de enfeite, de título nem de fundo de seção.
 
 **A Regra do Fechado Dourado.** Fora do horário nada fica vermelho: o ponto do
-status fica dourado e o texto diz quando abre. Vermelho é só para erro.
+status fica dourado (com o anel de Borda de Ouro no tema claro) e o texto diz
+quando abre. Os botões dos apps continuam dourados, mas o apoio diz "Fechado ·
+abre sexta às 09:00", e a barra fixa não aparece. Vermelho é só para erro.
 
 **A Regra da Tinta Escura.** Sobre o dourado o texto é sempre a tinta escura.
 Texto claro sobre o dourado, ou um dourado mais escuro, reprova no contraste.
@@ -265,7 +266,7 @@ compacto de propósito, para a foto do Kit Completa caber inteira na primeira
 tela do celular.
 
 A **barra fixa de pedido** (iFood e 99 Food lado a lado) só aparece depois que
-os botões do topo saem da tela; quando ela está visível, a página ganha
+os botões do topo saem da tela, e só com a loja aberta; quando ela está visível, a página ganha
 espaço no fim e o `scroll-padding-bottom` impede que o foco fique escondido
 atrás dela.
 
@@ -293,10 +294,9 @@ suave, sem sombra. Só o que leva ao pedido se levanta da página.
 
 Cantos suaves e consistentes. Controles e cartões usam 14px (`raio`);
 blocos que agrupam vários itens (cardápio, perguntas) usam 20px (`raio-g`);
-notas internas 10px; status e selo são pílulas. A logo é recortada em
-círculo. As fotos dos kits ficam em 4:3, cortadas pelo canto do cartão.
-O único contorno tracejado do site é o aviso de "exclusivamente para
-retirada", para diferenciar informação de controle.
+status e selo são pílulas. A logo é recortada em círculo. As fotos dos
+kits ficam em 4:3, cortadas pelo canto do cartão. Não há contorno tracejado
+nem caixa dentro de bloco: aviso é texto de apoio.
 
 ## Components
 
@@ -321,8 +321,9 @@ Risco Suave, 14px, sem sombra. A nota de preço de referência vem depois dos
 cartões, nunca antes.
 
 ### Ponto de retirada
-Linha tocável de 56px: pino dourado, nome em negrito, detalhe em meta e, depois
-da geolocalização, a distância em dourado e o selo "Mais perto" (pílula
+Linha tocável de 56px com Borda de Barro (é um controle): pino dourado, nome em
+negrito, detalhe em meta ("Abrir no mapa" ou o endereço), seta à direita e,
+depois da geolocalização, a distância em dourado e o selo "Mais perto" (pílula
 dourada). O mais perto ganha borda dourada.
 
 ### Status de horário
@@ -330,12 +331,16 @@ Pílula em largura cheia com ponto de 10px: verde e pulsando três vezes quando
 aberto, dourado e texto normal quando fechado, cinza neutro antes do JS.
 
 ### Cardápio e perguntas
-`<details>` nativos em bloco de 20px com divisórias internas. O resumo do
-cardápio gira a seta 90° ao abrir; a pergunta troca "+" por "−" em dourado.
+`<details>` nativos em bloco de 20px com divisórias internas, com título de
+seção visível acima. Um só idioma de abrir e fechar: "+" que vira "−" em
+dourado, à direita do resumo. O resumo do cardápio diz o que tem dentro
+("Bolinha, torresmo e Coca-Cola"), sem ícone nem seta de link.
+Notas dentro do bloco são texto de apoio. Os botões dos apps dentro do
+cardápio só existem sem JavaScript.
 
 ### Barra fixa de pedido
 Dois botões dourados de 48px lado a lado, presos ao rodapé da tela, entrando
-de baixo em 180ms.
+de baixo em 180ms. Só com a loja aberta.
 
 ## Do's and Don'ts
 
@@ -360,6 +365,9 @@ de baixo em 180ms.
 - **Don't** alargar a coluna além de 520px nem criar layout de várias colunas
   no desktop.
 - **Don't** pôr sombra em cartões, listas ou status.
+- **Don't** pôr caixa com borda e fundo dentro de outro bloco com borda e
+  fundo.
+- **Don't** usar seta de "sai do site" em algo que só abre e fecha.
 - **Don't** usar animação infinita; o que pulsa, pulsa três vezes e para.
 - **Don't** usar fontes, ícones ou imagens de CDN de terceiro; tudo é
   servido do próprio site.
