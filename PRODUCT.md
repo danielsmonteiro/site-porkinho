@@ -28,7 +28,8 @@ Públicos secundários:
 
 O site é um hub de pedido, não uma loja. Ele existe para levar a pessoa ao
 canal certo o mais rápido possível: iFood e 99 Food para entrega, um dos 4 food
-trucks para retirada, WhatsApp para festas, eventos, encomendas grandes e Pix.
+trucks para retirada, WhatsApp para pedir direto durante o funcionamento (sem
+passar pelos apps), reservas, festas, eventos e encomendas grandes, com Pix.
 
 Sucesso é clique de saída para iFood, 99 Food ou WhatsApp, medido pelas rotas
 `/go/*` (Cloudflare Analytics Engine). A taxa de conversão por canal sai de
@@ -58,7 +59,9 @@ encontrado e recomendado por buscadores e por IAs.
   Os 3 de Fortaleza ficam na rua e não têm endereço, só uma localização no mapa.
   O do Eusébio fica na Av. Eusébio de Queiroz, 3409.
 - A sede/fábrica tem endereço, mas não atende ao público.
-- Pix e encomendas grandes são combinados pelo WhatsApp com o Sr. Monteiro.
+- Pelo WhatsApp com o Sr. Monteiro: pedido direto durante o funcionamento, sem
+  passar pelos apps; reservas; festas, eventos e encomendas grandes. Pagamento
+  via Pix.
 - Os kits não acompanham pratos nem talheres descartáveis.
 
 ## Capabilities and Constraints

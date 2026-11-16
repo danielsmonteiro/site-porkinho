@@ -291,6 +291,22 @@ a { color: var(--primaria-texto); }
   font-size: var(--fs-apoio);
 }
 
+/* Logo abaixo dos botoes dos apps: o caminho sem app (WhatsApp). Texto,
+   nao botao: o dourado continua so nos apps. */
+.dica-whatsapp {
+  margin: 0;
+  font-size: var(--fs-apoio);
+  color: var(--texto-2);
+}
+.dica-whatsapp a {
+  color: var(--texto);
+  font-weight: 700;
+  text-decoration-color: var(--whatsapp-borda);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.dica-whatsapp a:hover { color: var(--whatsapp-texto); }
+
 .cta-titulo {
   margin: 0 0 12px;
   font-size: var(--fs-texto);

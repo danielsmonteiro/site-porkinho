@@ -61,7 +61,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 .botao__apoio{display:block;font-size:.8125rem;line-height:1.3;color:var(--texto-2)}
 .botao--primario{background:var(--primaria);border-color:var(--primaria-borda);color:var(--primaria-tinta);box-shadow:var(--sombra);min-height:64px}.botao--primario .botao__apoio{color:var(--primaria-apoio)}
 </style>
-<link rel="stylesheet" href="/css/style.css?v=13">
+<link rel="stylesheet" href="/css/style.css?v=14">
 <!-- Marca que ha JavaScript ANTES da primeira pintura. Sem isto, o botao
      de geolocalizacao so aparecia no DOMContentLoaded e empurrava a lista
      de pontos para baixo (layout shift). Liberado na CSP por hash, nao
@@ -120,6 +120,8 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
       </span>
     </a>
+
+    <p class="dica-whatsapp">Prefere sem app? <a href="/go/whatsapp" rel="nofollow noopener noreferrer">Peça ou reserve pelo WhatsApp</a> com o Sr. Monteiro.</p>
 
     <!-- Os kits sao o produto: ficam logo abaixo dos botoes dos apps, sempre
          visiveis. Precos de referencia — iguais no JSON-LD e no llms.txt
@@ -257,11 +259,12 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </a>
     </section>
 
-    <!-- 3. WhatsApp: evento, encomenda grande ou Pix. A mensagem ja abre
+    <!-- 3. WhatsApp: pedido direto no horario, reserva, festa e evento, com
+         Pix. A mensagem ja abre
          preenchida (ver o destino de /go/whatsapp no src/worker.js). -->
     <section class="secao" id="encomenda" aria-labelledby="titulo-whatsapp">
-      <h2 class="secao__titulo" id="titulo-whatsapp">Feijoada para festa ou evento</h2>
-      <p class="secao__apoio">Para evento, encomenda grande ou pagamento via Pix, fale direto com o Sr. Monteiro: é ele quem responde. Para entrega no dia a dia, o app é mais rápido.</p>
+      <h2 class="secao__titulo" id="titulo-whatsapp">Pedir direto com o Sr. Monteiro</h2>
+      <p class="secao__apoio">Pelo WhatsApp você pede sem passar pelos apps durante o funcionamento, faz reserva e encomenda para festa ou evento, com pagamento via Pix. É o Sr. Monteiro quem responde.</p>
 
       <a class="botao botao--secundario botao--whatsapp" href="/go/whatsapp"
          rel="nofollow noopener noreferrer">
@@ -269,8 +272,8 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.17-1.35a9.94 9.94 0 0 0 4.87 1.26h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.86c2.17 0 4.2.84 5.73 2.38a8.05 8.05 0 0 1 2.37 5.72c0 4.47-3.63 8.1-8.1 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-2.99-.19-.31a8.06 8.06 0 0 1-1.24-4.29c0-4.47 3.64-8.1 8.11-8.1Zm-3.1 4.3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34 1 2.5c.12.17 1.68 2.66 4.12 3.62 2.03.8 2.45.64 2.89.6.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46Z"/></svg>
         </span>
         <span class="botao__texto">
-          <span class="botao__rotulo">Pedir orçamento no WhatsApp</span>
-          <span class="botao__apoio">Para evento, diga a data, o número de pessoas e o bairro</span>
+          <span class="botao__rotulo">Pedir no WhatsApp</span>
+          <span class="botao__apoio">Para reserva ou evento, diga a data, o número de pessoas e o bairro</span>
         </span>
         <span class="botao__seta" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -375,6 +378,10 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           <p class="pergunta__resposta">Você compra na hora, direto no balcão de um dos 4 food trucks, e leva para casa. Não há mesas nem consumo no local. O iFood e o 99 Food fazem apenas entrega.</p>
         </details>
         <details class="pergunta">
+          <summary class="pergunta__titulo">Dá para pedir sem usar o iFood ou o 99 Food?</summary>
+          <p class="pergunta__resposta">Sim. Durante o funcionamento, peça direto pelo WhatsApp com o Sr. Monteiro, com pagamento via Pix. Pelo WhatsApp também dá para fazer reserva e encomendar para festa ou evento.</p>
+        </details>
+        <details class="pergunta">
           <summary class="pergunta__titulo">Onde fica a Feijoada Porkinho?</summary>
           <p class="pergunta__resposta">São 4 food trucks de retirada: Guararapes, Parque del Sol e Sapiranga, em Fortaleza, e Av. Eusébio de Queiroz, 3409, no Eusébio. O endereço da Rua Marcelino Lopes é da fábrica e não atende ao público.</p>
         </details>
@@ -448,7 +455,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       "@type": "Organization",
       "@id": "https://feijoadaporkinho.com.br/#empresa",
       "name": "Feijoada Porkinho",
-      "description": "Feijoada e torresmo caseiro de sexta a domingo em Fortaleza e no Eusébio (CE). Entrega pelo iFood e pelo 99 Food, ou compra para levar em um dos 4 food trucks.",
+      "description": "Feijoada e torresmo caseiro de sexta a domingo em Fortaleza e no Eusébio (CE). Entrega pelo iFood e pelo 99 Food, compra para levar em um dos 4 food trucks, ou pedido, reserva e encomenda pelo WhatsApp.",
       "url": "https://feijoadaporkinho.com.br/",
       "logo": "https://feijoadaporkinho.com.br/img/icon-512.png?v=2",
       "image": "https://feijoadaporkinho.com.br/img/og-image.jpg?v=3",
@@ -810,6 +817,14 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Você compra na hora, direto no balcão de um dos 4 food trucks, e leva para casa. Não há mesas nem consumo no local. O iFood e o 99 Food fazem apenas entrega."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Dá para pedir sem usar o iFood ou o 99 Food?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. Durante o funcionamento, peça direto pelo WhatsApp com o Sr. Monteiro, com pagamento via Pix. Pelo WhatsApp também dá para fazer reserva e encomendar para festa ou evento."
           }
         },
         {

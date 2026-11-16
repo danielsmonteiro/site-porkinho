@@ -13,7 +13,9 @@ que faz os redirects `/go/` e os cabeçalhos).
 1. **iFood** e **99 Food** — os dois botões mais destacados, logo seguidos dos
    **kits** (foto, porção e preço), que são o produto.
 2. **Retirada** em um dos 4 food trucks.
-3. **WhatsApp** com o Sr. Monteiro — festa, evento, encomenda grande ou Pix.
+3. **WhatsApp** com o Sr. Monteiro — pedido direto no horário (sem app),
+   reserva, festa, evento e encomenda grande, com Pix. Uma linha de texto logo
+   abaixo dos botões dos apps também leva até ele.
 
 Depois vêm petiscos e bebidas (recolhidos no celular) e as **perguntas
 frequentes**, que existem tanto para quem compra quanto para buscadores e IAs.
