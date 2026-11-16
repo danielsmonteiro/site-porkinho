@@ -434,6 +434,10 @@ A **logo é a oficial**, a mesma do [Linktree](https://linktr.ee/porkinho) e do
 [Instagram](https://www.instagram.com/feijoadaporkinho): o porco-chef no anel
 dourado. Dela saem o favicon, os ícones de PWA e a og-image.
 
+O **fundo é cimento** (cimento queimado no tema escuro, cimento claro no
+tema claro), como no Instagram da marca: nada de marrom, bege ou creme. A cor
+quente fica para o dourado e para as fotos.
+
 O **amarelo do site vem do próprio anel da logo**. O degradê metálico dele vai
 de `#945C24` a `#F4EC6C`; `--primaria: #E9D45C` é a faixa clara desse degradê.
 Os tons estão todos em `:root` no `css/style.css` — mexendo lá, o site inteiro

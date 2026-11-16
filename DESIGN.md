@@ -1,26 +1,27 @@
 ---
 name: Feijoada Porkinho
-description: Hub de pedidos de feijoada caseira, desenhado para o celular, marrom quente com o dourado da logo.
+description: Hub de pedidos de feijoada caseira, desenhado para o celular, em cimento e o dourado da logo.
 colors:
   primaria: "#E9D45C"
   primaria-forte: "#F2DE6B"
   primaria-tinta: "#241A0B"
   primaria-apoio: "#4A3A12"
   primaria-texto-claro: "#6B5410"
-  primaria-borda-claro: "#9C7C20"
-  fundo: "#1A120C"
-  superficie: "#2A1F18"
-  superficie-alta: "#34261D"
-  borda: "#8A6C52"
-  borda-suave: "#3D2E23"
-  texto: "#F5EDE3"
-  texto-2: "#B8A594"
-  fundo-claro: "#FBF5EC"
-  superficie-claro: "#FFFFFF"
-  borda-claro: "#9C8168"
-  borda-suave-claro: "#EADCC9"
-  texto-claro: "#241A14"
-  texto-2-claro: "#6B5443"
+  primaria-borda-claro: "#937520"
+  fundo: "#262624"
+  superficie: "#31312E"
+  superficie-alta: "#3B3B38"
+  borda: "#85827B"
+  borda-suave: "#46453F"
+  texto: "#F1EFEA"
+  texto-2: "#B5B1A9"
+  fundo-claro: "#E0E0DD"
+  superficie-claro: "#F1F1EF"
+  superficie-alta-claro: "#FFFFFF"
+  borda-claro: "#807C74"
+  borda-suave-claro: "#CFCCC5"
+  texto-claro: "#1F1E1C"
+  texto-2-claro: "#57534C"
   whatsapp: "#25D366"
   whatsapp-texto: "#3BE07A"
   whatsapp-texto-claro: "#0B7C3A"
@@ -140,10 +141,12 @@ coluna não cresce, só o respiro em volta. Não há grade, nem colunas, nem
 herói: a primeira tela é o nome, o horário, os dois botões dourados e a foto
 do kit.
 
-O mundo de cor vem da comida e da logo. O fundo é um marrom de panela
-(escuro por padrão, creme quando o celular está no tema claro), as
-superfícies são um degrau mais claras, e o único acento é o dourado do anel
-da logo oficial do porco-chef. O dourado marca ação e preço, nada mais. As
+O mundo de cor é cimento e dourado, o mesmo do Instagram da marca. O fundo
+é cimento queimado (grafite levemente quente, por padrão) ou cimento claro
+quando o celular está no tema claro; as superfícies são um degrau mais
+claras, e o único acento é o dourado do anel da logo oficial do porco-chef.
+O cinza neutro deixa as fotos da comida e o dourado como as únicas cores
+quentes da tela. O dourado marca ação e preço, nada mais. As
 fotos reais dos kits na caixa da Porkinho são a única imagem do site e carregam
 o apetite; a interface em volta fica quieta para não competir com elas.
 
@@ -153,7 +156,7 @@ embaixo dizendo o que acontece ao tocar.
 
 **Key Characteristics:**
 - Uma coluna de no máximo 520px, mobile-first, sem layout de desktop próprio.
-- Dois temas automáticos pelo sistema: marrom escuro e creme claro.
+- Dois temas automáticos pelo sistema: cimento queimado e cimento claro.
 - Um acento só, o dourado da logo, para ação e preço.
 - Fotos reais dos kits como única imagem.
 - Uma fonte (Outfit), cinco tamanhos, dois pesos.
@@ -161,8 +164,9 @@ embaixo dizendo o que acontece ao tocar.
 
 ## Colors
 
-Marrom de panela com o dourado da logo: terroso, quente, de pouco contraste
-entre superfícies e muito contraste no que importa.
+Cimento com o dourado da logo: neutro, sóbrio, de pouco contraste entre
+superfícies e muito contraste no que importa. A cor quente vem do dourado e
+das fotos, nunca do fundo.
 
 ### Primary
 - **Dourado do Anel** (`primaria`): a faixa clara do degradê metálico do anel
@@ -175,9 +179,9 @@ entre superfícies e muito contraste no que importa.
   (`primaria-apoio`, 7,37:1).
 - **Dourado de Preço**: no tema escuro, preços, distâncias, ícones de pino e o
   "+" das perguntas usam o próprio dourado como texto; no claro passam a
-  **Ouro Queimado** (`primaria-texto-claro`), legível sobre branco.
+  **Ouro Queimado** (`primaria-texto-claro`), legível sobre o cimento claro.
 - **Borda de Ouro** (`primaria-borda-claro`): só no tema claro, contorna os
-  botões dourados, que sem ela somem no creme (WCAG 1.4.11, 3,64:1).
+  botões dourados, que sem ela somem no cimento claro (WCAG 1.4.11, 3,3:1).
 
 ### Secondary
 - **Verde WhatsApp** (`whatsapp`): só a borda e o ícone do botão do WhatsApp.
@@ -185,18 +189,18 @@ entre superfícies e muito contraste no que importa.
   Nunca vira fundo de botão.
 
 ### Neutral
-- **Panela** (`fundo` / `fundo-claro` creme): o fundo da página e da barra
-  fixa.
-- **Prato** (`superficie` / `superficie-claro` branco): cartões, botões
-  secundários, status, cardápio e perguntas.
-- **Prato Quente** (`superficie-alta`): hover das superfícies e fundo enquanto
+- **Cimento** (`fundo` / `fundo-claro`): cimento queimado no escuro, cimento
+  claro no tema claro. O fundo da página e da barra fixa.
+- **Placa** (`superficie` / `superficie-claro`): cartões, botões secundários,
+  status, cardápio e perguntas.
+- **Placa Acesa** (`superficie-alta`): hover das superfícies e fundo enquanto
   a foto carrega.
-- **Borda de Barro** (`borda` / `borda-claro`): contorno dos controles
+- **Junta** (`borda` / `borda-claro`): contorno dos controles
   secundários e das linhas de food truck; precisa passar de 3:1.
 - **Risco Suave** (`borda-suave` / `borda-suave-claro`): divisórias e contorno
   de cartões que não são controles.
-- **Farinha** (`texto` / `texto-claro`): texto principal.
-- **Farofa** (`texto-2` / `texto-2-claro`): texto de apoio, porções,
+- **Giz** (`texto` / `texto-claro`): texto principal.
+- **Pó de Cimento** (`texto-2` / `texto-2-claro`): texto de apoio, porções,
   descrições, rodapé.
 
 ### Status
@@ -209,6 +213,9 @@ entre superfícies e muito contraste no que importa.
 ### Named Rules
 **A Regra do Ouro que Age.** O dourado aparece só no que se toca para pedir e
 no preço. Não é cor de enfeite, de título nem de fundo de seção.
+
+**A Regra do Fundo Neutro.** O fundo é sempre cimento, nunca marrom, bege ou
+creme: a cor quente da tela vem só do dourado e das fotos da comida.
 
 **A Regra do Fechado Dourado.** Fora do horário nada fica vermelho: o ponto do
 status fica dourado (com o anel de Borda de Ouro no tema claro) e o texto diz
@@ -309,14 +316,14 @@ apoio de 13px embaixo e seta à direita (55% de opacidade, decorativa).
 - **Shape:** cantos suaves (14px), altura mínima 56px.
 - **Primário (pedido):** fundo dourado, tinta escura, 64px de altura, sombra
   de pedido. No tema claro ganha a Borda de Ouro. Hover: Dourado Aceso.
-- **Primário fechado:** fundo de prato, borda dourada (`primaria-texto`),
+- **Primário fechado:** fundo de placa, borda dourada (`primaria-texto`),
   texto normal, sem sombra e sem seta. Continua link.
-- **Secundário (WhatsApp, voltar):** fundo de prato, Borda de Barro.
+- **Secundário (WhatsApp, voltar):** fundo de placa, Junta.
   O do WhatsApp troca a borda e o ícone pelo verde. O WhatsApp do topo, com a
   loja fechada, vira destaque: fundo dourado, tinta escura, sombra de pedido.
   Rótulo por horário: "Pedir no WhatsApp" aberto, "Reservar no WhatsApp"
   fechado.
-- **Fantasma (geolocalização):** transparente com Borda de Barro, 48px,
+- **Fantasma (geolocalização):** transparente com Junta, 48px,
   conteúdo centralizado; desabilitado com 60% enquanto busca.
 - **Toque:** encolhe para 98,5% (`scale(.985)`), 160ms; sem isso com
   movimento reduzido.
@@ -324,12 +331,12 @@ apoio de 13px embaixo e seta à direita (55% de opacidade, decorativa).
 
 ### Cartão de kit (assinatura)
 O produto. Foto real em largura cheia e 4:3 no topo, depois nome (rótulo),
-porção (meta), preço em destaque dourado e descrição (apoio). Fundo de prato,
+porção (meta), preço em destaque dourado e descrição (apoio). Fundo de placa,
 Risco Suave, 14px, sem sombra. A nota de preço de referência vem depois dos
 cartões, nunca antes.
 
 ### Ponto de retirada
-Linha tocável de 56px com Borda de Barro (é um controle): pino dourado, nome em
+Linha tocável de 56px com Junta (é um controle): pino dourado, nome em
 negrito, detalhe em meta ("Abrir no mapa" ou o endereço), seta à direita e,
 depois da geolocalização, a distância em dourado e o selo "Mais perto" (pílula
 dourada). O mais perto ganha borda dourada.
