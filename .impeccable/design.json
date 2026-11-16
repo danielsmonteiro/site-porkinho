@@ -1,0 +1,410 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T22:37:05+00:00",
+  "title": "Design System: Feijoada Porkinho",
+  "extensions": {
+    "colorMeta": {
+      "primaria": {
+        "role": "primary",
+        "displayName": "Dourado do Anel",
+        "canonical": "#E9D45C",
+        "tonalRamp": [
+          "#3D3419",
+          "#685C2A",
+          "#93843A",
+          "#BEAC4B",
+          "#EDDB7A",
+          "#F2E49F",
+          "#F6EDC4",
+          "#FAF4E1"
+        ]
+      },
+      "primaria-tinta": {
+        "role": "primary",
+        "displayName": "Tinta de Torresmo",
+        "canonical": "#241A0B",
+        "tonalRamp": [
+          "#160F09",
+          "#191209",
+          "#1D140A",
+          "#20170A",
+          "#4F4639",
+          "#857E72",
+          "#BBB5AB",
+          "#E6E2D9"
+        ]
+      },
+      "primaria-apoio": {
+        "role": "primary",
+        "displayName": "Tinta Velha",
+        "canonical": "#4A3A12",
+        "tonalRamp": [
+          "#1D150A",
+          "#281E0C",
+          "#34280E",
+          "#3F3110",
+          "#6E603E",
+          "#9A9076",
+          "#C7BFAD",
+          "#EAE5DA"
+        ]
+      },
+      "primaria-texto-claro": {
+        "role": "primary",
+        "displayName": "Ouro Queimado",
+        "canonical": "#6B5410",
+        "tonalRamp": [
+          "#241A0A",
+          "#36290B",
+          "#47370D",
+          "#59460E",
+          "#88753D",
+          "#AC9E75",
+          "#D0C7AD",
+          "#EEE8DA"
+        ]
+      },
+      "whatsapp": {
+        "role": "secondary",
+        "displayName": "Verde WhatsApp",
+        "canonical": "#25D366",
+        "tonalRamp": [
+          "#16341B",
+          "#1A5C2E",
+          "#1D8340",
+          "#21AB53",
+          "#50DA82",
+          "#86E4A4",
+          "#BCEDC7",
+          "#E6F4E2"
+        ]
+      },
+      "fundo": {
+        "role": "neutral",
+        "displayName": "Panela",
+        "canonical": "#1A120C",
+        "tonalRamp": [
+          "#140D09",
+          "#150E0A",
+          "#17100A",
+          "#18110B",
+          "#47403A",
+          "#807A73",
+          "#B8B3AC",
+          "#E5E1D9"
+        ]
+      },
+      "fundo-claro": {
+        "role": "neutral",
+        "displayName": "Panela (claro)",
+        "canonical": "#FBF5EC",
+        "tonalRamp": [
+          "#413B36",
+          "#6F6963",
+          "#9E9891",
+          "#CCC6BE",
+          "#FBF6ED",
+          "#FBF6EE",
+          "#FCF7EF",
+          "#FCF8F0"
+        ]
+      },
+      "superficie": {
+        "role": "neutral",
+        "displayName": "Prato",
+        "canonical": "#2A1F18",
+        "tonalRamp": [
+          "#17100B",
+          "#1C140E",
+          "#201712",
+          "#251B15",
+          "#544A43",
+          "#888179",
+          "#BDB7AF",
+          "#E7E2DA"
+        ]
+      },
+      "borda": {
+        "role": "neutral",
+        "displayName": "Borda de Barro",
+        "canonical": "#8A6C52",
+        "tonalRamp": [
+          "#2A1F17",
+          "#423226",
+          "#5A4634",
+          "#725943",
+          "#A18872",
+          "#BDAB99",
+          "#DACEC1",
+          "#F1EAE0"
+        ]
+      },
+      "borda-suave": {
+        "role": "neutral",
+        "displayName": "Risco Suave",
+        "canonical": "#3D2E23",
+        "tonalRamp": [
+          "#1B130D",
+          "#231A13",
+          "#2C2018",
+          "#34271E",
+          "#63564C",
+          "#93897F",
+          "#C3BBB2",
+          "#E9E4DC"
+        ]
+      },
+      "texto": {
+        "role": "neutral",
+        "displayName": "Farinha",
+        "canonical": "#F5EDE3",
+        "tonalRamp": [
+          "#3F3934",
+          "#6D6660",
+          "#9A938B",
+          "#C8C0B7",
+          "#F6EFE6",
+          "#F8F2E9",
+          "#FAF5EC",
+          "#FBF7EF"
+        ]
+      },
+      "texto-2": {
+        "role": "neutral",
+        "displayName": "Farofa",
+        "canonical": "#B8A594",
+        "tonalRamp": [
+          "#332B24",
+          "#544940",
+          "#76685C",
+          "#978678",
+          "#C6B6A6",
+          "#D7CABD",
+          "#E8DFD4",
+          "#F5F0E7"
+        ]
+      },
+      "aberto": {
+        "role": "status",
+        "displayName": "Aberto",
+        "canonical": "#4ADE80",
+        "tonalRamp": [
+          "#1D3620",
+          "#286038",
+          "#348A50",
+          "#3FB468",
+          "#6EE396",
+          "#9AEAB2",
+          "#C7F0CE",
+          "#EAF5E5"
+        ]
+      },
+      "fechado": {
+        "role": "status",
+        "displayName": "Erro",
+        "canonical": "#F87171",
+        "tonalRamp": [
+          "#40201D",
+          "#6E3432",
+          "#9C4947",
+          "#CA5D5C",
+          "#F98C8A",
+          "#FAAEAA",
+          "#FBD0CA",
+          "#FCEAE3"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "titulo": {
+        "displayName": "Título",
+        "purpose": "Nome da marca e h1 das páginas de texto."
+      },
+      "destaque": {
+        "displayName": "Destaque",
+        "purpose": "Títulos de seção e preços."
+      },
+      "rotulo": {
+        "displayName": "Rótulo",
+        "purpose": "Rótulos de botão e nomes de kit, ponto e item."
+      },
+      "texto": {
+        "displayName": "Texto",
+        "purpose": "Corpo."
+      },
+      "apoio": {
+        "displayName": "Apoio",
+        "purpose": "Textos de apoio e descrições."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Apoio dentro de botões, porções, notas, rodapé, selo."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sombra-pedido",
+        "value": "0 6px 18px rgba(0,0,0,.38)",
+        "purpose": "Botões primários de pedido (tema escuro)."
+      },
+      {
+        "name": "sombra-pedido-claro",
+        "value": "0 6px 18px rgba(72,48,26,.12)",
+        "purpose": "Botões primários de pedido (tema claro)."
+      },
+      {
+        "name": "sombra-barra",
+        "value": "0 -6px 18px rgba(0,0,0,.25)",
+        "purpose": "Barra fixa de pedido."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transicao",
+        "value": "160ms ease",
+        "purpose": "Hover, toque e giro da seta."
+      },
+      {
+        "name": "barra-entra",
+        "value": "180ms ease-out",
+        "purpose": "Entrada da barra fixa, de baixo."
+      },
+      {
+        "name": "pulsar",
+        "value": "2.2s ease-in-out, 3 vezes",
+        "purpose": "Ponto verde de aberto; para depois de três pulsos (WCAG 2.2.2)."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "respiro",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário (pedido)",
+      "kind": "button",
+      "refersTo": "botao-primario",
+      "description": "iFood e 99 Food: o caminho principal até o pedido.",
+      "html": "<a class=\"ds-botao ds-botao--primario\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z\"/><path d=\"M9 8V6a3 3 0 0 1 6 0v2\"/></svg><span class=\"ds-botao__texto\"><span class=\"ds-botao__rotulo\">Pedir no iFood</span><span class=\"ds-botao__apoio\">Entrega ou retirada · mínimo R$ 59,00</span></span><span class=\"ds-botao__seta\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m9 18 6-6-6-6\"/></svg></span></a>",
+      "css": ".ds-botao{display:flex;align-items:center;gap:14px;width:100%;min-height:56px;padding:11px 16px;border:1px solid transparent;border-radius:14px;background:#2A1F18;color:#F5EDE3;font:inherit;font-family:Outfit,system-ui,sans-serif;text-align:left;text-decoration:none;cursor:pointer;transition:transform 160ms ease,background-color 160ms ease,border-color 160ms ease}.ds-botao:active{transform:scale(.985)}.ds-botao:focus-visible{outline:3px solid #FFE9A3;outline-offset:3px}.ds-botao__texto{flex:1 1 auto}.ds-botao__rotulo{display:block;font-size:1rem;font-weight:700;line-height:1.25}.ds-botao__apoio{display:block;font-size:.8125rem;line-height:1.3;color:#B8A594}.ds-botao__seta{opacity:.55;display:flex}.ds-botao--primario{background:#E9D45C;color:#241A0B;min-height:64px;box-shadow:0 6px 18px rgba(0,0,0,.38)}.ds-botao--primario .ds-botao__apoio{color:#4A3A12}.ds-botao--primario:hover{background:#F2DE6B}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "botao-secundario",
+      "description": "WhatsApp, Instagram e voltar: ação de segunda ordem, com borda.",
+      "html": "<a class=\"ds-botao ds-botao--secundario\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M17.5 6.5h.01\"/></svg><span class=\"ds-botao__texto\"><span class=\"ds-botao__rotulo\">@feijoadaporkinho</span><span class=\"ds-botao__apoio\">Fotos do dia e onde o food truck vai estar</span></span><span class=\"ds-botao__seta\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m9 18 6-6-6-6\"/></svg></span></a>",
+      "css": ".ds-botao{display:flex;align-items:center;gap:14px;width:100%;min-height:56px;padding:11px 16px;border:1px solid transparent;border-radius:14px;background:#2A1F18;color:#F5EDE3;font:inherit;font-family:Outfit,system-ui,sans-serif;text-align:left;text-decoration:none;cursor:pointer;transition:transform 160ms ease,background-color 160ms ease,border-color 160ms ease}.ds-botao:active{transform:scale(.985)}.ds-botao:focus-visible{outline:3px solid #FFE9A3;outline-offset:3px}.ds-botao__texto{flex:1 1 auto}.ds-botao__rotulo{display:block;font-size:1rem;font-weight:700;line-height:1.25}.ds-botao__apoio{display:block;font-size:.8125rem;line-height:1.3;color:#B8A594}.ds-botao__seta{opacity:.55;display:flex}.ds-botao--secundario{border-color:#8A6C52}.ds-botao--secundario:hover{background:#34261D}"
+    },
+    {
+      "name": "Botão fantasma",
+      "kind": "button",
+      "refersTo": "botao-fantasma",
+      "description": "Ação utilitária (geolocalização), centralizada e transparente.",
+      "html": "<button type=\"button\" class=\"ds-botao ds-botao--fantasma\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z\"/><circle cx=\"12\" cy=\"10\" r=\"2.6\"/></svg><span class=\"ds-botao__rotulo\">Ver o food truck mais perto de mim</span></button>",
+      "css": ".ds-botao{display:flex;align-items:center;gap:14px;width:100%;min-height:56px;padding:11px 16px;border:1px solid transparent;border-radius:14px;background:#2A1F18;color:#F5EDE3;font:inherit;font-family:Outfit,system-ui,sans-serif;text-align:left;text-decoration:none;cursor:pointer;transition:transform 160ms ease,background-color 160ms ease,border-color 160ms ease}.ds-botao:active{transform:scale(.985)}.ds-botao:focus-visible{outline:3px solid #FFE9A3;outline-offset:3px}.ds-botao__texto{flex:1 1 auto}.ds-botao__rotulo{display:block;font-size:1rem;font-weight:700;line-height:1.25}.ds-botao__apoio{display:block;font-size:.8125rem;line-height:1.3;color:#B8A594}.ds-botao__seta{opacity:.55;display:flex}.ds-botao--fantasma{background:transparent;border-color:#8A6C52;min-height:48px;justify-content:center}.ds-botao--fantasma:hover{background:#2A1F18}"
+    },
+    {
+      "name": "Cartão de kit",
+      "kind": "card",
+      "refersTo": "cartao-kit",
+      "description": "O produto: foto real 4:3, nome, porção, preço dourado e descrição.",
+      "html": "<article class=\"ds-kit\"><div class=\"ds-kit__foto\" role=\"img\" aria-label=\"Foto do kit\"></div><div class=\"ds-kit__corpo\"><h3 class=\"ds-kit__nome\">Kit Feijoada Completa</h3><p class=\"ds-kit__porcao\">3 a 4 pessoas, 1,2 kg de feijoada</p><p class=\"ds-kit__preco\">R$ 119,90</p><p class=\"ds-kit__descricao\">Feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais.</p></div></article>",
+      "css": ".ds-kit{max-width:360px;border:1px solid #3D2E23;border-radius:14px;background:#2A1F18;overflow:hidden;color:#F5EDE3;font-family:Outfit,system-ui,sans-serif}.ds-kit__foto{aspect-ratio:4/3;background:#34261D}.ds-kit__corpo{padding:12px 14px 14px}.ds-kit__nome{margin:0;font-size:1rem;font-weight:700;line-height:1.25}.ds-kit__porcao{margin:2px 0 0;font-size:.8125rem;color:#B8A594}.ds-kit__preco{margin:4px 0 0;font-size:1.25rem;font-weight:700;line-height:1.2;color:#E9D45C}.ds-kit__descricao{margin:6px 0 0;font-size:.9375rem;line-height:1.5;color:#B8A594}"
+    },
+    {
+      "name": "Ponto de retirada",
+      "kind": "custom",
+      "refersTo": "ponto-retirada",
+      "description": "Linha tocável de food truck, com distância e selo do mais perto.",
+      "html": "<a class=\"ds-ponto ds-ponto--proximo\" href=\"#\"><span class=\"ds-ponto__pino\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z\"/><circle cx=\"12\" cy=\"10\" r=\"2.6\"/></svg></span><span class=\"ds-ponto__corpo\"><span class=\"ds-ponto__nome\">Eusébio</span><span class=\"ds-ponto__detalhe\">Av. Eusébio de Queiroz, 3409</span><span class=\"ds-ponto__distancia\">2,4 km</span></span><span class=\"ds-selo\">Mais perto</span></a>",
+      "css": ".ds-ponto{display:flex;align-items:center;gap:12px;min-height:56px;padding:11px 14px;border:1px solid #3D2E23;border-radius:14px;background:#2A1F18;color:#F5EDE3;text-decoration:none;font-family:Outfit,system-ui,sans-serif;transition:border-color 160ms ease,background-color 160ms ease}.ds-ponto:hover{border-color:#8A6C52;background:#34261D}.ds-ponto:focus-visible{outline:3px solid #FFE9A3;outline-offset:3px}.ds-ponto--proximo{border-color:#E9D45C}.ds-ponto__pino{color:#E9D45C;display:flex}.ds-ponto__corpo{flex:1 1 auto}.ds-ponto__nome{display:block;font-weight:700;line-height:1.25}.ds-ponto__detalhe{display:block;font-size:.8125rem;color:#B8A594}.ds-ponto__distancia{display:block;font-size:.8125rem;font-weight:700;color:#E9D45C}.ds-selo{padding:3px 9px;border-radius:999px;background:#E9D45C;color:#241A0B;font-size:.8125rem;font-weight:700}"
+    },
+    {
+      "name": "Status de horário",
+      "kind": "chip",
+      "refersTo": "status",
+      "description": "Pílula em largura cheia; fechado é dourado, nunca vermelho.",
+      "html": "<p class=\"ds-status\"><span class=\"ds-status__ponto\"></span><span>Abre sexta às 09:00</span></p>",
+      "css": ".ds-status{display:flex;align-items:center;gap:9px;min-height:48px;margin:0;padding:10px 18px;border:1px solid #3D2E23;border-radius:999px;background:#2A1F18;color:#F5EDE3;font-family:Outfit,system-ui,sans-serif;font-size:.9375rem;font-weight:700}.ds-status__ponto{width:10px;height:10px;border-radius:50%;background:#E9D45C}"
+    },
+    {
+      "name": "Barra fixa de pedido",
+      "kind": "nav",
+      "refersTo": "barra-pedido-botao",
+      "description": "Dois botões dourados presos ao rodapé, depois que os do topo saem da tela.",
+      "html": "<nav class=\"ds-barra\"><a class=\"ds-barra__botao\" href=\"#\">Pedir no iFood</a><a class=\"ds-barra__botao\" href=\"#\">Pedir no 99 Food</a></nav>",
+      "css": ".ds-barra{display:flex;gap:10px;max-width:520px;padding:10px 16px;background:#1A120C;border-top:1px solid #3D2E23;box-shadow:0 -6px 18px rgba(0,0,0,.25);font-family:Outfit,system-ui,sans-serif}.ds-barra__botao{flex:1 1 0;display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 12px;border-radius:14px;background:#E9D45C;color:#241A0B;font-weight:700;text-decoration:none;white-space:nowrap}.ds-barra__botao:hover{background:#F2DE6B}.ds-barra__botao:focus-visible{outline:3px solid #FFE9A3;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Cardápio de Bolso",
+    "overview": "O site é um cardápio que cabe na mão: uma coluna estreita (no máximo 520px),\nlida de cima para baixo com o polegar, que diz o essencial e manda a pessoa\npedir. Tudo é desenhado primeiro para um celular de 390px; em telas maiores a\ncoluna não cresce, só o respiro em volta. Não há grade, nem colunas, nem\nherói: a primeira tela é o nome, o horário, os dois botões dourados e a foto\ndo kit.\n\nO mundo de cor vem da comida e da logo. O fundo é um marrom de panela\n(escuro por padrão, creme quando o celular está no tema claro), as\nsuperfícies são um degrau mais claras, e o único acento é o dourado do anel\nda logo oficial do porco-chef. O dourado marca ação e preço, nada mais. As\nfotos reais dos kits na caixa da Porkinho são a única imagem do site e carregam\no apetite; a interface em volta fica quieta para não competir com elas.\n\nOs componentes são firmes e generosos: alvos de toque grandes (56–64px),\ncantos suaves de 14px, rótulos em negrito curto, e um texto de apoio menor\nembaixo dizendo o que acontece ao tocar.",
+    "keyCharacteristics": [
+      "Uma coluna de no máximo 520px, mobile-first, sem layout de desktop próprio.",
+      "Dois temas automáticos pelo sistema: marrom escuro e creme claro.",
+      "Um acento só, o dourado da logo, para ação e preço.",
+      "Fotos reais dos kits como única imagem.",
+      "Uma fonte (Outfit), cinco tamanhos, dois pesos.",
+      "Plano e tonal; sombra só nos botões de pedido."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Ouro que Age",
+        "body": "O dourado aparece só no que se toca para pedir e no preço. Não é cor de enfeite, de título nem de fundo de seção.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Fechado Dourado",
+        "body": "Fora do horário nada fica vermelho: o ponto do status fica dourado e o texto diz quando abre. Vermelho é só para erro.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Tinta Escura",
+        "body": "Sobre o dourado o texto é sempre a tinta escura. Texto claro sobre o dourado, ou um dourado mais escuro, reprova no contraste.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra Sem Opacidade",
+        "body": "Nunca usar `opacity` para clarear texto; usar o token de apoio certo, que já tem o contraste medido.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra dos Cinco Degraus",
+        "body": "Só existem os cinco tamanhos de `--fs-*` em `:root` (13, 15, 16, 20, 28). Nenhum tamanho solto.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra dos Dois Pesos",
+        "body": "Só 400 e 700. Hierarquia vem do tamanho e do peso, nunca de caixa alta, itálico ou espaçamento de letras.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Prato na Mesa",
+        "body": "Cartões, listas e o status ficam deitados: borda suave, sem sombra. Só o que leva ao pedido se levanta da página.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar só os tokens de `:root` em `public/css/style.css`; mexendo lá, os dois temas acompanham.",
+      "Do manter todo texto em 4,5:1 e todo limite de controle em 3:1, nos dois temas, e recalcular ao trocar cor ou logo.",
+      "Do manter alvos de toque de pelo menos 48×48px (botões de 56px).",
+      "Do usar fotos reais dos kits, sempre em par WebP + JPG, com `width` e `height` declarados e o `?v=` incrementado ao trocar.",
+      "Do desenhar primeiro em 390px e conferir no tema claro e no escuro.",
+      "Do desligar animação e transição com `prefers-reduced-motion`."
+    ],
+    "donts": [
+      "Don't usar vermelho para \"fechado\"; vermelho é só erro.",
+      "Don't pôr texto claro sobre o dourado, nem usar o dourado como decoração.",
+      "Don't criar tamanho de fonte fora dos cinco degraus, nem um terceiro peso.",
+      "Don't clarear texto com `opacity`.",
+      "Don't alargar a coluna além de 520px nem criar layout de várias colunas no desktop.",
+      "Don't pôr sombra em cartões, listas ou status.",
+      "Don't usar animação infinita; o que pulsa, pulsa três vezes e para.",
+      "Don't usar fontes, ícones ou imagens de CDN de terceiro; tudo é servido do próprio site."
+    ]
+  }
+}
