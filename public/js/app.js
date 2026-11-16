@@ -196,23 +196,21 @@
     if (estaAberto(t)) {
       return {
         aberto: true,
-        status: 'Aberto agora · fecha às ' + doisDigitos(h.fechaHora) + ':00',
-        cta: 'Peça agora'
+        status: 'Aberto agora · fecha às ' + doisDigitos(h.fechaHora) + ':00'
       };
     }
     /* Fechado: o status olha para a frente ("Abre hoje às 09:00"). O iFood
-       e o 99 Food nao aceitam pedido agendado, entao o chamado nao convida a
-       pedir: explica por que os botoes esperam, sem repetir o dia e a hora
-       do status. Quem repete o dia e o texto de apoio de cada botao, no
-       ponto do toque. */
+       e o 99 Food nao aceitam pedido agendado: o apoio de cada botao diz
+       quando abre, no ponto do toque, e a secao de retirada avisa que os
+       food trucks tambem estao fechados. */
     var prox = proximaAbertura(t);
     var dia = rotuloDoDia(prox);
     var hora = doisDigitos(h.abreHora) + ':00';
     return {
       aberto: false,
       status: 'Abre ' + dia + ' às ' + hora,
-      cta: 'Pedidos pelo app só com a loja aberta',
-      apoio: 'Fechado · abre ' + dia + ' às ' + hora
+      apoio: 'Fechado · abre ' + dia + ' às ' + hora,
+      retirada: 'Fechado agora · os food trucks abrem ' + dia + ' às ' + hora
     };
   }
   window.__porkinhoStatus = function (base) { return textoDoStatus(agoraEmFortaleza(base)); };
@@ -221,7 +219,6 @@
     var banner = $('#status');
     if (!banner) { return; }
     var texto = $('#status-texto');
-    var cta = $('#cta-titulo');
     var s = textoDoStatus(agoraEmFortaleza());
 
     /* Tirar as tres antes de por a certa. Sem isso, quem deixa a aba aberta
@@ -236,17 +233,44 @@
        texto a cada minuto fazia alguns leitores de tela repetirem o horario
        sem parar; so troca quando muda. */
     if (texto && texto.textContent !== s.status) { texto.textContent = s.status; }
-    if (cta && cta.textContent !== s.cta) { cta.textContent = s.cta; }
 
-    /* Botoes dos apps: fechado, o apoio diz quando abre; aberto, volta ao
-       texto do HTML ("Entrega em casa..."), guardado no primeiro uso. */
-    $$('#comprar > .botao--primario [data-apoio]').forEach(function (el) {
+    /* Botoes dos apps: fechado, viram secundarios (sem sombra nem seta: o
+       dourado e para o que da para pedir agora) e o apoio diz quando abre;
+       aberto, volta ao texto do HTML, guardado no primeiro uso. */
+    $$('#comprar > .botao--primario').forEach(function (botao) {
+      botao.classList.toggle('botao--fechado', !s.aberto);
+      var el = $('[data-apoio]', botao);
+      if (!el) { return; }
       if (!el.hasAttribute('data-apoio-original')) {
         el.setAttribute('data-apoio-original', el.textContent);
       }
       var alvo = s.aberto ? el.getAttribute('data-apoio-original') : s.apoio;
       if (el.textContent !== alvo) { el.textContent = alvo; }
     });
+
+    /* WhatsApp: no horario, pedido direto sem app; fora dele, reserva. O do
+       topo fica dourado quando fechado: e o unico pedido possivel agora. */
+    $$('[data-whatsapp]').forEach(function (botao) {
+      var rotulo = $('[data-rotulo]', botao);
+      var apoio = $('[data-apoio-wa]', botao);
+      var r = s.aberto ? 'Pedir no WhatsApp' : 'Reservar no WhatsApp';
+      var a = s.aberto ? 'Direto com o Sr. Monteiro, com Pix'
+                       : 'Diga a data, quantas pessoas e o bairro';
+      if (rotulo && rotulo.textContent !== r) { rotulo.textContent = r; }
+      if (apoio && apoio.textContent !== a) { apoio.textContent = a; }
+    });
+    var waTopo = $('#whatsapp-topo');
+    if (waTopo) { waTopo.classList.toggle('botao--destaque', !s.aberto); }
+
+    /* Retirada: fechado, uma linha avisa antes da lista de food trucks. */
+    var avisoRetirada = $('#retirada-fechado');
+    if (avisoRetirada) {
+      var alvoTexto = $('[data-texto]', avisoRetirada);
+      if (!s.aberto && alvoTexto && alvoTexto.textContent !== s.retirada) {
+        alvoTexto.textContent = s.retirada;
+      }
+      avisoRetirada.hidden = s.aberto;
+    }
 
     /* A barra fixa so faz sentido com a loja aberta (ver prepararBarra). */
     lojaAberta = s.aberto;

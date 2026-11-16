@@ -212,8 +212,11 @@ no preço. Não é cor de enfeite, de título nem de fundo de seção.
 
 **A Regra do Fechado Dourado.** Fora do horário nada fica vermelho: o ponto do
 status fica dourado (com o anel de Borda de Ouro no tema claro) e o texto diz
-quando abre. Os botões dos apps continuam dourados, mas o apoio diz "Fechado ·
-abre sexta às 09:00", e a barra fixa não aparece. Vermelho é só para erro.
+quando abre. Os botões dos apps perdem o dourado cheio, a sombra e a seta
+(ficam com borda dourada e o apoio "Fechado · abre sexta às 09:00"), o
+WhatsApp do topo ganha o dourado como "Reservar no WhatsApp", a retirada
+mostra "Fechado agora" com o mesmo ponto dourado, e a barra fixa não aparece.
+Vermelho é só para erro.
 
 **A Regra da Tinta Escura.** Sobre o dourado o texto é sempre a tinta escura.
 Texto claro sobre o dourado, ou um dourado mais escuro, reprova no contraste.
@@ -306,8 +309,13 @@ apoio de 13px embaixo e seta à direita (55% de opacidade, decorativa).
 - **Shape:** cantos suaves (14px), altura mínima 56px.
 - **Primário (pedido):** fundo dourado, tinta escura, 64px de altura, sombra
   de pedido. No tema claro ganha a Borda de Ouro. Hover: Dourado Aceso.
-- **Secundário (WhatsApp, Instagram, voltar):** fundo de prato, Borda de Barro.
-  O do WhatsApp troca a borda e o ícone pelo verde.
+- **Primário fechado:** fundo de prato, borda dourada (`primaria-texto`),
+  texto normal, sem sombra e sem seta. Continua link.
+- **Secundário (WhatsApp, voltar):** fundo de prato, Borda de Barro.
+  O do WhatsApp troca a borda e o ícone pelo verde. O WhatsApp do topo, com a
+  loja fechada, vira destaque: fundo dourado, tinta escura, sombra de pedido.
+  Rótulo por horário: "Pedir no WhatsApp" aberto, "Reservar no WhatsApp"
+  fechado.
 - **Fantasma (geolocalização):** transparente com Borda de Barro, 48px,
   conteúdo centralizado; desabilitado com 60% enquanto busca.
 - **Toque:** encolhe para 98,5% (`scale(.985)`), 160ms; sem isso com
