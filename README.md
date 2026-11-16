@@ -14,8 +14,8 @@ que faz os redirects `/go/` e os cabeçalhos).
    **kits** (foto, porção e preço), que são o produto.
 2. **Retirada** em um dos 4 food trucks.
 3. **WhatsApp** com o Sr. Monteiro — pedido direto no horário (sem app),
-   reserva, festa, evento e encomenda grande, com Pix. Uma linha de texto logo
-   abaixo dos botões dos apps também leva até ele.
+   reserva, festa, evento e encomenda grande, com Pix. Um botão de WhatsApp
+   logo abaixo dos botões dos apps também leva até ele.
 
 Depois vêm petiscos e bebidas (recolhidos no celular) e as **perguntas
 frequentes**, que existem tanto para quem compra quanto para buscadores e IAs.
@@ -26,9 +26,12 @@ Três regras de tela que vieram de uma análise de design (15/11/2026):
   Completa caber inteira na primeira tela do celular.
 - **Fora do horário, nada de vermelho.** O status diz quando abre ("Abre hoje
   às 09:00") com ponto dourado. Como o iFood e o 99 Food **não aceitam pedido
-  agendado**, o chamado acima dos botões passa a "Pedidos pelo app só com a
-  loja aberta" e o texto de apoio de cada botão vira "Fechado · abre sexta às
-  09:00". Tudo sai de `textoDoStatus` no `app.js`.
+  agendado**, fora do horário os botões dos apps viram secundários (sem
+  dourado cheio, sem sombra, sem seta) com o apoio "Fechado · abre sexta às
+  09:00", e o botão do WhatsApp logo abaixo fica dourado como "Reservar no
+  WhatsApp": é o único pedido possível. A seção de retirada ganha a linha
+  "Fechado agora · os food trucks abrem sexta às 09:00". Tudo sai de
+  `textoDoStatus` e `renderizarStatus` no `app.js`.
 - **Barra fixa de pedido** no rodapé da tela, com iFood e 99 Food. Aparece só
   depois que os botões do topo saem da tela e some quando eles voltam. **Fora
   do horário ela não aparece.** Os cliques dela vão para as mesmas rotas, com

@@ -291,29 +291,6 @@ a { color: var(--primaria-texto); }
   font-size: var(--fs-apoio);
 }
 
-/* Logo abaixo dos botoes dos apps: o caminho sem app (WhatsApp). Texto,
-   nao botao: o dourado continua so nos apps. */
-.dica-whatsapp {
-  margin: 0;
-  font-size: var(--fs-apoio);
-  color: var(--texto-2);
-}
-.dica-whatsapp a {
-  color: var(--texto);
-  font-weight: 700;
-  text-decoration-color: var(--whatsapp-borda);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-}
-.dica-whatsapp a:hover { color: var(--whatsapp-texto); }
-
-.cta-titulo {
-  margin: 0 0 12px;
-  font-size: var(--fs-texto);
-  font-weight: 700;
-  color: var(--texto);
-}
-
 /* ------------------------------------------------------------------ *
  * Botoes. Altura minima 56px, alvo de toque nunca menor que 48x48.
  * ------------------------------------------------------------------ */
@@ -380,6 +357,19 @@ a { color: var(--primaria-texto); }
 .botao--primario .botao__apoio { color: var(--primaria-apoio); }
 .botao--primario:hover { background: var(--primaria-forte); }
 
+/* Fechado (app.js): os apps nao recebem pedido. Sai o dourado cheio, a
+   sombra e a seta; fica a borda dourada, para o botao continuar
+   reconhecivel, e o link, para quem quer ver o cardapio no app. */
+.botao--primario.botao--fechado {
+  background: var(--superficie);
+  border-color: var(--primaria-texto);
+  color: var(--texto);
+  box-shadow: none;
+}
+.botao--primario.botao--fechado .botao__apoio { color: var(--texto-2); }
+.botao--primario.botao--fechado .botao__seta { visibility: hidden; }
+.botao--primario.botao--fechado:hover { background: var(--superficie-alta); }
+
 /* Retirada e WhatsApp: secundarios, com borda. */
 .botao--secundario {
   background: var(--superficie);
@@ -389,6 +379,18 @@ a { color: var(--primaria-texto); }
 
 .botao--whatsapp { border-color: var(--whatsapp-borda); }
 .botao--whatsapp .botao__icone { color: var(--whatsapp-texto); }
+
+/* Fechado, o WhatsApp do topo e o unico pedido possivel (reserva): ganha o
+   dourado de acao que os apps perderam. */
+.botao--whatsapp.botao--destaque {
+  background: var(--primaria);
+  border-color: var(--primaria-borda);
+  color: var(--primaria-tinta);
+  box-shadow: var(--sombra);
+}
+.botao--whatsapp.botao--destaque .botao__icone { color: var(--primaria-tinta); }
+.botao--whatsapp.botao--destaque .botao__apoio { color: var(--primaria-apoio); }
+.botao--whatsapp.botao--destaque:hover { background: var(--primaria-forte); }
 
 .botao--fantasma {
   background: transparent;
@@ -477,6 +479,28 @@ html.js #btn-geo { display: flex; }
 .geo-aviso:empty { margin: 0; }
 .geo-aviso--erro { color: var(--fechado); }
 .geo-aviso--ok { color: var(--aberto); }
+
+/* Retirada fechada (app.js): mesmo ponto dourado do status, nada de
+   vermelho. */
+.aviso-fechado {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: -4px 0 14px;
+  font-size: var(--fs-apoio);
+  font-weight: 700;
+  color: var(--texto);
+}
+.aviso-fechado__ponto {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--primaria);
+  box-shadow: inset 0 0 0 1px var(--primaria-borda);
+  /* centro da primeira linha (15px x 1.5 = 22,5px) */
+  margin-top: 6px;
+}
 
 .nota-retirada {
   margin: 12px 0 14px;
