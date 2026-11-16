@@ -200,25 +200,19 @@
         cta: 'Peça agora'
       };
     }
-    /* Fechado: o texto olha para a frente ("Abre hoje às 09:00") e o
-       chamado usa o MESMO dia do status. Antes o chamado era fixo em
-       "Peça para o próximo fim de semana" e, num sabado de madrugada,
-       contradizia o "abre hoje" logo acima. */
+    /* Fechado: o status olha para a frente ("Abre hoje às 09:00"). O iFood
+       e o 99 Food nao aceitam pedido agendado, entao o chamado nao convida a
+       pedir: explica por que os botoes esperam, sem repetir o dia e a hora
+       do status. Quem repete o dia e o texto de apoio de cada botao, no
+       ponto do toque. */
     var prox = proximaAbertura(t);
     var dia = rotuloDoDia(prox);
     var hora = doisDigitos(h.abreHora) + ':00';
-    var cta;
-    if (prox.emDias === 0) {
-      cta = 'Peça hoje, a partir das ' + hora;
-    } else if (prox.emDias === 1) {
-      cta = 'Peça para amanhã, a partir das ' + hora;
-    } else {
-      cta = 'Peça para ' + dia + ', a partir das ' + hora;
-    }
     return {
       aberto: false,
       status: 'Abre ' + dia + ' às ' + hora,
-      cta: cta
+      cta: 'Pedidos pelo app só com a loja aberta',
+      apoio: 'Fechado · abre ' + dia + ' às ' + hora
     };
   }
   window.__porkinhoStatus = function (base) { return textoDoStatus(agoraEmFortaleza(base)); };
@@ -243,7 +237,24 @@
        sem parar; so troca quando muda. */
     if (texto && texto.textContent !== s.status) { texto.textContent = s.status; }
     if (cta && cta.textContent !== s.cta) { cta.textContent = s.cta; }
+
+    /* Botoes dos apps: fechado, o apoio diz quando abre; aberto, volta ao
+       texto do HTML ("Entrega em casa..."), guardado no primeiro uso. */
+    $$('#comprar > .botao--primario [data-apoio]').forEach(function (el) {
+      if (!el.hasAttribute('data-apoio-original')) {
+        el.setAttribute('data-apoio-original', el.textContent);
+      }
+      var alvo = s.aberto ? el.getAttribute('data-apoio-original') : s.apoio;
+      if (el.textContent !== alvo) { el.textContent = alvo; }
+    });
+
+    /* A barra fixa so faz sentido com a loja aberta (ver prepararBarra). */
+    lojaAberta = s.aberto;
+    if (atualizarBarra) { atualizarBarra(); }
   }
+
+  var lojaAberta = true;
+  var atualizarBarra = null;
 
   /* ------------------------------------------------------------------ *
    * 2. Ponto de retirada mais proximo — so no clique, nunca no load.
@@ -412,15 +423,21 @@
     if (!barra || !topo.length || !('IntersectionObserver' in window)) { return; }
 
     var naTela = [];
+    /* Fora do horario a barra nao aparece: os apps nao aceitam pedido
+       agendado, e uma barra dourada ali levaria a uma loja fechada. */
+    atualizarBarra = function () {
+      var algumNaTela = topo.some(function (_, i) { return naTela[i] !== false; });
+      var mostrar = lojaAberta && !algumNaTela;
+      barra.hidden = !mostrar;
+      document.documentElement.classList.toggle('com-barra', mostrar);
+    };
     var obs = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) {
         /* conta como "na tela" tambem o que ainda esta abaixo dela; so o
            que saiu pelo alto libera a barra */
         naTela[topo.indexOf(e.target)] = e.isIntersecting || e.boundingClientRect.top > 0;
       });
-      var algumNaTela = topo.some(function (_, i) { return naTela[i] !== false; });
-      barra.hidden = algumNaTela;
-      document.documentElement.classList.toggle('com-barra', !algumNaTela);
+      atualizarBarra();
     });
     topo.forEach(function (b) { obs.observe(b); });
   }

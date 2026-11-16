@@ -49,10 +49,12 @@ encontrado e recomendado por buscadores e por IAs.
 ## Operating Context
 
 - Funciona de sexta a domingo, das 09:00 às 15:00 (horário de Fortaleza).
-- Pedido para entrega pelo iFood e pelo 99 Food. O pagamento é feito no app.
-  Pedido mínimo no iFood: R$ 59,00.
+- Pedido para entrega pelo iFood e pelo 99 Food. Os apps fazem **só entrega**,
+  sem retirada, e não aceitam pedido agendado: fora do horário a loja não
+  recebe pedido. O pagamento é feito no app. Pedido mínimo no iFood: R$ 59,00.
 - Retirada em 4 food trucks: Guararapes, Parque del Sol e Sapiranga (Fortaleza)
-  e Eusébio. Os food trucks são só para retirada, sem mesas nem consumo no local.
+  e Eusébio. No food truck a compra é feita na hora, no balcão, para levar: sem
+  pedido antecipado, sem mesas e sem consumo no local.
   Os 3 de Fortaleza ficam na rua e não têm endereço, só uma localização no mapa.
   O do Eusébio fica na Av. Eusébio de Queiroz, 3409.
 - A sede/fábrica tem endereço, mas não atende ao público.
