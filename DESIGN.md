@@ -23,6 +23,15 @@ colors:
   texto-claro: "#1F1E1C"
   texto-2-claro: "#57534C"
   whatsapp: "#25D366"
+  ifood: "#E81C2B"
+  ifood-forte: "#CF1626"
+  noventa: "#FFDD00"
+  noventa-forte: "#F2D000"
+  noventa-tinta: "#1A1A1A"
+  noventa-apoio: "#3D3500"
+  noventa-borda-claro: "#8F7A00"
+  wa: "#008069"
+  wa-forte: "#006B58"
   whatsapp-texto: "#3BE07A"
   whatsapp-texto-claro: "#0B7C3A"
   aberto: "#4ADE80"
@@ -170,8 +179,8 @@ das fotos, nunca do fundo.
 
 ### Primary
 - **Dourado do Anel** (`primaria`): a faixa clara do degradê metálico do anel
-  da logo (que vai de #945C24 a #F4EC6C). Fundo dos botões de pedido (iFood,
-  99 Food, barra fixa) e do selo "Mais perto". É igual nos dois temas.
+  da logo (que vai de #945C24 a #F4EC6C). Fundo do selo "Mais perto" e do
+  botão da página 404. É igual nos dois temas.
 - **Dourado Aceso** (`primaria-forte`): hover dos botões dourados no tema
   escuro; no claro o hover escurece para #DFC544.
 - **Tinta de Torresmo** (`primaria-tinta`): o único texto que pode ir sobre o
@@ -184,9 +193,11 @@ das fotos, nunca do fundo.
   botões dourados, que sem ela somem no cimento claro (WCAG 1.4.11, 3,3:1).
 
 ### Secondary
-- **Verde WhatsApp** (`whatsapp`): só a borda e o ícone do botão do WhatsApp.
-  Como texto usa `whatsapp-texto` (escuro) ou `whatsapp-texto-claro` (claro).
-  Nunca vira fundo de botão.
+- **Cores dos canais** (`ifood`, `noventa`, `wa` e variações): iFood
+  `#E81C2B` (um tom abaixo do `#EA1D2C` da marca, para o branco passar de
+  4,5:1), 99 Food `#FFDD00` com tinta `#1A1A1A`, WhatsApp `#008069` (o verde
+  do app; branco sobre o `#25D366` da logo daria 1,98:1). Só nos botões de
+  cada canal.
 
 ### Neutral
 - **Cimento** (`fundo` / `fundo-claro`): cimento queimado no escuro, cimento
@@ -211,8 +222,14 @@ das fotos, nunca do fundo.
 - **Foco** (`foco` / `foco-claro`): anel de foco de 3px, afastado 3px.
 
 ### Named Rules
-**A Regra do Ouro que Age.** O dourado aparece só no que se toca para pedir e
-no preço. Não é cor de enfeite, de título nem de fundo de seção.
+**A Regra do Ouro que Age.** O dourado é a cor da Porkinho: preço, selo,
+ponto de status, pinos e os "+". Não é cor de enfeite, de título nem de fundo
+de seção.
+
+**A Regra da Cor do Canal.** Os botões que levam a um app vestem a cor e o
+logo oficial daquele app: iFood em vermelho com o logo branco, 99 Food em
+amarelo com o "99" preto, WhatsApp em verde com o logo e o texto brancos. Nada
+mais na página usa essas cores.
 
 **A Regra do Fundo Neutro.** O fundo é sempre cimento, nunca marrom, bege ou
 creme: a cor quente da tela vem só do dourado e das fotos da comida.
@@ -314,15 +331,16 @@ nem caixa dentro de bloco: aviso é texto de apoio.
 **Firmes e generosos**: largura cheia, ícone à esquerda, rótulo em negrito,
 apoio de 13px embaixo e seta à direita (55% de opacidade, decorativa).
 - **Shape:** cantos suaves (14px), altura mínima 56px.
-- **Primário (pedido):** fundo dourado, tinta escura, 64px de altura, sombra
-  de pedido. No tema claro ganha a Borda de Ouro. Hover: Dourado Aceso.
-- **Primário fechado:** fundo de placa, borda dourada (`primaria-texto`),
-  texto normal, sem sombra e sem seta. Continua link.
-- **Secundário (WhatsApp, voltar):** fundo de placa, Junta.
-  O do WhatsApp troca a borda e o ícone pelo verde. O WhatsApp do topo, com a
-  loja fechada, vira destaque: fundo dourado, tinta escura, sombra de pedido.
-  Rótulo por horário: "Pedir no WhatsApp" aberto, "Reservar no WhatsApp"
-  fechado.
+- **Canal (iFood, 99 Food):** fundo na cor do app, logo oficial no lugar do
+  ícone, 64px de altura, sombra de pedido. O 99 ganha borda escura no tema
+  claro (amarelo sobre cimento claro não tem limite visível).
+- **Canal fechado:** fundo de placa, borda na cor do app, texto normal, sem
+  sombra e sem seta; o logo vai para um quadrado na cor do app, como o ícone
+  do aplicativo. Continua link.
+- **WhatsApp:** sempre cheio, no verde do app, com logo e texto brancos.
+  Fechado, é o único botão cheio do topo. Rótulo por horário: "Pedir no
+  WhatsApp" aberto, "Reservar no WhatsApp" fechado.
+- **Secundário (voltar):** fundo de placa, Junta.
 - **Fantasma (geolocalização):** transparente com Junta, 48px,
   conteúdo centralizado; desabilitado com 60% enquanto busca.
 - **Toque:** encolhe para 98,5% (`scale(.985)`), 160ms; sem isso com
@@ -354,8 +372,8 @@ Notas dentro do bloco são texto de apoio. Os botões dos apps dentro do
 cardápio só existem sem JavaScript.
 
 ### Barra fixa de pedido
-Dois botões dourados de 48px lado a lado, presos ao rodapé da tela, entrando
-de baixo em 180ms. Só com a loja aberta.
+Dois botões de 48px lado a lado, nas cores do iFood e do 99 Food, presos ao
+rodapé da tela, entrando de baixo em 180ms. Só com a loja aberta.
 
 ## Do's and Don'ts
 

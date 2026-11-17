@@ -36,6 +36,11 @@ Três regras de tela que vieram de uma análise de design (15/11/2026):
   depois que os botões do topo saem da tela e some quando eles voltam. **Fora
   do horário ela não aparece.** Os cliques dela vão para as mesmas rotas, com
   `?de=barra`.
+- **Cada canal na cor do app.** Os botões do iFood, do 99 Food e do WhatsApp
+  usam a cor e o logo oficial de cada um (vetores em linha no `index.html`).
+  O vermelho do iFood é `#E81C2B` e o verde do WhatsApp é `#008069`, e não as
+  cores da logo, para o texto branco passar no contraste. O dourado fica para
+  o resto da Porkinho (preço, selo, status).
 - **Os apps são só entrega.** Retirada é compra na hora, no balcão do food
   truck. Não escreva "entrega ou retirada" nos botões, no JSON-LD nem no
   `llms.txt`.

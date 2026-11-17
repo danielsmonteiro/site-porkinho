@@ -248,8 +248,7 @@
       if (el.textContent !== alvo) { el.textContent = alvo; }
     });
 
-    /* WhatsApp: no horario, pedido direto sem app; fora dele, reserva. O do
-       topo fica dourado quando fechado: e o unico pedido possivel agora. */
+    /* WhatsApp: no horario, pedido direto sem app; fora dele, reserva. */
     $$('[data-whatsapp]').forEach(function (botao) {
       var rotulo = $('[data-rotulo]', botao);
       var apoio = $('[data-apoio-wa]', botao);
@@ -259,8 +258,6 @@
       if (rotulo && rotulo.textContent !== r) { rotulo.textContent = r; }
       if (apoio && apoio.textContent !== a) { apoio.textContent = a; }
     });
-    var waTopo = $('#whatsapp-topo');
-    if (waTopo) { waTopo.classList.toggle('botao--destaque', !s.aberto); }
 
     /* Retirada: fechado, uma linha avisa antes da lista de food trucks. */
     var avisoRetirada = $('#retirada-fechado');
