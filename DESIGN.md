@@ -186,9 +186,11 @@ das fotos, nunca do fundo.
 - **Tinta de Torresmo** (`primaria-tinta`): o único texto que pode ir sobre o
   dourado (11,43:1). O texto de apoio sobre o dourado usa **Tinta Velha**
   (`primaria-apoio`, 7,37:1).
-- **Dourado de Preço**: no tema escuro, preços, distâncias, ícones de pino e o
-  "+" das perguntas usam o próprio dourado como texto; no claro passam a
-  **Ouro Queimado** (`primaria-texto-claro`), legível sobre o cimento claro.
+- **Dourado de Detalhe**: no tema escuro, distâncias, ícones de pino e o "+"
+  das perguntas usam o próprio dourado como texto; no claro passam a **Ouro
+  Queimado** (`primaria-texto-claro`), legível sobre o cimento claro. Preço
+  não é dourado: vai em Giz e negrito, para não virar vizinho do amarelo do
+  99 Food.
 - **Borda de Ouro** (`primaria-borda-claro`): só no tema claro, contorna os
   botões dourados, que sem ela somem no cimento claro (WCAG 1.4.11, 3,3:1).
 
@@ -222,8 +224,8 @@ das fotos, nunca do fundo.
 - **Foco** (`foco` / `foco-claro`): anel de foco de 3px, afastado 3px.
 
 ### Named Rules
-**A Regra do Ouro que Age.** O dourado é a cor da Porkinho: preço, selo,
-ponto de status, pinos e os "+". Não é cor de enfeite, de título nem de fundo
+**A Regra do Ouro que Age.** O dourado é a cor da Porkinho: selo, ponto de
+status, pinos e os "+". Preço vai em texto claro e negrito. Não é cor de enfeite, de título nem de fundo
 de seção.
 
 **A Regra da Cor do Canal.** Os botões que levam a um app vestem a cor e o
@@ -337,7 +339,8 @@ apoio de 13px embaixo e seta à direita (55% de opacidade, decorativa).
 - **Canal fechado:** fundo de placa, borda na cor do app, texto normal, sem
   sombra e sem seta; o logo vai para um quadrado na cor do app, como o ícone
   do aplicativo. Continua link.
-- **WhatsApp:** sempre cheio, no verde do app, com logo e texto brancos.
+- **WhatsApp:** sempre cheio, no verde do app, com texto branco; o logo vai
+  num círculo no verde da logo (`#25D366`), como o ícone do aplicativo.
   Fechado, é o único botão cheio do topo. Rótulo por horário: "Pedir no
   WhatsApp" aberto, "Reservar no WhatsApp" fechado.
 - **Secundário (voltar):** fundo de placa, Junta.
@@ -349,7 +352,7 @@ apoio de 13px embaixo e seta à direita (55% de opacidade, decorativa).
 
 ### Cartão de kit (assinatura)
 O produto. Foto real em largura cheia e 4:3 no topo, depois nome (rótulo),
-porção (meta), preço em destaque dourado e descrição (apoio). Fundo de placa,
+porção (meta), preço em destaque (Giz, negrito) e descrição (apoio). Fundo de placa,
 Risco Suave, 14px, sem sombra. A nota de preço de referência vem depois dos
 cartões, nunca antes.
 
@@ -372,8 +375,9 @@ Notas dentro do bloco são texto de apoio. Os botões dos apps dentro do
 cardápio só existem sem JavaScript.
 
 ### Barra fixa de pedido
-Dois botões de 48px lado a lado, nas cores do iFood e do 99 Food, presos ao
-rodapé da tela, entrando de baixo em 180ms. Só com a loja aberta.
+Três botões de 48px lado a lado, só com os logos, nas cores do iFood, do 99
+Food e do WhatsApp (o nome fica para o leitor de tela), presos ao rodapé da
+tela, entrando de baixo em 180ms. Só com a loja aberta.
 
 ## Do's and Don'ts
 

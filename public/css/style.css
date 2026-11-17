@@ -448,7 +448,17 @@ a { color: var(--primaria-texto); }
   color: #FFFFFF;
   box-shadow: var(--sombra);
 }
-.botao--whatsapp .botao__icone { color: #FFFFFF; }
+/* O logo vai num circulo no verde da logo (#25D366), como o icone do app:
+   e o que faz o botao ser reconhecido como WhatsApp. */
+.botao--whatsapp .botao__icone {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #FFFFFF;
+}
+.botao--whatsapp .botao__icone svg { width: 22px; height: 22px; }
 .botao--whatsapp .botao__apoio { color: #FFFFFF; }
 .botao--whatsapp:hover { background: var(--wa-forte); }
 
@@ -625,7 +635,7 @@ html.js #btn-geo { display: flex; }
   font-size: var(--fs-destaque);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--primaria-texto);
+  color: var(--texto);
 }
 
 .kit__descricao {
@@ -700,7 +710,7 @@ html.js #btn-geo { display: flex; }
 .item__preco {
   flex: 0 0 auto;
   font-weight: 700;
-  color: var(--primaria-texto);
+  color: var(--texto);
   white-space: nowrap;
 }
 
@@ -813,6 +823,12 @@ html.js .cardapio__acoes { display: none; }
 .barra-pedido__botao--ifood:hover { background: var(--ifood-forte); }
 .barra-pedido__botao--99 { background: var(--noventa); border-color: var(--noventa-borda); color: var(--noventa-tinta); }
 .barra-pedido__botao--99:hover { background: var(--noventa-forte); }
+.barra-pedido__botao--wa { background: var(--wa); border-color: var(--wa); color: #FFFFFF; }
+.barra-pedido__botao--wa:hover { background: var(--wa-forte); }
+/* Na barra vao so os logos (o nome fica para o leitor de tela). */
+.barra-pedido__botao .logo-app--ifood { height: 20px; }
+.barra-pedido__botao .logo-app--99 { height: 18px; }
+.barra-pedido__botao .logo-app--wa { width: 24px; height: 24px; }
 
 /* A barra cobre o fim da pagina: o rodape ganha espaco quando ela aparece. */
 html.com-barra .pagina { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
