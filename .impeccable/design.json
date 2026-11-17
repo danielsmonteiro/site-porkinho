@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-17T00:13:34+00:00",
+  "generatedAt": "2026-11-17T00:32:09+00:00",
   "title": "Design System: Feijoada Porkinho",
   "extensions": {
     "colorMeta": {
@@ -313,7 +313,7 @@
       "refersTo": "cartao-kit",
       "description": "O produto: foto real 4:3, nome, porção, preço dourado e descrição.",
       "html": "<article class=\"ds-kit\"><div class=\"ds-kit__foto\" role=\"img\" aria-label=\"Foto do kit\"></div><div class=\"ds-kit__corpo\"><h3 class=\"ds-kit__nome\">Kit Feijoada Completa</h3><p class=\"ds-kit__porcao\">3 a 4 pessoas, 1,2 kg de feijoada</p><p class=\"ds-kit__preco\">R$ 119,90</p><p class=\"ds-kit__descricao\">Feijoada, torresmo crocante, arroz soltinho, couve fresca, farofa temperada, laranja, molho apimentado exclusivo e 3 docinhos artesanais.</p></div></article>",
-      "css": ".ds-kit{max-width:360px;border:1px solid #46453F;border-radius:14px;background:#31312E;overflow:hidden;color:#F1EFEA;font-family:Outfit,system-ui,sans-serif}.ds-kit__foto{aspect-ratio:4/3;background:#3B3B38}.ds-kit__corpo{padding:12px 14px 14px}.ds-kit__nome{margin:0;font-size:1rem;font-weight:700;line-height:1.25}.ds-kit__porcao{margin:2px 0 0;font-size:.8125rem;color:#B5B1A9}.ds-kit__preco{margin:4px 0 0;font-size:1.25rem;font-weight:700;line-height:1.2;color:#E9D45C}.ds-kit__descricao{margin:6px 0 0;font-size:.9375rem;line-height:1.5;color:#B5B1A9}"
+      "css": ".ds-kit{max-width:360px;border:1px solid #46453F;border-radius:14px;background:#31312E;overflow:hidden;color:#F1EFEA;font-family:Outfit,system-ui,sans-serif}.ds-kit__foto{aspect-ratio:4/3;background:#3B3B38}.ds-kit__corpo{padding:12px 14px 14px}.ds-kit__nome{margin:0;font-size:1rem;font-weight:700;line-height:1.25}.ds-kit__porcao{margin:2px 0 0;font-size:.8125rem;color:#B5B1A9}.ds-kit__preco{margin:4px 0 0;font-size:1.25rem;font-weight:700;line-height:1.2;color:#F1EFEA}.ds-kit__descricao{margin:6px 0 0;font-size:.9375rem;line-height:1.5;color:#B5B1A9}"
     },
     {
       "name": "Ponto de retirada",
@@ -335,7 +335,7 @@
       "name": "Barra fixa de pedido",
       "kind": "nav",
       "refersTo": "barra-pedido-botao",
-      "description": "Dois botões nas cores do iFood e do 99 Food, presos ao rodapé, só com a loja aberta.",
+      "description": "Três botões só com os logos (iFood, 99 Food, WhatsApp), presos ao rodapé, só com a loja aberta.",
       "html": "<nav class=\"ds-barra\"><a class=\"ds-barra__botao\" href=\"#\">Pedir no iFood</a><a class=\"ds-barra__botao\" href=\"#\">Pedir no 99 Food</a></nav>",
       "css": ".ds-barra{display:flex;gap:10px;max-width:520px;padding:10px 16px;background:#262624;border-top:1px solid #46453F;box-shadow:0 -6px 18px rgba(0,0,0,.25);font-family:Outfit,system-ui,sans-serif}.ds-barra__botao{flex:1 1 0;display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 12px;border-radius:14px;background:#E9D45C;color:#241A0B;font-weight:700;text-decoration:none;white-space:nowrap}.ds-barra__botao:hover{background:#F2DE6B}.ds-barra__botao:focus-visible{outline:3px solid #FFE9A3;outline-offset:3px}"
     }
@@ -354,7 +354,7 @@
     "rules": [
       {
         "name": "A Regra do Ouro que Age",
-        "body": "O dourado é a cor da Porkinho: preço, selo, ponto de status, pinos e os \"+\". Não é cor de enfeite, de título nem de fundo de seção.",
+        "body": "O dourado é a cor da Porkinho: selo, ponto de status, pinos e os \"+\". Preço vai em texto claro e negrito. Não é cor de enfeite, de título nem de fundo de seção.",
         "section": "colors"
       },
       {

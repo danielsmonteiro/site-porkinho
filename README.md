@@ -28,11 +28,12 @@ Três regras de tela que vieram de uma análise de design (15/11/2026):
   às 09:00") com ponto dourado. Como o iFood e o 99 Food **não aceitam pedido
   agendado**, fora do horário os botões dos apps viram secundários (sem
   dourado cheio, sem sombra, sem seta) com o apoio "Fechado · abre sexta às
-  09:00", e o botão do WhatsApp logo abaixo fica dourado como "Reservar no
-  WhatsApp": é o único pedido possível. A seção de retirada ganha a linha
+  09:00", e o botão do WhatsApp logo abaixo vira "Reservar no WhatsApp": é o
+  único botão cheio do topo e o único pedido possível. A seção de retirada ganha a linha
   "Fechado agora · os food trucks abrem sexta às 09:00". Tudo sai de
   `textoDoStatus` e `renderizarStatus` no `app.js`.
-- **Barra fixa de pedido** no rodapé da tela, com iFood e 99 Food. Aparece só
+- **Barra fixa de pedido** no rodapé da tela, com iFood, 99 Food e WhatsApp
+  (só os logos). Aparece só
   depois que os botões do topo saem da tela e some quando eles voltam. **Fora
   do horário ela não aparece.** Os cliques dela vão para as mesmas rotas, com
   `?de=barra`.
@@ -281,8 +282,8 @@ WHERE blob1 = '/go/(desconhecido)' GROUP BY caminho ORDER BY n DESC
 > os kits ficam sempre visíveis e o bloco recolhido só tem petiscos e bebidas.
 > As duas séries medem coisas diferentes e não se comparam.
 >
-> **Barra fixa:** cliques nela chegam como `/go/ifood?de=barra` e
-> `/go/99food?de=barra`. O relatório soma tudo na rota; para separar:
+> **Barra fixa:** cliques nela chegam como `/go/ifood?de=barra`,
+> `/go/99food?de=barra` e `/go/whatsapp?de=barra`. O relatório soma tudo na rota; para separar:
 > `SELECT blob1, blob2, SUM(_sample_interval) FROM porkinho_cliques WHERE blob1 IN ('/go/ifood', '/go/99food') GROUP BY blob1, blob2`.
 
 O relatório roda na sua máquina e lê de lá:
