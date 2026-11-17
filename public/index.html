@@ -64,7 +64,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 .botao--99{background:#FFDD00;border-color:transparent;color:#1A1A1A}.botao--99 .botao__apoio{color:#3D3500}@media(prefers-color-scheme:light){.botao--99{border-color:#8F7A00}}
 .botao--whatsapp{background:#008069;border-color:#008069;color:#FFF}.botao--whatsapp .botao__icone,.botao--whatsapp .botao__apoio{color:#FFF}.botao--whatsapp .botao__icone{width:36px;height:36px;min-width:36px;border-radius:50%;background:#25D366}.botao--whatsapp .botao__icone svg{width:22px;height:22px}
 </style>
-<link rel="stylesheet" href="/css/style.css?v=18">
+<link rel="stylesheet" href="/css/style.css?v=19">
 <!-- Marca que ha JavaScript ANTES da primeira pintura. Sem isto, o botao
      de geolocalizacao so aparecia no DOMContentLoaded e empurrava a lista
      de pontos para baixo (layout shift). Liberado na CSP por hash, nao
@@ -94,13 +94,17 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 
   <!-- 1. Marketplaces: os canais preferenciais. -->
   <main id="comprar" class="secao">
+    <!-- Fechado, os dois apps viram uma linha compacta lado a lado (classe
+         apps--fechado, app.js): o selo do status ja diz quando abre, e a
+         foto e o preco do kit sobem para a primeira tela. -->
+    <div class="apps" id="apps">
     <a class="botao botao--primario botao--ifood" href="/go/ifood"
        rel="nofollow noopener noreferrer">
       <span class="botao__icone botao__icone--logo" aria-hidden="true">
         <svg class="logo-app logo-app--ifood" viewBox="0 0 1500 793"><path fill="currentColor" fill-rule="evenodd" d="M406 0L455 2L501 13L502 20L490 81L470 73L455 70L433 68L403 69L390 73L382 78L374 86L366 100L357 140L441 140L429 201L428 203L342 203L273 544L159 544L228 207L228 203L189 203L201 140L240 140L252 107L269 76L282 61L282 59L300 41L302 41L313 31L331 20L357 9L381 3ZM1386 6L1500 6L1408 455L1296 455L1308 398L1302 398L1287 418L1272 431L1249 445L1223 455L1199 460L1169 462L1151 459L1139 454L1126 445L1113 430L1106 417L1099 390L1099 364L1106 327L1117 295L1131 266L1149 237L1165 218L1165 216L1170 212L1170 210L1197 183L1233 157L1266 142L1291 136L1318 135L1359 139ZM88 8L203 8L185 101L70 102ZM603 133L644 135L682 145L712 162L733 184L741 199L746 214L748 225L748 257L741 292L726 330L700 371L667 406L639 427L597 448L575 455L549 460L501 461L472 456L440 444L419 430L402 412L392 394L386 371L385 347L391 309L401 279L414 252L430 227L441 215L441 213L449 206L449 204L475 180L495 166L521 152L548 142L580 135ZM963 133L1004 135L1024 139L1047 147L1064 156L1079 167L1098 190L1104 203L1109 221L1110 251L1102 294L1086 333L1060 373L1033 402L1031 402L1025 409L1002 426L961 447L918 459L902 461L863 461L830 455L801 444L776 427L764 414L754 398L746 372L745 346L749 317L759 284L774 252L790 227L808 207L808 205L830 184L855 166L881 152L908 142L940 135ZM63 140L177 140L177 145L114 455L0 455ZM349 544L356 545L362 559L377 583L389 599L395 604L395 606L403 613L403 615L431 641L462 663L496 681L535 695L569 702L606 705L638 704L664 701L696 695L735 684L778 667L806 653L837 634L861 616L875 602L800 544L1029 544L1029 547L979 787L977 786L973 775L973 771L966 755L966 751L959 735L959 731L952 715L947 697L945 692L942 692L912 716L878 737L840 756L804 770L770 780L730 788L694 792L649 793L616 791L588 787L538 773L499 755L457 727L446 716L444 716L413 684L383 641L370 616L360 591L352 563Z"/></svg>
       </span>
       <span class="botao__texto">
-        <span class="botao__rotulo">Pedir no iFood</span>
+        <span class="botao__rotulo"><span class="botao__verbo">Pedir no </span>iFood</span>
         <span class="botao__apoio" data-apoio>Entrega em casa · mínimo R$&nbsp;59,00</span>
       </span>
       <span class="botao__seta" aria-hidden="true">
@@ -114,13 +118,14 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
         <svg class="logo-app logo-app--99" viewBox="74 128 352 250"><path fill="currentColor" d="m336.5 131.94c-26.428 0-49.864 13.069-64.467 33.217-9.3301 12.868-15.036 28.624-15.63 45.716l-0.0746 2.953c0 38.867 26.527 71.387 62.089 79.765l-44.431 69.233c-1.4402 2.2464 0.13947 5.2286 2.7661 5.2286h54.571c1.3301 0 2.5738-0.68593 3.3035-1.8223l68.789-107.2c8.4043-12.943 13.256-28.505 13.256-45.202v-2.953c-0.66985-17.137-6.4084-32.932-15.779-45.819-14.608-20.091-38.007-33.114-64.392-33.114zm0 49.034c16.179 0 29.299 13.38 29.325 29.9 2e-3 5.2954-1.3217 10.221-3.6399 14.508l-2.2382 3.4857c-5.3517 7.283-13.846 12.018-23.447 12.018-16.199 0-29.33-13.41-29.33-29.956 0.0311-16.572 13.148-29.956 29.33-29.956zm-173-49.033c26.385 0 49.787 13.021 64.397 33.113 9.3706 12.887 15.105 28.685 15.772 45.821v2.9502c0 16.698-4.8488 32.26-13.252 45.202l-68.789 107.2c-0.7299 1.1364-1.9703 1.8206-3.3014 1.8206h-54.573c-2.6275 0-4.2038-2.9785-2.7641-5.2249l44.428-69.234c-35.563-8.378-62.086-40.9-62.086-79.767l0.07392-2.9502c0.59235-17.092 6.301-32.852 15.629-45.72 14.605-20.149 38.038-33.214 64.467-33.214zm-2.4e-4 108.94c9.6014 0 18.098-4.733 23.448-12.016l2.238-3.4878c2.3175-4.2868 3.6431-9.2098 3.6409-14.505-0.028-16.519-13.146-29.903-29.327-29.903-16.181 0-29.298 13.383-29.329 29.955 0 16.545 13.131 29.956 29.329 29.956z"/></svg>
       </span>
       <span class="botao__texto">
-        <span class="botao__rotulo">Pedir no 99 Food</span>
+        <span class="botao__rotulo"><span class="botao__verbo">Pedir no </span>99 Food</span>
         <span class="botao__apoio" data-apoio>Entrega em casa, direto no app</span>
       </span>
       <span class="botao__seta" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
       </span>
     </a>
+    </div>
 
     <!-- Pedido sem app (no horario) ou reserva (fora dele). Fechado, os
          botoes dos apps passam a secundarios e este fica como o unico
@@ -147,8 +152,8 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       <ul class="kits">
         <li class="kit">
           <picture>
-            <source srcset="/img/kit-completa.webp?v=3" type="image/webp">
-            <img class="kit__foto" src="/img/kit-completa.jpg?v=3" width="800" height="600"
+            <source srcset="/img/kit-completa.webp?v=4" type="image/webp">
+            <img class="kit__foto" src="/img/kit-completa.jpg?v=4" width="800" height="450"
                  alt="Kit Feijoada Completa na caixa da Porkinho: feijoada, torresmo, arroz, couve, farofa, laranja, molho apimentado e docinho"
                  decoding="async">
           </picture>
@@ -161,8 +166,8 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
         </li>
         <li class="kit">
           <picture>
-            <source srcset="/img/kit-executiva.webp?v=3" type="image/webp">
-            <img class="kit__foto" src="/img/kit-executiva.jpg?v=3" width="800" height="600"
+            <source srcset="/img/kit-executiva.webp?v=4" type="image/webp">
+            <img class="kit__foto" src="/img/kit-executiva.jpg?v=4" width="800" height="450"
                  alt="Kit Feijoada Executiva na caixa da Porkinho: feijoada, arroz, torresmo, farofa e docinho"
                  loading="lazy" decoding="async">
           </picture>
@@ -736,7 +741,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
                 "price": "69.90",
                 "priceCurrency": "BRL"
               },
-              "image": "https://feijoadaporkinho.com.br/img/kit-executiva.jpg?v=3"
+              "image": "https://feijoadaporkinho.com.br/img/kit-executiva.jpg?v=4"
             },
             {
               "@type": "MenuItem",
@@ -747,7 +752,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
                 "price": "119.90",
                 "priceCurrency": "BRL"
               },
-              "image": "https://feijoadaporkinho.com.br/img/kit-completa.jpg?v=3"
+              "image": "https://feijoadaporkinho.com.br/img/kit-completa.jpg?v=4"
             }
           ]
         },
@@ -895,7 +900,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 }
 </script>
 
-<script src="/js/app.js?v=11" defer></script>
+<script src="/js/app.js?v=12" defer></script>
 
 <!-- Cloudflare Web Analytics: sem cookie, agregado. Token no README. -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "8e8b0d44a40e4c05b79d54e70756893f"}'></script>

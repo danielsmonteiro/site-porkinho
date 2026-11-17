@@ -346,6 +346,24 @@ a { color: var(--primaria-texto); }
 .botao__seta { flex: 0 0 auto; width: 18px; height: 18px; opacity: .55; }
 .botao__seta svg { width: 18px; height: 18px; display: block; }
 
+/* Os dois apps. Abertos, empilhados como os outros botoes. Fechados,
+   uma linha compacta lado a lado: so a marca e "Fechado agora" (o selo do
+   status acima diz quando abre), e o WhatsApp fica como unico botao cheio. */
+.apps { margin-bottom: 12px; }
+.apps--fechado {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.apps--fechado > .botao {
+  margin: 0;
+  min-height: 56px;
+  padding: 10px 12px;
+  gap: 10px;
+}
+.apps--fechado .botao__verbo,
+.apps--fechado .botao__seta { display: none; }
+
 /* Marketplaces: fundo solido de destaque, tinta escura por cima. */
 .botao--primario {
   background: var(--primaria);
@@ -610,7 +628,7 @@ html.js #btn-geo { display: flex; }
 .kit__foto {
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   background: var(--superficie-alta);
 }
@@ -624,9 +642,10 @@ html.js #btn-geo { display: flex; }
   line-height: 1.25;
 }
 
+/* Porcao em 15px: quantas pessoas e quantos quilos decidem a compra. */
 .kit__porcao {
   margin: 2px 0 0;
-  font-size: var(--fs-meta);
+  font-size: var(--fs-apoio);
   color: var(--texto-2);
 }
 
