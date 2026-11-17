@@ -458,8 +458,8 @@ acompanha.
 
 | Arquivo | Tamanho | Situação |
 |---|---|---|
-| `img/kit-completa.*` | 800×600 (4:3) | Pronto — foto real do kit na caixa da Porkinho. **É a foto que mais vende**: primeiro cartão da página, em largura cheia. |
-| `img/kit-executiva.*` | 800×600 (4:3) | Pronto — foto real do kit. |
+| `img/kit-completa.*` | 800×450 (16:9) | Pronto — foto real do kit, recortada nos potes (menos mesa e parede). **É a foto que mais vende**: primeiro cartão da página, em largura cheia. Uma foto da feijoada servida no prato venderia mais. |
+| `img/kit-executiva.*` | 800×450 (16:9) | Pronto — foto real do kit, recortada nos potes. |
 | `img/og-image.jpg` | 1200×630 | Pronto — recorte da foto do Kit Completa: é o que aparece quando o link é colado no WhatsApp. |
 | `img/logo.webp` / `.png` | 192×192 | Pronto — logo oficial, com transparência. |
 | `img/icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `../favicon.ico` | — | Prontos, gerados da logo oficial. |

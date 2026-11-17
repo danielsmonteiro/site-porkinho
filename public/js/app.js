@@ -209,7 +209,9 @@
     return {
       aberto: false,
       status: 'Abre ' + dia + ' às ' + hora,
-      apoio: 'Fechado · abre ' + dia + ' às ' + hora,
+      /* Curto: fechado, os botoes ficam lado a lado, e o selo do status
+         logo acima ja diz o dia e a hora. */
+      apoio: 'Fechado agora',
       retirada: 'Fechado agora · os food trucks abrem ' + dia + ' às ' + hora
     };
   }
@@ -237,7 +239,9 @@
     /* Botoes dos apps: fechado, viram secundarios (sem sombra nem seta: o
        dourado e para o que da para pedir agora) e o apoio diz quando abre;
        aberto, volta ao texto do HTML, guardado no primeiro uso. */
-    $$('#comprar > .botao--primario').forEach(function (botao) {
+    var apps = $('#apps');
+    if (apps) { apps.classList.toggle('apps--fechado', !s.aberto); }
+    $$('#apps > .botao--primario').forEach(function (botao) {
       botao.classList.toggle('botao--fechado', !s.aberto);
       var el = $('[data-apoio]', botao);
       if (!el) { return; }
@@ -440,7 +444,7 @@
    * ------------------------------------------------------------------ */
   function prepararBarra() {
     var barra = $('#barra-pedido');
-    var topo = $$('#comprar > .botao--primario');
+    var topo = $$('#apps > .botao--primario');
     if (!barra || !topo.length || !('IntersectionObserver' in window)) { return; }
 
     var naTela = [];
