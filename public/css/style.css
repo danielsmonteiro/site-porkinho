@@ -372,6 +372,67 @@ a { color: var(--primaria-texto); }
 .botao--primario.botao--fechado .botao__seta { visibility: hidden; }
 .botao--primario.botao--fechado:hover { background: var(--superficie-alta); }
 
+/* ------------------------------------------------------------------ *
+ * Botoes dos apps na cor de cada marca, com o logo oficial.
+ * O vermelho do iFood fica um tom abaixo do da marca (#EA1D2C) para o
+ * texto branco passar de 4,5:1 (4,53). O verde do WhatsApp e o do proprio
+ * app (#008069): branco sobre o #25D366 da logo daria 1,98:1.
+ * ------------------------------------------------------------------ */
+:root {
+  --ifood: #E81C2B;
+  --ifood-forte: #CF1626;
+  --noventa: #FFDD00;
+  --noventa-forte: #F2D000;
+  --noventa-tinta: #1A1A1A;
+  --noventa-apoio: #3D3500;
+  --noventa-borda: transparent;
+  --wa: #008069;
+  --wa-forte: #006B58;
+}
+@media (prefers-color-scheme: light) {
+  /* Amarelo sobre o cimento claro da 1,02:1: a borda marca o limite. */
+  :root { --noventa-borda: #8F7A00; }
+}
+
+.botao__icone--logo { width: auto; min-width: 28px; }
+.logo-app { display: block; width: auto; }
+.logo-app--ifood { height: 22px; }
+.logo-app--99 { height: 20px; }
+
+.botao--ifood {
+  background: var(--ifood);
+  border-color: var(--ifood);
+  color: #FFFFFF;
+}
+.botao--ifood .botao__apoio { color: #FFFFFF; }
+.botao--ifood:hover { background: var(--ifood-forte); }
+
+.botao--99 {
+  background: var(--noventa);
+  border-color: var(--noventa-borda);
+  color: var(--noventa-tinta);
+}
+.botao--99 .botao__apoio { color: var(--noventa-apoio); }
+.botao--99:hover { background: var(--noventa-forte); }
+
+/* Fechado: o botao vira secundario (ver .botao--fechado) e o logo fica num
+   quadrado na cor da marca, como o icone do app. */
+.botao--ifood.botao--fechado,
+.botao--99.botao--fechado { color: var(--texto); }
+.botao--ifood.botao--fechado { border-color: var(--ifood); }
+.botao--99.botao--fechado { border-color: var(--primaria-texto); }
+.botao--ifood.botao--fechado .botao__apoio,
+.botao--99.botao--fechado .botao__apoio { color: var(--texto-2); }
+.botao--fechado .botao__icone--logo {
+  padding: 5px 7px;
+  border-radius: 8px;
+}
+.botao--ifood.botao--fechado .botao__icone--logo { background: var(--ifood); color: #FFFFFF; }
+.botao--99.botao--fechado .botao__icone--logo { background: var(--noventa); color: var(--noventa-tinta); }
+.botao--ifood.botao--fechado .logo-app--ifood { height: 18px; }
+.botao--99.botao--fechado .logo-app--99 { height: 16px; }
+
+
 /* Retirada e WhatsApp: secundarios, com borda. */
 .botao--secundario {
   background: var(--superficie);
@@ -379,20 +440,18 @@ a { color: var(--primaria-texto); }
 }
 .botao--secundario:hover { background: var(--superficie-alta); }
 
-.botao--whatsapp { border-color: var(--whatsapp-borda); }
-.botao--whatsapp .botao__icone { color: var(--whatsapp-texto); }
-
-/* Fechado, o WhatsApp do topo e o unico pedido possivel (reserva): ganha o
-   dourado de acao que os apps perderam. */
-.botao--whatsapp.botao--destaque {
-  background: var(--primaria);
-  border-color: var(--primaria-borda);
-  color: var(--primaria-tinta);
+/* WhatsApp: botao cheio no verde do app, logo e texto brancos (4,89:1).
+   Fechado, e o unico botao cheio do topo: os dos apps viram secundarios. */
+.botao--whatsapp {
+  background: var(--wa);
+  border-color: var(--wa);
+  color: #FFFFFF;
   box-shadow: var(--sombra);
 }
-.botao--whatsapp.botao--destaque .botao__icone { color: var(--primaria-tinta); }
-.botao--whatsapp.botao--destaque .botao__apoio { color: var(--primaria-apoio); }
-.botao--whatsapp.botao--destaque:hover { background: var(--primaria-forte); }
+.botao--whatsapp .botao__icone { color: #FFFFFF; }
+.botao--whatsapp .botao__apoio { color: #FFFFFF; }
+.botao--whatsapp:hover { background: var(--wa-forte); }
+
 
 .botao--fantasma {
   background: transparent;
@@ -750,6 +809,10 @@ html.js .cardapio__acoes { display: none; }
   white-space: nowrap;
 }
 .barra-pedido__botao:hover { background: var(--primaria-forte); }
+.barra-pedido__botao--ifood { background: var(--ifood); border-color: var(--ifood); color: #FFFFFF; }
+.barra-pedido__botao--ifood:hover { background: var(--ifood-forte); }
+.barra-pedido__botao--99 { background: var(--noventa); border-color: var(--noventa-borda); color: var(--noventa-tinta); }
+.barra-pedido__botao--99:hover { background: var(--noventa-forte); }
 
 /* A barra cobre o fim da pagina: o rodape ganha espaco quando ela aparece. */
 html.com-barra .pagina { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }

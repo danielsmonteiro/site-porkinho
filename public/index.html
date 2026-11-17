@@ -59,8 +59,12 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 .botao__rotulo{display:block;font-size:1rem;font-weight:700;line-height:1.25}
 .botao__apoio{display:block;font-size:.8125rem;line-height:1.3;color:var(--texto-2)}
 .botao--primario{background:var(--primaria);border-color:var(--primaria-borda);color:var(--primaria-tinta);box-shadow:var(--sombra);min-height:64px}.botao--primario .botao__apoio{color:var(--primaria-apoio)}
+.botao__icone--logo{width:auto;min-width:28px}.logo-app{display:block;width:auto}.logo-app--ifood{height:22px}.logo-app--99{height:20px}
+.botao--ifood{background:#E81C2B;border-color:#E81C2B;color:#FFF}.botao--ifood .botao__apoio{color:#FFF}
+.botao--99{background:#FFDD00;border-color:transparent;color:#1A1A1A}.botao--99 .botao__apoio{color:#3D3500}@media(prefers-color-scheme:light){.botao--99{border-color:#8F7A00}}
+.botao--whatsapp{background:#008069;border-color:#008069;color:#FFF}.botao--whatsapp .botao__icone,.botao--whatsapp .botao__apoio{color:#FFF}
 </style>
-<link rel="stylesheet" href="/css/style.css?v=16">
+<link rel="stylesheet" href="/css/style.css?v=17">
 <!-- Marca que ha JavaScript ANTES da primeira pintura. Sem isto, o botao
      de geolocalizacao so aparecia no DOMContentLoaded e empurrava a lista
      de pontos para baixo (layout shift). Liberado na CSP por hash, nao
@@ -90,10 +94,10 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 
   <!-- 1. Marketplaces: os canais preferenciais. -->
   <main id="comprar" class="secao">
-    <a class="botao botao--primario" href="/go/ifood"
+    <a class="botao botao--primario botao--ifood" href="/go/ifood"
        rel="nofollow noopener noreferrer">
-      <span class="botao__icone" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="botao__icone botao__icone--logo" aria-hidden="true">
+        <svg class="logo-app logo-app--ifood" viewBox="0 0 1500 793" role="img" aria-label="iFood"><path fill="currentColor" fill-rule="evenodd" d="M406 0L455 2L501 13L502 20L490 81L470 73L455 70L433 68L403 69L390 73L382 78L374 86L366 100L357 140L441 140L429 201L428 203L342 203L273 544L159 544L228 207L228 203L189 203L201 140L240 140L252 107L269 76L282 61L282 59L300 41L302 41L313 31L331 20L357 9L381 3ZM1386 6L1500 6L1408 455L1296 455L1308 398L1302 398L1287 418L1272 431L1249 445L1223 455L1199 460L1169 462L1151 459L1139 454L1126 445L1113 430L1106 417L1099 390L1099 364L1106 327L1117 295L1131 266L1149 237L1165 218L1165 216L1170 212L1170 210L1197 183L1233 157L1266 142L1291 136L1318 135L1359 139ZM88 8L203 8L185 101L70 102ZM603 133L644 135L682 145L712 162L733 184L741 199L746 214L748 225L748 257L741 292L726 330L700 371L667 406L639 427L597 448L575 455L549 460L501 461L472 456L440 444L419 430L402 412L392 394L386 371L385 347L391 309L401 279L414 252L430 227L441 215L441 213L449 206L449 204L475 180L495 166L521 152L548 142L580 135ZM963 133L1004 135L1024 139L1047 147L1064 156L1079 167L1098 190L1104 203L1109 221L1110 251L1102 294L1086 333L1060 373L1033 402L1031 402L1025 409L1002 426L961 447L918 459L902 461L863 461L830 455L801 444L776 427L764 414L754 398L746 372L745 346L749 317L759 284L774 252L790 227L808 207L808 205L830 184L855 166L881 152L908 142L940 135ZM63 140L177 140L177 145L114 455L0 455ZM349 544L356 545L362 559L377 583L389 599L395 604L395 606L403 613L403 615L431 641L462 663L496 681L535 695L569 702L606 705L638 704L664 701L696 695L735 684L778 667L806 653L837 634L861 616L875 602L800 544L1029 544L1029 547L979 787L977 786L973 775L973 771L966 755L966 751L959 735L959 731L952 715L947 697L945 692L942 692L912 716L878 737L840 756L804 770L770 780L730 788L694 792L649 793L616 791L588 787L538 773L499 755L457 727L446 716L444 716L413 684L383 641L370 616L360 591L352 563Z"/></svg>
       </span>
       <span class="botao__texto">
         <span class="botao__rotulo">Pedir no iFood</span>
@@ -104,10 +108,10 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </span>
     </a>
 
-    <a class="botao botao--primario" href="/go/99food"
+    <a class="botao botao--primario botao--99" href="/go/99food"
        rel="nofollow noopener noreferrer">
-      <span class="botao__icone" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3"/><circle cx="18.5" cy="17.5" r="3"/><path d="M8.5 17.5h7"/><path d="m5.5 17.5 3.2-8.5H13l2.6 5.4"/><path d="M13 5h3l2.5 12.5"/></svg>
+      <span class="botao__icone botao__icone--logo" aria-hidden="true">
+        <svg class="logo-app logo-app--99" viewBox="74 128 352 250" role="img" aria-label="99"><path fill="currentColor" d="m336.5 131.94c-26.428 0-49.864 13.069-64.467 33.217-9.3301 12.868-15.036 28.624-15.63 45.716l-0.0746 2.953c0 38.867 26.527 71.387 62.089 79.765l-44.431 69.233c-1.4402 2.2464 0.13947 5.2286 2.7661 5.2286h54.571c1.3301 0 2.5738-0.68593 3.3035-1.8223l68.789-107.2c8.4043-12.943 13.256-28.505 13.256-45.202v-2.953c-0.66985-17.137-6.4084-32.932-15.779-45.819-14.608-20.091-38.007-33.114-64.392-33.114zm0 49.034c16.179 0 29.299 13.38 29.325 29.9 2e-3 5.2954-1.3217 10.221-3.6399 14.508l-2.2382 3.4857c-5.3517 7.283-13.846 12.018-23.447 12.018-16.199 0-29.33-13.41-29.33-29.956 0.0311-16.572 13.148-29.956 29.33-29.956zm-173-49.033c26.385 0 49.787 13.021 64.397 33.113 9.3706 12.887 15.105 28.685 15.772 45.821v2.9502c0 16.698-4.8488 32.26-13.252 45.202l-68.789 107.2c-0.7299 1.1364-1.9703 1.8206-3.3014 1.8206h-54.573c-2.6275 0-4.2038-2.9785-2.7641-5.2249l44.428-69.234c-35.563-8.378-62.086-40.9-62.086-79.767l0.07392-2.9502c0.59235-17.092 6.301-32.852 15.629-45.72 14.605-20.149 38.038-33.214 64.467-33.214zm-2.4e-4 108.94c9.6014 0 18.098-4.733 23.448-12.016l2.238-3.4878c2.3175-4.2868 3.6431-9.2098 3.6409-14.505-0.028-16.519-13.146-29.903-29.327-29.903-16.181 0-29.298 13.383-29.329 29.955 0 16.545 13.131 29.956 29.329 29.956z"/></svg>
       </span>
       <span class="botao__texto">
         <span class="botao__rotulo">Pedir no 99 Food</span>
@@ -118,11 +122,12 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
       </span>
     </a>
 
-    <!-- Pedido sem app (no horario) ou reserva (fora dele). Fechado, este
-         botao fica dourado e os dos apps passam a secundarios (app.js). -->
+    <!-- Pedido sem app (no horario) ou reserva (fora dele). Fechado, os
+         botoes dos apps passam a secundarios e este fica como o unico
+         botao cheio (app.js). -->
     <a class="botao botao--secundario botao--whatsapp" id="whatsapp-topo" href="/go/whatsapp" data-whatsapp
        rel="nofollow noopener noreferrer">
-      <span class="botao__icone" aria-hidden="true">
+      <span class="botao__icone botao__icone--logo" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.17-1.35a9.94 9.94 0 0 0 4.87 1.26h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.86c2.17 0 4.2.84 5.73 2.38a8.05 8.05 0 0 1 2.37 5.72c0 4.47-3.63 8.1-8.1 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-2.99-.19-.31a8.06 8.06 0 0 1-1.24-4.29c0-4.47 3.64-8.1 8.11-8.1Zm-3.1 4.3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34 1 2.5c.12.17 1.68 2.66 4.12 3.62 2.03.8 2.45.64 2.89.6.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46Z"/></svg>
       </span>
       <span class="botao__texto">
@@ -267,7 +272,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 
       <a class="botao botao--secundario botao--whatsapp" id="whatsapp-secao" href="/go/whatsapp" data-whatsapp
          rel="nofollow noopener noreferrer">
-        <span class="botao__icone" aria-hidden="true">
+        <span class="botao__icone botao__icone--logo" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.48 1.34 5L2 22l5.17-1.35a9.94 9.94 0 0 0 4.87 1.26h.01c5.5 0 9.96-4.46 9.96-9.96 0-2.66-1.04-5.16-2.92-7.04A9.9 9.9 0 0 0 12.04 2Zm0 1.86c2.17 0 4.2.84 5.73 2.38a8.05 8.05 0 0 1 2.37 5.72c0 4.47-3.63 8.1-8.1 8.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-2.99-.19-.31a8.06 8.06 0 0 1-1.24-4.29c0-4.47 3.64-8.1 8.11-8.1Zm-3.1 4.3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34 1 2.5c.12.17 1.68 2.66 4.12 3.62 2.03.8 2.45.64 2.89.6.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.64-1.19-1.42-1.33-1.66-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46Z"/></svg>
         </span>
         <span class="botao__texto">
@@ -338,20 +343,20 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
           <p class="nota">Preço de referência. O valor final aparece no app.</p>
 
           <div class="cardapio__acoes">
-            <a class="botao botao--primario" href="/go/ifood"
+            <a class="botao botao--primario botao--ifood" href="/go/ifood"
                rel="nofollow noopener noreferrer">
-              <span class="botao__icone" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+              <span class="botao__icone botao__icone--logo" aria-hidden="true">
+        <svg class="logo-app logo-app--ifood" viewBox="0 0 1500 793" role="img" aria-label="iFood"><path fill="currentColor" fill-rule="evenodd" d="M406 0L455 2L501 13L502 20L490 81L470 73L455 70L433 68L403 69L390 73L382 78L374 86L366 100L357 140L441 140L429 201L428 203L342 203L273 544L159 544L228 207L228 203L189 203L201 140L240 140L252 107L269 76L282 61L282 59L300 41L302 41L313 31L331 20L357 9L381 3ZM1386 6L1500 6L1408 455L1296 455L1308 398L1302 398L1287 418L1272 431L1249 445L1223 455L1199 460L1169 462L1151 459L1139 454L1126 445L1113 430L1106 417L1099 390L1099 364L1106 327L1117 295L1131 266L1149 237L1165 218L1165 216L1170 212L1170 210L1197 183L1233 157L1266 142L1291 136L1318 135L1359 139ZM88 8L203 8L185 101L70 102ZM603 133L644 135L682 145L712 162L733 184L741 199L746 214L748 225L748 257L741 292L726 330L700 371L667 406L639 427L597 448L575 455L549 460L501 461L472 456L440 444L419 430L402 412L392 394L386 371L385 347L391 309L401 279L414 252L430 227L441 215L441 213L449 206L449 204L475 180L495 166L521 152L548 142L580 135ZM963 133L1004 135L1024 139L1047 147L1064 156L1079 167L1098 190L1104 203L1109 221L1110 251L1102 294L1086 333L1060 373L1033 402L1031 402L1025 409L1002 426L961 447L918 459L902 461L863 461L830 455L801 444L776 427L764 414L754 398L746 372L745 346L749 317L759 284L774 252L790 227L808 207L808 205L830 184L855 166L881 152L908 142L940 135ZM63 140L177 140L177 145L114 455L0 455ZM349 544L356 545L362 559L377 583L389 599L395 604L395 606L403 613L403 615L431 641L462 663L496 681L535 695L569 702L606 705L638 704L664 701L696 695L735 684L778 667L806 653L837 634L861 616L875 602L800 544L1029 544L1029 547L979 787L977 786L973 775L973 771L966 755L966 751L959 735L959 731L952 715L947 697L945 692L942 692L912 716L878 737L840 756L804 770L770 780L730 788L694 792L649 793L616 791L588 787L538 773L499 755L457 727L446 716L444 716L413 684L383 641L370 616L360 591L352 563Z"/></svg>
               </span>
               <span class="botao__texto"><span class="botao__rotulo">Pedir no iFood</span></span>
               <span class="botao__seta" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
               </span>
             </a>
-            <a class="botao botao--primario" href="/go/99food"
+            <a class="botao botao--primario botao--99" href="/go/99food"
                rel="nofollow noopener noreferrer">
-              <span class="botao__icone" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3"/><circle cx="18.5" cy="17.5" r="3"/><path d="M8.5 17.5h7"/><path d="m5.5 17.5 3.2-8.5H13l2.6 5.4"/><path d="M13 5h3l2.5 12.5"/></svg>
+              <span class="botao__icone botao__icone--logo" aria-hidden="true">
+        <svg class="logo-app logo-app--99" viewBox="74 128 352 250" role="img" aria-label="99"><path fill="currentColor" d="m336.5 131.94c-26.428 0-49.864 13.069-64.467 33.217-9.3301 12.868-15.036 28.624-15.63 45.716l-0.0746 2.953c0 38.867 26.527 71.387 62.089 79.765l-44.431 69.233c-1.4402 2.2464 0.13947 5.2286 2.7661 5.2286h54.571c1.3301 0 2.5738-0.68593 3.3035-1.8223l68.789-107.2c8.4043-12.943 13.256-28.505 13.256-45.202v-2.953c-0.66985-17.137-6.4084-32.932-15.779-45.819-14.608-20.091-38.007-33.114-64.392-33.114zm0 49.034c16.179 0 29.299 13.38 29.325 29.9 2e-3 5.2954-1.3217 10.221-3.6399 14.508l-2.2382 3.4857c-5.3517 7.283-13.846 12.018-23.447 12.018-16.199 0-29.33-13.41-29.33-29.956 0.0311-16.572 13.148-29.956 29.33-29.956zm-173-49.033c26.385 0 49.787 13.021 64.397 33.113 9.3706 12.887 15.105 28.685 15.772 45.821v2.9502c0 16.698-4.8488 32.26-13.252 45.202l-68.789 107.2c-0.7299 1.1364-1.9703 1.8206-3.3014 1.8206h-54.573c-2.6275 0-4.2038-2.9785-2.7641-5.2249l44.428-69.234c-35.563-8.378-62.086-40.9-62.086-79.767l0.07392-2.9502c0.59235-17.092 6.301-32.852 15.629-45.72 14.605-20.149 38.038-33.214 64.467-33.214zm-2.4e-4 108.94c9.6014 0 18.098-4.733 23.448-12.016l2.238-3.4878c2.3175-4.2868 3.6431-9.2098 3.6409-14.505-0.028-16.519-13.146-29.903-29.327-29.903-16.181 0-29.298 13.383-29.329 29.955 0 16.545 13.131 29.956 29.329 29.956z"/></svg>
               </span>
               <span class="botao__texto"><span class="botao__rotulo">Pedir no 99 Food</span></span>
               <span class="botao__seta" aria-hidden="true">
@@ -418,8 +423,8 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
        fazer) e sem JavaScript ela nunca aparece. ?de=barra separa
        estes cliques no relatorio, sem mudar a rota. -->
   <nav class="barra-pedido" id="barra-pedido" aria-label="Pedir pelo aplicativo" hidden>
-    <a class="barra-pedido__botao" href="/go/ifood?de=barra" rel="nofollow noopener noreferrer">Pedir no iFood</a>
-    <a class="barra-pedido__botao" href="/go/99food?de=barra" rel="nofollow noopener noreferrer">Pedir no 99 Food</a>
+    <a class="barra-pedido__botao barra-pedido__botao--ifood" href="/go/ifood?de=barra" rel="nofollow noopener noreferrer">Pedir no iFood</a>
+    <a class="barra-pedido__botao barra-pedido__botao--99" href="/go/99food?de=barra" rel="nofollow noopener noreferrer">Pedir no 99 Food</a>
   </nav>
 
   <footer class="rodape">
@@ -888,7 +893,7 @@ img{max-width:100%;height:auto;display:block}[hidden]{display:none!important}#bt
 }
 </script>
 
-<script src="/js/app.js?v=10" defer></script>
+<script src="/js/app.js?v=11" defer></script>
 
 <!-- Cloudflare Web Analytics: sem cookie, agregado. Token no README. -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "8e8b0d44a40e4c05b79d54e70756893f"}'></script>
